@@ -754,7 +754,7 @@ class Reporte
     public function ventas_trans_plin($id_usuario, $fecha_ini_caja, $fecha_fin_caja){
         try{
             $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
+                    where v.id_usuario = ? and date(v.venta_fecha) between ? and ? and venta_tipo <> 07 
                     and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 5 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_usuario, $fecha_ini_caja, $fecha_fin_caja]);
@@ -769,7 +769,7 @@ class Reporte
     public function ventas_trans_yape($id_usuario, $fecha_ini_caja, $fecha_fin_caja){
         try{
             $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
+                    where v.id_usuario = ? and date(v.venta_fecha) between ? and ? and venta_tipo <> 07 
                     and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 4 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_usuario, $fecha_ini_caja, $fecha_fin_caja]);
@@ -784,7 +784,7 @@ class Reporte
     public function ventas_trans_otros($id_usuario, $fecha_ini_caja, $fecha_fin_caja){
         try{
             $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
+                    where v.id_usuario = ? and date(v.venta_fecha) between ? and ? and venta_tipo <> 07 
                     and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 6 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_usuario, $fecha_ini_caja, $fecha_fin_caja]);
