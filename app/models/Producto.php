@@ -267,7 +267,7 @@ class Producto
 
     public function listar_familias(){
         try{
-            $sql = 'select * from producto_familia';
+            $sql = 'select * from producto_familia where producto_familia_estado = 1';
             $stm = $this->pdo->prepare($sql);
             $stm->execute();
             $result = $stm->fetchAll();
