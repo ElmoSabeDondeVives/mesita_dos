@@ -59,7 +59,7 @@ $pdf->Ln(3);
 
 $pdf->Cell(60,4,"DATOS DEL CLIENTE",1,1,'C');
 
-$pdf->SetMargins(10);
+$pdf->SetMargins(10,'');
 if($dato_venta->id_tipodocumento != 4){
     $pdf->MultiCell(60,4,"RAZÓN SOCIAL:    ".$dato_venta->cliente_nombre,0,1,'');
 }else{
@@ -71,7 +71,7 @@ $pdf->Cell(60,4,"FECHA:                  ".date('d-m-Y', strtotime($dato_venta->
 //$pdf->Cell(60,4,"$dato_grado",0,1,'');
 
 //$pdf->Cell(60,4,"PADRES:   $padre1",0,1,'');
-$pdf->SetMargins(10);
+$pdf->SetMargins(10,'');
 //$pdf->Cell(60,4,"                   $padre2",0,1,'');
 
 $pdf->Cell(60,4,"$dato_impresion",1,1,'C');
@@ -173,5 +173,11 @@ $pdf->Cell(60,0,'Whatsapp Business +51925642418',0,1,'C');
 $pdf->Ln(3);
 $pdf->Cell(60,0,'www.bufeotec.com',0,1,'C');
 
-$pdf->Output('',"$serie_correlativo-" .date('Y-m-d'));
+if(isset($guardar_localmente) && isset($ruta_guardado)){
+    $ruta_guardado = 'media/comprobantes/'."$serie_correlativo-" .date('Y-m-d').'.pdf';
+    $pdf->Output("F",$ruta_guardado);
+} else {
+    $pdf->Output('',"$serie_correlativo-" .date('Y-m-d'));
+}
+
 ?>

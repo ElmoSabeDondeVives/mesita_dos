@@ -156,6 +156,7 @@
                                             <td <?= $estilo_mensaje;?>><?= $mensaje;?></td>
                                             <td style="text-align: left">
                                                 <a target="_blank" type="button" title="Ver detalle" class="btn btn-sm btn-primary" style="color: white" href="<?php echo _SERVER_. 'Ventas/ver_detalle_venta/' . $al->id_venta;?>" ><i class="fa fa-eye ver_detalle"></i></a>
+                                                <a type="button" title="Enviar Correo" data-toggle="modal" data-target="#enviar_correo_al_cliente" onclick="poner_id_venta(<?= $al->id_venta ;?>);" class="btn btn-sm btn-success" style="color: white"  ><i class="fa fa-envelope-o ver_detalle"></i></a>
                                                 <?php
                                                 if($al->anulado_sunat == "0" && ($al->venta_tipo_envio == "0" || $al->venta_tipo_envio == "1") && $al->venta_tipo != '03'){ ?>
                                                     <a id="btn_enviar<?= $al->id_venta;?>" type="button" title="Enviar a Sunat" class="btn btn-sm btn-success btne" style="color: white" onclick="preguntar('¿Está seguro que desea enviar a la Sunat este Comprobante?','enviar_comprobante_sunat','Si','No',<?= $al->id_venta;?>)"><i class="fa fa-check margen"></i></a>
@@ -193,6 +194,33 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="enviar_correo_al_cliente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Enviar Comprobante al Correo</h4>
+                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>-->
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-12">
+                        <input type="hidden" id="id_venta_cliente" value=""  readonly>
+                        <input class="form-control" type="text" id="correo_del_cliente" name="correo_del_cliente">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="realizar_impugnacion">
+                    <a onclick="enviar_email_cliente()" style="color: white;" class="btn btn-primary" id="guardar_envio_mensajito" >Guardar</a>
+                    <a class="btn btn-danger" style="color: white;" data-dismiss="modal" id="cancelar_envio_mensajito" >Cerrar</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

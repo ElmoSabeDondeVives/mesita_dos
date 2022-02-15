@@ -1,5 +1,13 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
+
+require 'libs/PHPMailer/Exception.php';
+require 'libs/PHPMailer/PHPMailer.php';
+require 'libs/PHPMailer/SMTP.php';
+
 require 'app/models/Archivo.php';
 require 'app/models/Usuario.php';
 require 'app/models/Rol.php';
@@ -1253,4 +1261,135 @@ class VentasController
         $respuesta = array("result" => $result);
         echo json_encode($respuesta);
     }
+
+    public function enviar_venta_correo(){
+        $result = 2;
+        try{
+            $modelo = new Ventas();
+            $modelo->email = $_POST['email'];
+            $modelo->archivo = $this->imprimir_ticket_pdf_local($_POST['id']);
+            $modelo->titulo = 'Tu comprobante de Venta de La Ultima Conchita';
+            $result = $this->enviar_comprobantes_facheritos($modelo);
+            if($result == 1){
+                unlink($modelo->archivo);
+            }
+        }catch (Exception $e){
+            //Registramos el error generado y devolvemos el mensaje enviado por PHP
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            //$message = $e->getMessage();
+        }
+        //Retornamos el json
+        $respuesta = array("result" => $result);
+        echo json_encode($respuesta);
+    }
+
+    function imprimir_ticket_pdf_local($id){
+        $guardar_localmente = true;
+        $ruta_guardado = "";
+        try{
+            //include('libreria/phpqrcode/qrlib.php');
+            //$this->nav = new Navbar();
+            //$navs = $this->nav->listar_menus($this->encriptar->desencriptar($_SESSION['ru'], _FULL_KEY_));
+            if ($id == 0) {
+                throw new Exception('ID Sin Declarar');
+            }
+            $dato_venta = $this->ventas->listar_venta_x_id_pdf($id);
+            if($dato_venta->id_mesa != "-02"){
+                $detalle_venta = $this->ventas->listar_venta_detalle_x_id_venta_pdf($id);
+            }else{
+                $detalle_venta = $this->ventas->listar_venta_detalle_x_id_venta_venta($id);
+            }
+            $fecha_hoy = date('d-m-Y H:i:s');
+
+            //codigo QR
+            $tiempo_fecha = explode(" ", $dato_venta->pago_fecha_emitida);
+            //$ruta = _SERVER_ .'media/codigo_qr/'.$dato_pago->pago_seriecorrelativo.'-'.$tiempo_fecha[0].'.png';
+            $ruta_qr = "libs/ApiFacturacion/imagenqr/$dato_venta->empresa_ruc-$dato_venta->venta_tipo-$dato_venta->venta_serie-$dato_venta->venta_correlativo.png";
+
+            if (!file_exists($ruta_qr)) {
+                include('libs/ApiFacturacion/phpqrcode/qrlib.php');
+                $nombre_qr = $dato_venta->empresa_ruc. '-' .$dato_venta->venta_tipo. '-' .$dato_venta->venta_serie. '-' .$dato_venta->venta_correlativo;
+                $contenido_qr = $dato_venta->empresa_ruc.'|'.$dato_venta->venta_tipo.'|'.$dato_venta->venta_serie.'|'.$dato_venta->venta_correlativo. '|'.
+                    $dato_venta->venta_totaligv.'|'.$dato_venta->venta_total.'|'.date('Y-m-d', strtotime($dato_venta->venta_fecha)).'|'.
+                    $dato_venta->tipodocumento_codigo.'|'.$dato_venta->cliente_numero;
+                $ruta = 'libs/ApiFacturacion/imagenqr/';
+                $ruta_qr = $ruta.$nombre_qr.'.png';
+                QRcode::png($contenido_qr, $ruta_qr, 'H - mejor', '3');
+            }
+
+            if ($dato_venta->venta_tipo == "03") {
+                $tipo_comprobante = "BOLETA DE VENTA ELECTRONICA";
+                $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
+                $documento = "DNI:                        $dato_venta->cliente_numero";
+            } else if ($dato_venta->venta_tipo == "01") {
+                $tipo_comprobante = "FACTURA DE VENTA ELECTRONICA";
+                $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
+                $documento = "RUC:                      $dato_venta->cliente_numero";
+            } else if ($dato_venta->venta_tipo == "07") {
+                $tipo_comprobante = "NOTA DE CRÉDITO DE VENTA ELECTRONICA";
+                $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
+                $documento = "DOCUMENTO: $dato_venta->cliente_numero";
+            } else if($dato_venta->venta_tipo == "08") {
+                $tipo_comprobante = "NOTA DE DÉBITO DE VENTA ELECTRONICA";
+                $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
+                $documento = "DOCUMENTO: $dato_venta->cliente_numero";
+            }else if($dato_venta->venta_tipo == "20") {
+                $tipo_comprobante = "NOTA DE VENTA";
+                $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
+                $documento = "DOCUMENTO: $dato_venta->cliente_numero";
+
+            }
+            //$fecha_comprobante = $tiempo_fecha[0];
+            //$hora_comprobante = $tiempo_fecha[1];
+            $importe_letra = $this->numLetra->num2letras(intval($dato_venta->venta_total));
+            $arrayImporte = explode(".", $dato_venta->venta_total);
+            $montoLetras = $importe_letra . ' con ' . $arrayImporte[1] . '/100 ' . $dato_venta->moneda;
+            //$qrcode = $dato_venta->pago_seriecorrelativo . '-' . $tiempo_fecha[0] . '.png';
+            $dato_impresion = 'DATOS DE IMPRESIÓN:';
+            require _VIEW_PATH_ . 'ventas/imprimir_ticket_pdf.php';
+        } catch (Throwable $e) {
+            //En caso de errores insertamos el error generado y redireccionamos a la vista de inicio
+            $this->log->insertar($e->getMessage(), get_class($this) . '|' . __FUNCTION__);
+        }
+        return $ruta_guardado;
+    }
+
+    function enviar_comprobantes_facheritos($modelo){
+        $result = 2;
+
+        //Codigo para enviar correo
+        //Inicio de Correo
+        $mail = new PHPMailer(true);
+        //Server settings
+        $mail->SMTPDebug = 0;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'mail.guabba.com';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'notificaciones.bufeotec@guabba.com';                     //SMTP username
+        $mail->Password   = 'HuevitoElCanrgy';                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+        $mail->Port       = 465;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+
+        //Recipients
+        $mail->setFrom('notificaciones.bufeotec@guabba.com', 'La Ultima Conchita: Comprobante de Venta');
+        //$mail->addAddress($_POST['correo']);     //Add a recipient
+        //$this->log->insert('PHPMAILPRE: EMAIL DE ENVIO :' . strtolower($persona_impugnacion->user_email), date('d-m-Y H:i:s'));
+        $mail->addAddress(strtolower($modelo->email));   //Add a recipient
+        //$mail->addCC('test_bufeotec@brunner.com.pe');
+
+        //Attachments
+        //$mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
+        $mail->addAttachment($modelo->archivo);    //Optional name
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = utf8_decode($modelo->titulo);
+        $correo_atendido = "";
+        require 'app/view/ventas/correo_venta.php';
+        $mail->Body    = utf8_decode($correo_atendido);
+        if($mail->send()){
+            $result = 1;
+        }
+        return $result;
+    }
+
 }

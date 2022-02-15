@@ -211,3 +211,45 @@ function anular_boleta_cambiarestado(id_venta, estado){
 
     });
 }
+
+
+function poner_id_venta(id){
+    $("#id_venta_cliente").val(id);
+}
+
+
+function enviar_email_cliente(){
+    var correo = $("#correo_del_cliente").val();
+    var id_venta = $("#id_venta_cliente").val();
+    if(correo == ""){
+        respuesta('Debe introducir una dirección de correo electronico', 'error');
+    } else {
+        var cadena = "email=" + correo+"&id="+id_venta;
+
+        $.ajax({
+            type:"POST",
+            url: urlweb + "api/Ventas/enviar_venta_correo",
+            data : cadena,
+            dataType: 'json',
+            beforeSend: function () {
+                cambiar_estado_boton('guardar_envio_mensajito', 'Enviando correo, espere un momento...', true);
+                $('#cancelar_envio_mensajito').hide();
+            },
+            success:function (r) {
+                cambiar_estado_boton('guardar_envio_mensajito', 'Guardar', true);
+                $('#cancelar_envio_mensajito').show();
+                switch (r.result) {
+                    case 1:
+                        $("#correo_del_cliente").val("");
+                        respuesta('¡Correo Enviado!', 'success');
+                        break;
+                    case 2:
+                        respuesta('Ocurrió Un Error al enviar correo', 'error');
+                        break;
+                    default:
+                        respuesta('Ocurrió Un Error Desconocido', 'error');
+                }
+            }
+        });
+    }
+}
