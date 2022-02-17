@@ -345,11 +345,11 @@ class Pedido
         return $result;
     }
 
-    public function listar_ultima_fecha($fecha_hoy,$id_usuario){
+    public function listar_ultima_fecha($id_usuario){
         try{
-            $sql = 'select * from caja where date(caja_fecha_apertura) = ? and id_usuario_apertura = ?';
+            $sql = 'select * from caja where id_usuario_apertura = ? and caja_estado = 1';
             $stm = $this->pdo->prepare($sql);
-            $stm->execute([$fecha_hoy,$id_usuario]);
+            $stm->execute([$id_usuario]);
             $result = $stm->fetch();
             if(!empty($result)){
                 $result = true;
@@ -363,12 +363,11 @@ class Pedido
         return $result;
     }
 
-    public function jalar_id_caja_aperturada($fecha_hoy,$id_usuario){
+    public function jalar_id_caja_aperturada($id_usuario){
         try{
-            $sql = 'select * from caja where date(caja_fecha) = ? 
-                    and id_usuario_apertura = ? limit 1';
+            $sql = 'select * from caja where id_usuario_apertura = ? and caja_estado = 1 limit 1';
             $stm = $this->pdo->prepare($sql);
-            $stm->execute([$fecha_hoy,$id_usuario]);
+            $stm->execute([$id_usuario]);
             $return = $stm->fetch();
         } catch (Throwable $e){
             $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);

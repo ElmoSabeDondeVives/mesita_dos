@@ -13,7 +13,7 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 
 
-$nombre_impresora = "Ticketera";
+$nombre_impresora = "Ticketera2";
 
 
 $connector = new WindowsPrintConnector($nombre_impresora);
@@ -97,21 +97,35 @@ $printer->text("------------------------------------------------" . "\n");
 $printer->setFont(Printer::FONT_B);
 $printer->setTextSize(2,2);
 $printer->text("PRODUCTOS VENDIDOS" . "\n\n");
-$cantidad_vendida = 0;
-foreach ($listar_productos as $dp) {
+$printer->setFont(Printer::FONT_A);
+$printer->setTextSize(1,1);
+foreach ($cajas_totales as $ct) {
+    $cantidad_vendida = 0;
+    $datitos = $this->reporte->datitos_caja($ct->id_caja);
 
-    /*Alinear a la izquierda para la cantidad y el nombre*/
-    $printer->setJustification(Printer::JUSTIFY_LEFT);
-    $printer->text($dp->producto_nombre . "\n");
+    $fecha_ini_caja = $datitos->caja_fecha_apertura;
+    if ($datitos->caja_fecha_cierre == NULL) {
+        $fecha_fin_caja = date('Y-m-d H:i:s');
+    } else {
+        $fecha_fin_caja = $datitos->caja_fecha_cierre;
+    }
+    $listar_productos = $this->reporte->reporte_productos($fecha_ini_caja,$fecha_fin_caja,$id_caja_numero);
+    foreach ($listar_productos as $dp) {
 
-    /*Y a la derecha para el importe*/
-    $printer->setJustification(Printer::JUSTIFY_RIGHT);
-    $printer->text('S/ ' . $dp->total . "\n");
-    $cantidad_vendida = $cantidad_vendida + $dp->total;
+        /*Alinear a la izquierda para la cantidad y el nombre*/
+        $printer->setJustification(Printer::JUSTIFY_LEFT);
+        $printer->text($dp->producto_nombre . "\n");
 
+        /*Y a la derecha para el importe*/
+        $printer->setJustification(Printer::JUSTIFY_RIGHT);
+        $printer->text('Cant. ' . $dp->total . "\n");
+        $cantidad_vendida = $cantidad_vendida + $dp->total;
+    }
+    $printer->text("------------------------------------------------\n");
+    $printer->text("                             TOTAL:" . $cantidad_vendida . "\n");
+    $printer->text("\n");
+    $printer->text("\n");
 }
-$printer->text("------------------------------------------------\n");
-$printer->text("                             TOTAL:". $cantidad_vendida ."\n");
 
 
 /*Alinear a la izquierda para la cantidad y el nombre*/

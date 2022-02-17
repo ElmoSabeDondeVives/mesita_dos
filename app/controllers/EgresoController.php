@@ -129,7 +129,7 @@ class EgresoController
                 $model = new Egresos();
                 $fecha_hoy = date('Y-m-d');
                 $id_usuario = $this->encriptar->desencriptar($_SESSION['c_u'],_FULL_KEY_);
-                $buscar_caja = $this->caja->jalar_caja_movi($fecha_hoy,$id_usuario);
+                $buscar_caja = $this->caja->jalar_caja_movi($id_usuario);
                 $fecha = date('Y-m-d H:i:s');
                 $model->id_caja_numero = $buscar_caja->id_caja_numero;
                 $model->id_usuario = $id_usuario;
@@ -312,9 +312,10 @@ class EgresoController
                 $model = new Egresos();
                 $id_usuario = $this->encriptar->desencriptar($_SESSION['c_u'],_FULL_KEY_);
                 $fecha = date('Y-m-d H:i:s');
+                $buscar_caja = $this->caja->jalar_caja_movi($id_usuario);
+                $model->id_caja_numero = $buscar_caja->id_caja;
                 $model->id_persona = $_POST['id_persona'];
                 $model->id_usuario = $id_usuario;
-                $model->id_caja_numero = 1;
                 $model->gasto_personal_concepto = $_POST['gasto_personal_concepto'];
                 $model->gasto_personal_monto = $_POST['gasto_personal_monto'];
                 $model->gasto_personal_fecha = $_POST['gasto_personal_fecha'];

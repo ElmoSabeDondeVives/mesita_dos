@@ -10,7 +10,7 @@
             <form method="post" action="<?= _SERVER_ ?>Reporte/reporte_general">
                 <input type="hidden" id="enviar_fecha" name="enviar_fecha" value="1">
                 <div class="row">
-                    <div class="col-lg-3 col-xs-6 col-md-6 col-sm-6" style="display: none">
+                    <div class="col-lg-3 col-xs-6 col-md-6 col-sm-6">
                         <label for="">Caja</label>
                         <select class="form-control" id="id_caja_numero" name="id_caja_numero">
                             <?php
@@ -24,7 +24,7 @@
                             ?>
                         </select>
                     </div>
-                    <div class="col-lg-3 col-xs-6 col-md-6 col-sm-6">
+                    <div class="col-lg-3 col-xs-6 col-md-6 col-sm-6" style="display:none;">
                         <label for="">Usuario</label>
                         <select class="form-control" id="id_usuario" name="id_usuario">
                             <?php
@@ -54,38 +54,47 @@
             <br>
 
             <div class="row">
-
+                <?php
+                foreach ($cajas_totales as $ct){
+                    $datitos = $this->reporte->datitos_caja($ct->id_caja);
+                    ?>
                     <div class="col-lg-6">
                         <div class="col-lg-12">
                             <div class="card shadow mb-4">
                                 <div class="card-body">
                                     <div class="table">
-                                        <!--<p>Apertura : <?= $datitos->caja_fecha_apertura;?> // Cierre : <?= $datitos->caja_fecha_cierre?> // Monto Cierre : <?= $datitos->caja_cierre;?></p>-->
+                                        <p>Apertura : <?= $datitos->caja_fecha_apertura;?> // Cierre : <?= $datitos->caja_fecha_cierre?> // Monto Cierre : <?= $datitos->caja_cierre;?></p>
                                         <?php
                                         if($datos){
+                                            $fecha_ini_caja = $datitos->caja_fecha_apertura;
+                                            if($datitos->caja_fecha_cierre==NULL){
+                                                $fecha_fin_caja = date('Y-m-d H:i:s');
+                                            }else{
+                                                $fecha_fin_caja = $datitos->caja_fecha_cierre;
+                                            }
                                             //N° DE VENTAS POR TIPO
-                                            $n_ventas_delivery = $this->reporte->n_ventas_delivery($id_usuario,$fecha_ini_caja, $fecha_fin_caja);
-                                            $n_ventas_salon = $this->reporte->n_ventas_salon($id_usuario,$fecha_ini_caja, $fecha_fin_caja);
+                                            $n_ventas_delivery = $this->reporte->n_ventas_delivery($ct->id_caja,$fecha_ini_caja, $fecha_fin_caja);
+                                            $n_ventas_salon = $this->reporte->n_ventas_salon($ct->id_caja,$fecha_ini_caja, $fecha_fin_caja);
 
-                                            $datos_gastos_p = $this->reporte->datos_gastos_p($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-                                            $sumar_datos_p = $this->reporte->sumar_datos_p($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
+                                            $datos_gastos_p = $this->reporte->datos_gastos_p($ct->id_caja);
+                                            $sumar_datos_p = $this->reporte->sumar_datos_p($ct->id_caja);
                                             //$reporte_ingresos = $this->reporte->reporte_ingresos_x_caja($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-                                            $monto_caja_apertura = $this->reporte->reporte_caja_x_caja($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-                                            $ingreso_caja_chica = $this->reporte->ingreso_caja_chica_x_caja($fecha_ini_caja, $fecha_fin_caja,$id_usuario);
+                                            $monto_caja_apertura = $this->reporte->reporte_caja_x_caja($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+                                            $ingreso_caja_chica = $this->reporte->ingreso_caja_chica_x_caja($ct->id_caja,$fecha_ini_caja, $fecha_fin_caja);
                                             //REPORTE DE VENTAS POR SALON
-                                            $ventas_efectivo_salon = $this->reporte->ventas_efectivo($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-                                            $ventas_tarjeta_salon = $this->reporte->ventas_tarjeta($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-                                            $ventas_trans = $this->reporte->ventas_trans_plin($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-                                            $ventas_trans_yape = $this->reporte->ventas_trans_yape($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-                                            $ventas_trans_otros = $this->reporte->ventas_trans_otros($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
+                                            $ventas_efectivo_salon = $this->reporte->ventas_efectivo($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+                                            $ventas_tarjeta_salon = $this->reporte->ventas_tarjeta($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+                                            $ventas_trans = $this->reporte->ventas_trans_plin($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+                                            $ventas_trans_yape = $this->reporte->ventas_trans_yape($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+                                            $ventas_trans_otros = $this->reporte->ventas_trans_otros($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
                                             //SALIDA DE CAJA CHICA
-                                            $salida_caja_chica = $this->reporte->salida_caja_chica_x_caja($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
+                                            $salida_caja_chica = $this->reporte->salida_caja_chica_x_caja($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
                                             //FUNCIONES PARA LOS INGRESOS DEL DELIVERY
-                                            $reporte_ingresos_delivery = $this->reporte->listar_datos_ingresos_delivery_($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-                                            $reporte_ingresos_tarjeta_delivery = $this->reporte->listar_datos_ingresos_tarjeta_delivery_($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-                                            $ventas_transferencia_delivery = $this->reporte->listar_datos_ingresos_transferencia_delivery_plin($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-                                            $ventas_transferencia_delivery_yape = $this->reporte->listar_datos_ingresos_transferencia_delivery_yape($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-                                            $ventas_transferencia_delivery_otros = $this->reporte->listar_datos_ingresos_transferencia_delivery_otros($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
+                                            $reporte_ingresos_delivery = $this->reporte->listar_datos_ingresos_delivery_($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+                                            $reporte_ingresos_tarjeta_delivery = $this->reporte->listar_datos_ingresos_tarjeta_delivery_($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+                                            $ventas_transferencia_delivery = $this->reporte->listar_datos_ingresos_transferencia_delivery_plin($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+                                            $ventas_transferencia_delivery_yape = $this->reporte->listar_datos_ingresos_transferencia_delivery_yape($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+                                            $ventas_transferencia_delivery_otros = $this->reporte->listar_datos_ingresos_transferencia_delivery_otros($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
 
                                             $sumar_datos_p = $sumar_datos_p->total;
                                             //FUNCIONES DESGLOSADAS PARA SALON
@@ -291,8 +300,14 @@
                                             </div>
                                         </div>
                                         <?php
+                                        $fecha_ini_caja = $datitos->caja_fecha_apertura;
+                                        if ($datitos->caja_fecha_cierre == NULL) {
+                                            $fecha_fin_caja = date('Y-m-d H:i:s');
+                                        } else {
+                                            $fecha_fin_caja = $datitos->caja_fecha_cierre;
+                                        }
                                         foreach ($datos_gastos_p as $dg){
-                                            $valores = $this->reporte->valores($dg->id_persona,$fecha_ini_caja, $fecha_fin_caja);
+                                            $valores = $this->reporte->valores($dg->id_gasto_personal);
                                             ?>
                                             <div class="row">
                                                 <div class="col-md-8">
@@ -350,27 +365,35 @@
                                 </thead>
                                 <tbody>
                                 <?php
-                                foreach ($listar_egresos as $le) {
+                                if($datos){
+                                    $fecha_ini_caja = $datitos->caja_fecha_apertura;
+                                    if($datitos->caja_fecha_cierre==NULL){
+                                        $fecha_fin_caja = date('Y-m-d H:i:s');
+                                    }else{
+                                        $fecha_fin_caja = $datitos->caja_fecha_cierre;
+                                    }
+                                    $listar_egresos = $this->reporte->listar_egresos_descripcion($fecha_ini_caja,$fecha_fin_caja);
+                                    foreach ($listar_egresos as $le) {
+                                        ?>
+                                        <tr>
+                                            <td><?php echo date('d-m-Y H:i:s',strtotime($le->egreso_fecha_registro));?></td>
+                                            <td><?php echo $le->egreso_descripcion;?></td>
+                                            <td>S/. <?php echo $le->egreso_monto;?></td>
+                                        </tr>
+                                        <?php
+                                        $egresos = $egresos + $le->egreso_monto;
+                                    }
                                     ?>
-                                    <tr>
-                                        <td><?php echo date('d-m-Y H:i:s',strtotime($le->egreso_fecha_registro));?></td>
-                                        <td><?php echo $le->egreso_descripcion;?></td>
-                                        <td>S/. <?php echo $le->egreso_monto;?></td>
-                                    </tr>
-                                    <?php
-                                    $egresos = $egresos + $le->egreso_monto;
-                                }?>
                                 <tr><td colspan="2" style="text-align: right">Total Egresos:</td><td style="background-color: #f9f17f"><b> S/. <?php echo $egresos ?? 0;?></b></td></tr>
+                                <?php
+                                }
+                                ?>
                                 </tbody>
                             </table>
                         </div>
                         <br>
-                        <div class="col-lg-12  text-center">
-                            <a id="imprimir_ticket" style="color: white;" class="btn btn-primary mr-5" target="_blank" onclick="ticket_venta('<?= $fecha_i; ?>','<?= $fecha_f?>','<?= $id_usuario?>')"><i class="fa fa-print"></i> Ticket</a>
-                            <a id="imprimir_ticket_productos" style="color: white;" class="btn btn-primary mr-5" target="_blank" onclick="ticket_productos('<?= $fecha_i; ?>','<?= $fecha_f?>','<?= $id_usuario?>')"><i class="fa fa-print"></i> Ticket Productos</a>
-                            <a href="<?= _SERVER_ ; ?>index.php?c=Reporte&a=reporte_general_pdf&fecha_filtro=<?= $_POST['fecha_filtro']?>&fecha_filtro_fin=<?= $_POST['fecha_filtro_fin']?>&id_usuario=<?= $_POST['id_usuario']?>" target="_blank" class="btn btn-primary ml-2"><i class="fa fa-print"></i> Exportar PDF</a>
-                        </div>
                     </div>
+                    <br>
                     <div class="col-lg-6">
                         <div class="col-lg-12">
                             <div class="card shadow mb-4">
@@ -385,14 +408,23 @@
                                         </thead>
                                         <tbody>
                                         <?php
-                                        foreach ($productos as $p){
-                                            ?>
-                                            <tr>
-                                                <td><?= $p->producto_nombre?></td>
-                                                <td><?= $fecha_i?> / <?= $fecha_f?></td>
-                                                <td><?= $p->total?></td>
-                                            </tr>
-                                            <?php
+                                        if($datos){
+                                            $fecha_ini_caja = $datitos->caja_fecha_apertura;
+                                            if($datitos->caja_fecha_cierre==NULL){
+                                                $fecha_fin_caja = date('Y-m-d H:i:s');
+                                            }else{
+                                                $fecha_fin_caja = $datitos->caja_fecha_cierre;
+                                            }
+                                            $productos = $this->reporte->reporte_productos_($fecha_ini_caja,$fecha_fin_caja);
+                                            foreach ($productos as $p){
+                                                ?>
+                                                <tr>
+                                                    <td><?= $p->producto_nombre?></td>
+                                                    <td><?= $fecha_i?> / <?= $fecha_f?></td>
+                                                    <td><?= $p->total?></td>
+                                                </tr>
+                                                <?php
+                                            }
                                         }
                                         ?>
                                         </tbody>
@@ -401,22 +433,29 @@
                             </div>
                         </div>
                     </div>
+                    <?php
+                }
+                ?>
                 <br>
             </div>
-            <br>
+            <div class="col-lg-12  text-center">
+                <a id="imprimir_ticket" style="color: white;" class="btn btn-primary mr-5" target="_blank" onclick="ticket_venta('<?= $fecha_i; ?>','<?= $fecha_f?>','<?= $id_caja_numero?>')"><i class="fa fa-print"></i> Ticket</a>
+                <a id="imprimir_ticket_productos" style="color: white;" class="btn btn-primary mr-5" target="_blank" onclick="ticket_productos('<?= $fecha_i; ?>','<?= $fecha_f?>','<?= $id_caja_numero?>')"><i class="fa fa-print"></i> Ticket Productos</a>
+                <a href="<?= _SERVER_ ; ?>index.php?c=Reporte&a=reporte_general_pdf&fecha_filtro=<?= $_POST['fecha_filtro']?>&fecha_filtro_fin=<?= $_POST['fecha_filtro_fin']?>&id_usuario=<?= $_POST['id_usuario']?>" target="_blank" class="btn btn-primary ml-2"><i class="fa fa-print"></i> Exportar PDF</a>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="<?php echo _SERVER_ . _JS_;?>domain.js"></script>
 <script>
-    function ticket_venta(fecha_i,fecha_f,id_usuario){
+    function ticket_venta(fecha_i,fecha_f,id_caja_numero){
         var boton = 'imprimir_ticket';
 
         $.ajax({
             type: 'POST',
             url: urlweb + "api/Reporte/ticket_reporte",
-            data: "fecha_i=" + fecha_i + "&fecha_f=" + fecha_f + "&id_usuario=" + id_usuario,
+            data: "fecha_i=" + fecha_i + "&fecha_f=" + fecha_f + "&id_caja_numero=" + id_caja_numero,
             dataType: 'json',
             beforeSend: function () {
                 cambiar_estado_boton(boton, 'imprimiendo...', true);
@@ -438,13 +477,13 @@
         });
     }
 
-    function ticket_productos(fecha_i,fecha_f,id_usuario){
+    function ticket_productos(fecha_i,fecha_f,id_caja_numero){
         var boton = 'imprimir_ticket_productos';
 
         $.ajax({
             type: 'POST',
             url: urlweb + "api/Reporte/ticket_productos",
-            data: "fecha_i=" + fecha_i + "&fecha_f=" + fecha_f + "&id_usuario=" + id_usuario,
+            data: "fecha_i=" + fecha_i + "&fecha_f=" + fecha_f + "&id_caja_numero=" + id_caja_numero,
             dataType: 'json',
             beforeSend: function () {
                 cambiar_estado_boton(boton, 'imprimiendo...', true);

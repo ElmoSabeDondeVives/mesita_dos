@@ -68,14 +68,13 @@ class   AdminController{
             $turnos = $this->caja->listar_turnos();
             $recurso_sede = $this->recursos->listar_recursos_sede();
 
-            $caja = $this->caja->listar_cajas();
-            $listar_ultima_caja = $this->caja->listar_ultima_caja();
             $fecha_hoy = date('Y-m-d');
             $fecha = date('Y-m-d');
 
-            $fecha_open = $this->caja->listar_ultima_fecha($id_usuario);
-
-            //$fecha_open = $this->caja->listar_ultima_fecha_($listar_ultima_caja->id_caja);
+            $caja = $this->caja->listar_cajas();
+            $listar_ultima_caja = $this->caja->listar_ultima_caja();
+            //$fecha_open = $this->caja->listar_ultima_fecha($id_usuario);
+            $fecha_open = $this->caja->listar_ultima_fecha_($listar_ultima_caja->id_caja);
             //Hacemos el require de los archivos a usar en las vistas
             require _VIEW_PATH_ . 'header.php';
             require _VIEW_PATH_ . 'navbar.php';

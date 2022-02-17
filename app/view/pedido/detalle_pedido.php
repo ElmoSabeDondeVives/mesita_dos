@@ -763,7 +763,7 @@
                                 $entre=true;
                                 $fecha = date('Y-m-d');
                                 $id_usuario = $this->encriptar->desencriptar($_SESSION['c_u'],_FULL_KEY_);
-                                $caja_apertura_fecha = $this->pedido->listar_ultima_fecha($fecha,$id_usuario);
+                                $caja_apertura_fecha = $this->pedido->listar_ultima_fecha($id_usuario);
 
                                 if($id_rol == 2 || $id_rol == 3 || $id_rol ==5){
                                     ?>
@@ -773,7 +773,6 @@
                                     </div>
                                     <?php
                                     if($caja_apertura_fecha){
-
                                         ?>
                                         <div class="col-lg-3 col-sm-3 col-md-3">
                                             <button type="button" id="btn_generarventa" class="btn btn-primary" data-toggle="modal" data-target="#ventas">

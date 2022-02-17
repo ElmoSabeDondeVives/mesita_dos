@@ -13,7 +13,7 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 
 
-$nombre_impresora = "Ticketera";
+$nombre_impresora = "Ticketera2";
 
 
 $connector = new WindowsPrintConnector($nombre_impresora);
@@ -58,29 +58,6 @@ $printer->text("DEL DIA : " . "$nueva_fecha_i AL $nueva_fecha_f\n");//AQUI IRIA 
 //$printer->text("CAL. YAVARI NRO. 1360" . "\n");
 //$printer->text("LORETO - MAYNAS - PUNCHANA" . "\n");
 
-//$printer->setFont(Printer::FONT_B);
-//$printer->setTextSize(2,2);
-//$printer->text("$venta_tipo" . "\n");
-//$printer->text("$venta->venta_serie-$venta->venta_correlativo" . "\n\n");
-/*
- Ahora datos del cliente
-*/
-//$printer->setFont(Printer::FONT_B);
-//$printer->setTextSize(1,1);
-//#La fecha también
-//$printer->text(date("Y-m-d H:i:s") . "\n");
-//$printer->setFont(Printer::FONT_A);
-//$printer->setTextSize(1,1);
-//$printer->text("------------------------------------------------" . "\n");
-//$printer->text("DATOS DEL CLIENTE" . "\n");
-////$printer->text("------------------------------------------------" . "\n");
-///*Alinear a la izquierda*/
-//$printer->setJustification(Printer::JUSTIFY_LEFT);
-//$printer->text("RAZÓN SOCIAL: $cliente_nombre" . "\n");
-//$printer->text("Nro. Doc    : $cliente->cliente_numero" . "\n");
-//$printer->text("FECHA       : " .date('d-m-Y', strtotime($venta->venta_fecha)) . "\n");
-//$printer->text("DIRECCIÓN   : $cliente->cliente_direccion" . "\n");
-//$printer->text("$venta->mesa_nombre" . "\n");
 
 //$printer->text("PADRES:       $padre1" . "\n" . "           $padre2" . "\n");
 # Vamos a alinear al centro lo próximo que imprimamos
@@ -157,41 +134,51 @@ $printer->text("------------------------------------------------" . "\n");
 //
 //    $diferencia = $diferencia + $caja_total + $movimientos_caja_chica + $ingresos_total + $ingresos_total_efectivo_delivery - $salida_caja_chica;
 
+foreach ($cajas_totales as $ct) {
+    $datitos = $this->reporte->datitos_caja($ct->id_caja);
+
+    $fecha_ini_caja = $datitos->caja_fecha_apertura;
+    if ($datitos->caja_fecha_cierre == NULL) {
+        $fecha_fin_caja = date('Y-m-d H:i:s');
+    } else {
+        $fecha_fin_caja = $datitos->caja_fecha_cierre;
+    }
+
     $total = 0;
     $apertura = 1;
     //N° DE VENTAS POR TIPO
-    $n_ventas_delivery = $this->reporte->n_ventas_delivery($id_usuario,$fecha_ini_caja, $fecha_fin_caja);
-    $n_ventas_salon = $this->reporte->n_ventas_salon($id_usuario,$fecha_ini_caja, $fecha_fin_caja);
+    $n_ventas_delivery = $this->reporte->n_ventas_delivery($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+    $n_ventas_salon = $this->reporte->n_ventas_salon($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
     //DATOS PARA LOS ADELANTOS AL PERSONAL
-    $datos_gastos_p = $this->reporte->datos_gastos_p($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-    $sumar_datos_p = $this->reporte->sumar_datos_p($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
+    $datos_gastos_p = $this->reporte->datos_gastos_p($ct->id_caja);
+    $sumar_datos_p = $this->reporte->sumar_datos_p($ct->id_caja);
     //FUNCIONEAS PARA SACAR LOS DATOS DEL REPORTE GENERAL
-    $monto_caja_apertura = $this->reporte->reporte_caja_x_caja($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-    $ingreso_caja_chica = $this->reporte->ingreso_caja_chica_x_caja($fecha_ini_caja, $fecha_fin_caja,$id_usuario);
+    $monto_caja_apertura = $this->reporte->reporte_caja_x_caja($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+    $ingreso_caja_chica = $this->reporte->ingreso_caja_chica_x_caja($ct->id_caja,$fecha_ini_caja, $fecha_fin_caja);
     //REPORTE DE VENTAS POR SALON
-    $ventas_efectivo_salon = $this->reporte->ventas_efectivo($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-    $ventas_tarjeta_salon = $this->reporte->ventas_tarjeta($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-    $ventas_trans = $this->reporte->ventas_trans_plin($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-    $ventas_trans_yape = $this->reporte->ventas_trans_yape($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-    $ventas_trans_otros = $this->reporte->ventas_trans_otros($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
+    $ventas_efectivo_salon = $this->reporte->ventas_efectivo($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+    $ventas_tarjeta_salon = $this->reporte->ventas_tarjeta($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+    $ventas_trans = $this->reporte->ventas_trans_plin($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+    $ventas_trans_yape = $this->reporte->ventas_trans_yape($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+    $ventas_trans_otros = $this->reporte->ventas_trans_otros($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
     //SALIDA DE CAJA CHICA
-    $salida_caja_chica = $this->reporte->salida_caja_chica_x_caja($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
+    $salida_caja_chica = $this->reporte->salida_caja_chica_x_caja($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
     //FUNCIONES PARA LOS INGRESOS DEL DELIVERY
-    $reporte_ingresos_delivery = $this->reporte->listar_datos_ingresos_delivery_($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-    $reporte_ingresos_tarjeta_delivery = $this->reporte->listar_datos_ingresos_tarjeta_delivery_($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-    $ventas_transferencia_delivery = $this->reporte->listar_datos_ingresos_transferencia_delivery_plin($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-    $ventas_transferencia_delivery_yape = $this->reporte->listar_datos_ingresos_transferencia_delivery_yape($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
-    $ventas_transferencia_delivery_otros = $this->reporte->listar_datos_ingresos_transferencia_delivery_otros($id_usuario, $fecha_ini_caja, $fecha_fin_caja);
+    $reporte_ingresos_delivery = $this->reporte->listar_datos_ingresos_delivery_($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+    $reporte_ingresos_tarjeta_delivery = $this->reporte->listar_datos_ingresos_tarjeta_delivery_($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+    $ventas_transferencia_delivery = $this->reporte->listar_datos_ingresos_transferencia_delivery_plin($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+    $ventas_transferencia_delivery_yape = $this->reporte->listar_datos_ingresos_transferencia_delivery_yape($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
+    $ventas_transferencia_delivery_otros = $this->reporte->listar_datos_ingresos_transferencia_delivery_otros($ct->id_caja, $fecha_ini_caja, $fecha_fin_caja);
 
 
     $sumar_datos_p = $sumar_datos_p->total;
     //FUNCIONES DESGLOSADAS PARA SALON
     $monto_caja_apertura = $monto_caja_apertura->total;
     $ingreso_caja_chica = $ingreso_caja_chica->total;
-    $ventas_efectivo  = $ventas_efectivo_salon->total;
-    $ventas_tarjeta  = $ventas_tarjeta_salon->total;
-    $ventas_trans  = $ventas_trans->total;
-    $ventas_trans_yape  = $ventas_trans_yape->total;
+    $ventas_efectivo = $ventas_efectivo_salon->total;
+    $ventas_tarjeta = $ventas_tarjeta_salon->total;
+    $ventas_trans = $ventas_trans->total;
+    $ventas_trans_yape = $ventas_trans_yape->total;
     $ventas_trans_otros = $ventas_trans_otros->total;
     //FUNCIONES DESGLOSADAS PARA DELIVERY
     $ventas_efectivo_delivery = $reporte_ingresos_delivery->total;
@@ -204,19 +191,19 @@ $printer->text("------------------------------------------------" . "\n");
 
 
     $ingresos_total_de_ventas = $ventas_efectivo + $ventas_tarjeta + $ventas_trans + $ventas_trans_yape + $ventas_trans_otros + $ventas_efectivo_delivery +
-    $ventas_tarjeta_delivery + $ventas_transferencia_delivery + $ventas_transferencia_delivery_yape + $ventas_transferencia_delivery_otros;
+        $ventas_tarjeta_delivery + $ventas_transferencia_delivery + $ventas_transferencia_delivery_yape + $ventas_transferencia_delivery_otros;
 
     $ingresos_totales_salon = $ventas_efectivo + $ventas_trans + $ventas_trans_yape + $ventas_trans_otros + $ventas_tarjeta;
 
     $ingresos_totales_delivery = $ventas_efectivo_delivery + $ventas_tarjeta_delivery + $ventas_transferencia_delivery +
-    $ventas_transferencia_delivery_yape + $ventas_transferencia_delivery_otros;
+        $ventas_transferencia_delivery_yape + $ventas_transferencia_delivery_otros;
 
-    $ingresos_generales = $ventas_efectivo + $ventas_trans + $ventas_trans_yape + $ventas_trans_otros  + $ventas_tarjeta +
-    $ventas_efectivo_delivery + $ventas_tarjeta_delivery + $ventas_transferencia_delivery + $ventas_transferencia_delivery_yape + $ventas_transferencia_delivery_otros
-    + $monto_caja_apertura + $ingreso_caja_chica - $salida_caja_chica - $sumar_datos_p;
+    $ingresos_generales = $ventas_efectivo + $ventas_trans + $ventas_trans_yape + $ventas_trans_otros + $ventas_tarjeta +
+        $ventas_efectivo_delivery + $ventas_tarjeta_delivery + $ventas_transferencia_delivery + $ventas_transferencia_delivery_yape + $ventas_transferencia_delivery_otros
+        + $monto_caja_apertura + $ingreso_caja_chica - $salida_caja_chica - $sumar_datos_p;
 
     $egresos_totales = $salida_caja_chica;
-    $diferencia = $monto_caja_apertura + $ingreso_caja_chica + $ventas_efectivo + $ventas_efectivo_delivery - $salida_caja_chica  - $sumar_datos_p;
+    $diferencia = $monto_caja_apertura + $ingreso_caja_chica + $ventas_efectivo + $ventas_efectivo_delivery - $salida_caja_chica - $sumar_datos_p;
 
 
     /*Alinear a la izquierda para la cantidad y el nombre*/
@@ -245,8 +232,8 @@ $printer->text("------------------------------------------------" . "\n");
     $printer->text("------------------------------------------------\n");
     $printer->text('GASTOS PERSONAL' . '                     S/ ' . $sumar_datos_p . "\n");
     foreach ($datos_gastos_p as $dg) {
-        $valores = $this->reporte->valores($dg->id_persona, $fecha_ini_caja, $fecha_fin_caja);
-    $printer->text('- '.$dg->nombre.''.$dg->apellido. 'S/ '.$valores->total."\n");
+        $valores = $this->reporte->valores($dg->id_gasto_personal);
+        $printer->text('- ' . $dg->nombre . '' . $dg->apellido . 'S/ ' . $valores->total . "\n");
     }
     $printer->text("------------------------------------------------\n");
     $printer->text('N° VENTAS SALON' . '                     ' . $n_ventas_salon->total . "\n");
@@ -258,36 +245,46 @@ $printer->text("------------------------------------------------" . "\n");
     //$printer->setJustification(Printer::JUSTIFY_CENTER);
     //$printer->text($dp->venta_detalle_cantidad . "   x   " .$dp->venta_detalle_valor_unitario.'  S/ ' . $dp->venta_detalle_valor_total . "\n");
 
-/*
-	Terminamos de imprimir
-	los productos, ahora va el total
-*/
-$printer->text("------------------------------------------------\n");
-/*
-	AHORA VAMOS A LISTAR LOS EGRESOS DETALLADOS
-*/
-$printer->setJustification(Printer::JUSTIFY_CENTER);
-$printer->setFont(Printer::FONT_B);
-$printer->setTextSize(2,2);
-$printer->text("DETALLES DE EGRESOS" . "\n\n");
-$total_e = 0;
-$printer->setFont(Printer::FONT_A);
-$printer->setTextSize(1,1);
-foreach ($listar_egresos as $dp) {
+    /*
+        Terminamos de imprimir
+        los productos, ahora va el total
+    */
+    $printer->text("------------------------------------------------\n");
+    /*
+        AHORA VAMOS A LISTAR LOS EGRESOS DETALLADOS
+    */
+    $printer->setJustification(Printer::JUSTIFY_CENTER);
+    $printer->setFont(Printer::FONT_B);
+    $printer->setTextSize(2, 2);
+    $printer->text("DETALLES DE EGRESOS" . "\n\n");
+    $total_e = 0;
+    $printer->setFont(Printer::FONT_A);
+    $printer->setTextSize(1, 1);
+    $fecha_ini_caja = $datitos->caja_fecha_apertura;
+    if ($datitos->caja_fecha_cierre == NULL) {
+        $fecha_fin_caja = date('Y-m-d H:i:s');
+    } else {
+        $fecha_fin_caja = $datitos->caja_fecha_cierre;
+    }
+    $listar_egresos = $this->reporte->listar_egresos_descripcion($fecha_ini_caja, $fecha_fin_caja);
+    foreach ($listar_egresos as $dp) {
 
-    /*Alinear a la izquierda para la cantidad y el nombre*/
-    $printer->setJustification(Printer::JUSTIFY_LEFT);
-    $printer->text($dp->egreso_descripcion . "\n");
+        /*Alinear a la izquierda para la cantidad y el nombre*/
+        $printer->setJustification(Printer::JUSTIFY_LEFT);
+        $printer->text($dp->egreso_descripcion . "\n");
 
-    /*Y a la derecha para el importe*/
-    $printer->setJustification(Printer::JUSTIFY_RIGHT);
-    $printer->text('S/ ' . $dp->egreso_monto . "\n");
-    $total_e = $total_e + $dp->egreso_monto;
+        /*Y a la derecha para el importe*/
+        $printer->setJustification(Printer::JUSTIFY_RIGHT);
+        $printer->text('S/ ' . $dp->egreso_monto . "\n");
+        $total_e = $total_e + $dp->egreso_monto;
 
+    }
+    $printer->text("------------------------------------------------\n");
+    $printer->text("               TOTAL: S/ " . $total_e . "\n");
+
+    $printer->text("\n");
+    $printer->text("\n");
 }
-$printer->text("------------------------------------------------\n");
-$printer->text("               TOTAL: S/ ". $total_e ."\n");
-
 
 /*Alinear a la izquierda para la cantidad y el nombre*/
 //$printer->setJustification(Printer::JUSTIFY_LEFT);
