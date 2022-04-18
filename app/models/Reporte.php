@@ -712,7 +712,7 @@ class Reporte
     public function ingreso_caja_chica_x_caja($id_caja,$fecha_ini_caja, $fecha_fin_caja){
         try{
             $sql = 'select sum(egreso_monto) total from movimientos m inner join caja c on m.id_caja_numero = c.id_caja_numero
-                    where c.id_caja =? and egreso_fecha_registro between ? and ? and movimiento_tipo = 1 and egreso_estado = 1';
+                    where c.id_caja =? and egreso_fecha_registro between ? and ? and movimiento_tipo = 1 and egreso_estado=1';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja,$fecha_ini_caja, $fecha_fin_caja]);
             $return = $stm->fetch();

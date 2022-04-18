@@ -483,7 +483,7 @@ class PedidoController
             $fecha_hoy = date('Y-m-d');
             $id_usuario = $this->encriptar->desencriptar($_SESSION['c_u'], _FULL_KEY_);
 
-            $jalar_id_caja = $this->pedido->jalar_id_caja_aperturada($fecha_hoy,$id_usuario);
+            $jalar_id_caja = $this->pedido->jalar_id_caja_aperturada($id_usuario);
             $caja_dato = $this->pedido->jalar_datos_caja_numero($jalar_id_caja->id_caja_numero);//datos de la caja para la captura del nombre de la impresora
             require _VIEW_PATH_ . 'pedido/ticket_venta.php';
             //INICIO - TICKET DELIVERY
