@@ -13,10 +13,10 @@
 
     <div class="main-content">
         <div class="section__content section__content--p30">
-        <?php
-        if($role == 2 || $role == 3 || $role == 5){
-            ?>
             <div class="container-fluid">
+                <?php
+                if($role == 2 || $role == 3 || $role == 7) {
+                    ?>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="overview-wrap">
@@ -98,7 +98,12 @@
                         </div>
                     </div>
                 </div>
-
+                <?php
+                }
+                ?>
+                <?php
+                if($role == 2 || $role == 3 || $role == 5 || $role == 7){
+                ?>
                 <div class="row">
                     <div class="col-lg-6">
                         <?php if(!$fecha_open){ ?>

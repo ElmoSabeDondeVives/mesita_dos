@@ -191,11 +191,16 @@
                 <div class="container-fluid">
                     <div id="categoria">
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-6">
+                                <label for="">Recurso</label>
+                                <input class="form-control" type="text" id="recurso_nombre_e" name="recurso_nombre_e">
+                            </div>
+                            <div class="col-lg-6">
                                 <label for=""> Stock Minimo</label>
                                 <input class="form-control" type="text" id="recurso_sede_stock_minimo_e" name="recurso_sede_stock_minimo_e" value="">
                             </div>
                             <input type="hidden" id="id_recurso_sede" name="id_recurso_sede" value="">
+                            <input type="hidden" id="id_recurso_" name="id_recurso_" value="">
                         </div>
                     </div>
                 </div>
@@ -305,7 +310,7 @@
                                             <td <?= $estilo_;?>><?= $ar->recurso_sede_stock;?></td>
                                             <td><?= $ar->recurso_sede_stock_minimo;?></td>
                                             <td>
-                                                <!--<button class="btn btn-success" data-toggle="modal" data-target="#editar_recurso" onclick="editar_recurso(<?= $ar->id_recurso_sede;?>,'<?= $ar->recurso_nombre?>','<?= $ar->id_medida;?>')"><i class="fa fa-edit"></i> Editar</button> -->
+                                                <!--<button class="btn btn-success" data-toggle="modal" data-target="#editar_recurso" onclick="editar_recurso(<?= $ar->id_recurso_sede;?>,'<?= $ar->recurso_nombre?>','<?= $ar->id_medida;?>')"><i class="fa fa-edit"></i> Editar</button>-->
                                                 <?php
                                                 if ($ar->recurso_sede_estado == 0) {
                                                     ?>
@@ -314,7 +319,7 @@
                                                 }else{
                                                     ?>
                                                     <button class="btn btn-danger" onclick="preguntar('¿Esta seguro que quiere eliminar este recurso?','deshabilitar','Si','No',<?= $ar->id_recurso_sede ?>,0)" title='Cambiar Estado'><i class='fa fa-trash editar margen'></i></button>
-                                                    <button class="btn btn-success" data-toggle="modal" data-target="#editar_stock_minimo" onclick="editar_stock_minimo(<?= $ar->id_recurso_sede;?>,'<?= $ar->recurso_sede_stock_minimo;?>')"><i class="fa fa-edit"></i></button>
+                                                    <button class="btn btn-success" data-toggle="modal" data-target="#editar_stock_minimo" onclick="editar_stock_minimo(<?= $ar->id_recurso_sede;?>,'<?= $ar->id_recurso;?>','<?= $ar->recurso_sede_stock_minimo;?>','<?= $ar->recurso_nombre?>')"><i class="fa fa-edit"></i></button>
                                                     <?php
                                                 }
                                                 ?>

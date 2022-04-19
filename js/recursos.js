@@ -295,9 +295,11 @@ function deshabilitar_categoria(id_categoria_negocio, recurso_categoria_estado){
 }
 
 
-function editar_stock_minimo(id_recurso_sede,recurso_sede_stock_minimo){
+function editar_stock_minimo(id_recurso_sede,id_recurso,recurso_sede_stock_minimo,nombre_recurso){
     $('#id_recurso_sede').val(id_recurso_sede);
     $('#recurso_sede_stock_minimo_e').val(recurso_sede_stock_minimo);
+    $('#recurso_nombre_e').val(nombre_recurso);
+    $('#id_recurso_').val(id_recurso);
 }
 
 
@@ -306,9 +308,13 @@ function guardar_stock_minimo_actializado(){
 
     var id_recurso_sede = $('#id_recurso_sede').val();
     var recurso_sede_stock_minimo_e = $('#recurso_sede_stock_minimo_e').val();
+    var recurso_nombre_e = $('#recurso_nombre_e').val();
+    var id_recurso_ = $('#id_recurso_').val();
     if(valor){
         var cadena = "id_recurso_sede=" + id_recurso_sede +
-            "&recurso_sede_stock_minimo_e=" + recurso_sede_stock_minimo_e;
+            "&recurso_sede_stock_minimo_e=" + recurso_sede_stock_minimo_e +
+            "&recurso_nombre_e=" + recurso_nombre_e +
+            "&id_recurso_=" + id_recurso_;
         //Cadena donde enviaremos los parametros por POST
         $.ajax({
             type: "POST",
@@ -320,8 +326,8 @@ function guardar_stock_minimo_actializado(){
                     case 1:
                         respuesta('¡Editado Exitosamente! Recargando...', 'success');
                         setTimeout(function () {
-                            location.reload();
-                        }, 1000);
+                            location.href = urlweb+'Almacen/recursos';
+                        }, 500);
                         break;
                     case 2:
                         respuesta('Error al editar, vuelva a intentarlo', 'error');

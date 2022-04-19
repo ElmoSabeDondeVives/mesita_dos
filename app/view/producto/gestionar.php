@@ -1,7 +1,5 @@
 
 
-
-
 <div class="modal fade" id="agregarproducto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 60% !important;">
         <div class="modal-content">
@@ -337,7 +335,6 @@
     </div>
 </div>
 
-
 <div class="modal fade" id="ver_general" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 80% !important;">
         <div class="modal-content">
@@ -369,6 +366,39 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="agregar_stock" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 40% !important;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar Stock</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <input type="hidden" id="id_receta_modal" name="id_receta_modal">
+                        <div class="col-lg-12">
+                            <h5><span id="nombre_producto_"></span></h5><br>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <input class="form-control" type="text" id="asignar_stock" name="asignar_stock" placeholder="Ingrese Cantidad...">
+                        </div>
+                        <div class="col-lg-3">
+                            <button class="btn btn-success" onclick="sumar_stock()"><i class="fa fa-plus"></i> Agregar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="main-content">
     <div class="section__content section__content--p30">
@@ -444,6 +474,13 @@
                                         if($ar->producto_estado == "0"){
                                             $estilo = "style=\"background-color: #FF6B70\"";
                                         }
+
+                                        $validar_solo_una_receta = $this->producto->jalar_recurso_sede_desde_receta_todo($ar->id_receta);
+                                        if(count($validar_solo_una_receta) == 1){
+                                            $entr = true;
+                                        }else{
+                                            $entr = false;
+                                        }
                                         ?>
                                         <tr <?= $estilo;?>>
                                             <td><?= $a;?></td>
@@ -455,8 +492,18 @@
                                             <td><?= $ar->producto_precio_venta;?></td>
                                             <td><img class="rounded" src="<?= $foto;?>" alt="Foto de <?php echo $ar->producto_nombre;?>" width="120"></td>
                                             <td>
+                                                <?php
+                                                if($role == 2 || $role == 3 || $role == 7) {
+                                                    ?>
                                                 <a class="btn btn-success" onclick="editar_producto(<?= $ar->id_producto?>,'<?= $ar->id_receta?>','<?= $ar->id_grupo?>','<?= $ar->id_producto_familia?>','<?= $ar->producto_nombre?>','<?= $ar->id_unidad_medida?>','<?= $ar->producto_precio_codigoafectacion?>','<?= $ar->producto_descripcion?>','<?= $ar->producto_precio_venta?>','<?= $ar->producto_foto?>')" data-target="#editarproducto" data-toggle="modal" title='Editar'><i class='fa fa-edit text-white editar margen'></i></a>
-                                                 <?php
+                                                    <?php
+                                                    if($entr){ ?>
+                                                        <a class="btn btn-primary" onclick="agregar_stock(<?= $ar->id_receta?>,'<?= $ar->producto_nombre?>')" data-target="#agregar_stock" data-toggle="modal" title='Agregar Stock'><i class='fa fa-plus text-white editar margen'></i></a>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                    <?php
+                                                }
                                                 if ($ar->producto_estado == 0) {
                                                     ?>
                                                     <a class="btn btn-success" onclick="preguntar('¿Esta seguro que quiere Habilitar este producto?','habilitar','Si','No',<?= $ar->id_producto ?>,1)" title='Habilitar producto'><i class='fa fa-check text-white editar margen'></i></a>
@@ -497,6 +544,11 @@
             dropdownParent: $("#agregarproducto")
         });
     })
+
+    function agregar_stock(id,nombre){
+        $("#id_receta_modal").val(id);
+        $("#nombre_producto_").html(nombre);
+    }
 </script>
 <script>
     function llenar_modal(id_producto){
@@ -513,6 +565,38 @@
                 $("#detalle_ventas_").html(r.detalle_ventas_);
             }
         });
+    }
+
+    function sumar_stock(){
+        var valor = true;
+        var id_receta_modal = $('#id_receta_modal').val();
+        var asignar_stock = $('#asignar_stock').val();
+        if(valor) {
+            var cadena = "id_receta_modal=" + id_receta_modal +
+                "&asignar_stock=" + asignar_stock;
+            $.ajax({
+                type: "POST",
+                url: urlweb + "api/Producto/sumar_stock_nuevo",
+                data: cadena,
+                dataType: 'json',
+                success: function (r) {
+                    switch (r.result.code) {
+                        case 1:
+                            respuesta('¡Stock Agregado correctamente!', 'success');
+                            setTimeout(function () {
+                                location.reload();
+                            }, 500);
+                            break;
+                        case 2:
+                            respuesta('Error al agregar, comuniquese con BufeoTec', 'error');
+                            break;
+                        default:
+                            respuesta('¡Algo catastrofico ha ocurrido!', 'error');
+                            break;
+                    }
+                }
+            });
+        }
     }
 
 </script>

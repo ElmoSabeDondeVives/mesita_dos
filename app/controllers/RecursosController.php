@@ -322,8 +322,12 @@ class RecursosController
             if($ok_data) {
                 $id_recurso_sede = $_POST['id_recurso_sede'];
                 $recurso_sede_stock_minimo = $_POST['recurso_sede_stock_minimo_e'];
-
+                $recurso_sede_nombre = $_POST['recurso_nombre_e'];
+                $id_recurso_ = $_POST['id_recurso_'];
                 $result = $this->recursos->editar_stock_minimo($id_recurso_sede, $recurso_sede_stock_minimo);
+                if($result==1){
+                    $result = $this->recursos->cambiar_nombre($recurso_sede_nombre,$id_recurso_);
+                }
             }else {
                 //Código 6: Integridad de datos erronea
                 $result = 6;

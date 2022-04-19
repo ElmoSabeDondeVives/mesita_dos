@@ -177,7 +177,11 @@ class RecetaController{
                 $model = new Receta();
                 $model->id_receta = $_POST['id_receta'];
                 $model->id_recursos_sede = $_POST['id_recursos_sede'];
-                $model->detalle_receta_unidad_medida = $_POST['valor_conversion'];
+                if(empty($_POST['valor_conversion'])){
+                    $model->detalle_receta_unidad_medida = 0;
+                }else{
+                    $model->detalle_receta_unidad_medida = $_POST['valor_conversion'];
+                }
                 $model->detalle_receta_cantidad = $_POST['detalle_receta_cantidad'];
                 $model->detalle_receta_precio = $_POST['detalle_receta_precio'];
                 $model->detalle_receta_estado = 1;

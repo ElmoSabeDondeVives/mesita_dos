@@ -164,8 +164,14 @@
                                                 }
                                                 if($al->venta_tipo == "03" and $al->anulado_sunat == "0"){
                                                 ?>
-                                                    <a target="_blank" type="button" id="btn_anular_anular<?= $al->id_venta;?>" class="btn btn-sm btn-danger btne" style="color: white" onclick="preguntar('¿Está seguro que desea anular este Comprobante?','anular_boleta_cambiarestado','Si','No',<?= $al->id_venta;?>, '1')" ><i class="fa fa-ban"></i></a>
                                                 <?php
+                                                if($role == 2 || $role == 3 || $role == 7) {
+                                                    ?>
+                                                    <a target="_blank" type="button" id="btn_anular_anular<?= $al->id_venta;?>" class="btn btn-sm btn-danger btne" style="color: white" onclick="preguntar('¿Está seguro que desea anular este Comprobante?','anular_boleta_cambiarestado','Si','No',<?= $al->id_venta;?>, '1')" ><i class="fa fa-ban"></i></a>
+                                                    <?php
+                                                }
+                                                    ?>
+                                                    <?php
                                                 }else{
                                                     if($al->anulado_sunat == "1"){ ?>
                                                         <h5 style="color: red">ANULADO, ir a resumen diario para enviar a sunat</h5>

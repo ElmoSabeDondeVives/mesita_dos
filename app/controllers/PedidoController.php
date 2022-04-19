@@ -1734,7 +1734,6 @@ class PedidoController
                         $jalar_id_caja = $this->pedido->jalar_id_caja_aperturada($id_usuario);
                         $id_mesa = $_POST['id_mesa'];
                         $caja_dato = $this->pedido->jalar_datos_caja_numero($jalar_id_caja->id_caja_numero);//datos de la caja para la captura del nombre de la impresora
-
                         $fecha = date('Y-m-d H:i:s');
                         $model->id_caja_numero = $jalar_id_caja->id_caja_numero;
                         $model->id_usuario = $id_usuario;
@@ -1758,8 +1757,6 @@ class PedidoController
                         $model->venta_correlativo = $correlativo;
                         $model->venta_tipo_moneda = $_POST['tipo_moneda'];
                         $model->id_tipo_pago = $tipo_pago;
-
-
                         //$correlativo = $this->pedido->listar_correlativos();
                         //AL HACER LA VENTA AUTOMATICAMENTE SE LLENA EL CORRELATIVO DE LA VENTA
                         $model->venta_totalgratuita = $_POST['op_gratuitas_'];
@@ -1868,7 +1865,7 @@ class PedidoController
                                                         $capturar = $v->id_recurso_sede;
                                                         $unidad_medida = $v->id_medida;
                                                         $id_detalle_receta = $v->id_detalle_receta;
-                                                        $monto_usado = $v->detalle_receta_cantidad;
+                                                        $monto_usado = $v->detalle_receta_cantidad * $cantidad;
                                                         $cantidad = $this->pedido->capturar_cantidad($capturar);
                                                         $valor_cantidad = $cantidad->recurso_sede_stock;
                                                         if($v->detalle_receta_unidad_medida != 0){
@@ -2119,9 +2116,9 @@ class PedidoController
             $ok_data = true;
             //Validacion de datos
             if($ok_data) {
-                $id_rol = 7;
-                $id_rol = 5;
-                if($this->pedido->verificar_password($id_rol, $_POST['password'])){
+                //$id_rol = 7;
+                //$id_rol = 3;
+                if($this->pedido->verificar_password_cambiado($_POST['password'])){
                     $id_comanda_detalle = $_POST['id_comanda_detalle'];
                     $comanda_detalle_eliminacion = $_POST['comanda_detalle_eliminacion'];
                     $fecha_eliminacion = date('Y-m-d H:i:s');

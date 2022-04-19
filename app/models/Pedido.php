@@ -1589,6 +1589,26 @@ class Pedido
         return $result;
     }
 
+    public function verificar_password_cambiado($pass){
+        $result = false;
+        try{
+            $sql = "Select usuario_contrasenha from usuarios 
+                    where (id_rol = 3 or id_rol = 7) and usuario_estado = 1";
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$pass]);
+            $info = $stm->fetchAll();
+            foreach ($info as $i){
+                if(password_verify($pass, $i->usuario_contrasenha)){
+                    $result = true;
+                }
+            }
+        } catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $result = false;
+        }
+        return $result;
+    }
+
 
     public function valor_insumos($id_comanda_detalle){
         try{

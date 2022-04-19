@@ -40,7 +40,7 @@ class ProductoController
         try{
             $this->nav = new Navbar();
             $navs = $this->nav->listar_menus($this->encriptar->desencriptar($_SESSION['ru'],_FULL_KEY_));
-
+            $role = $this->encriptar->desencriptar($_SESSION['ru'], _FULL_KEY_);
             $familia = $this->producto->listar_familias();
             if(isset($_POST['enviar_dato'])){
                 $id_producto_familia = $_POST['id_producto_familia'];
@@ -408,6 +408,35 @@ class ProductoController
         //Retornamos el json
         echo json_encode(array("result" => array("code" => $result, "message" => $message)));
     }
+
+
+    public function sumar_stock_nuevo(){
+        $result = 2;
+        $message = 'OK';
+        try{
+            $ok_data = true;
+            //Validacion de datos
+            if($ok_data) {
+                $id_receta = $_POST['id_receta_modal'];
+                $asignar_nuevo = $_POST['asignar_stock'];
+                //INICIO - OBTENEMOS INFORMACION
+                $lista_recurso = $this->producto->jalar_recurso_sede_desde_receta($id_receta);
+                $id_recurso_sede = $lista_recurso->id_recurso_sede;
+                $result = $this->producto->sumar_stock_adicional($id_recurso_sede, $asignar_nuevo);
+            }else {
+                //Código 6: Integridad de datos erronea
+                $result = 6;
+                $message = "Integridad de datos fallida. Algún parametro se está enviando mal";
+            }
+        }catch (Exception $e){
+            //Registramos el error generado y devolvemos el mensaje enviado por PHP
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $message = $e->getMessage();
+        }
+        //Retornamos el json
+        echo json_encode(array("result" => array("code" => $result, "message" => $message)));
+    }
+
 
 
 }

@@ -314,6 +314,19 @@ class Recursos
         return $result;
     }
 
+    public function cambiar_nombre($recurso_sede_nombre,$id_recurso_){
+        try {
+            $sql = "update recursos set recurso_nombre = ? where id_recurso = ? ";
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$recurso_sede_nombre,$id_recurso_]);
+            $result = 1;
+        }catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $result = 2;
+        }
+        return $result;
+    }
+
     public function jalar_id_ultima_categoria(){
         try{
             $sql = 'select * from categorias where categoria_estado = 1 order by id_categoria desc limit 1';
