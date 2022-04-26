@@ -111,6 +111,7 @@ class ReporteController
             $fecha_filtro = date('Y-m-d');
             $fecha_filtro_fin = date('Y-m-d');
             $caja = $this->caja->listar_cajas();
+            $turnos = $this->caja->listar_turnos();
             //$usuario = $this->caja->listar_all_users();
             $fecha_hoy = date('Y-m-d');
             $fecha_i = date('Y-m-d');
@@ -122,16 +123,17 @@ class ReporteController
                 $fecha_hoy = date('Y-m-d');
                 $fecha_i = $_POST['fecha_filtro'];
                 $fecha_f = $_POST['fecha_filtro_fin'];
+                $id_turno = $_POST['id_turno'];
                 $fecha_ini_caja = $_POST['fecha_filtro'];
                 $fecha_fin_caja = $_POST['fecha_filtro_fin'];
                 $fecha_filtro = strtotime($_POST['fecha_filtro']);
                 $fecha_filtro_fin = strtotime($_POST['fecha_filtro_fin']);
                 $productos = $this->reporte->reporte_productos($fecha_i,$fecha_f,$id_usuario);
-                $listar_egresos = $this->reporte->listar_egresos_descripcion($fecha_i,$fecha_f,$id_usuario);
+                $listar_egresos = $this->reporte->listar_egresos_descripcion($fecha_i,$fecha_f);
                 //$caja_ = $this->caja->datos_caja_($id_caja_numero);
-                $cajas_totales = $this->reporte->datos_por_apertura_caja_($fecha_i,$fecha_f);
+                $cajas_totales = $this->reporte->datos_por_apertura_caja_($id_turno,$fecha_i,$fecha_f);
                 $caja_ = $this->caja->datos_caja_($id_caja_numero);
-
+                $turno_ = $this->caja->turno_elegido($id_turno);
                 $usuario_ = $this->caja->listar_usuarios_($id_usuario);
                 //$cajas_totales = $this->reporte->datos_por_apertura_caja($id_usuario,$fecha_i,$fecha_f);
                 $datos = true;
@@ -155,16 +157,22 @@ class ReporteController
             $fecha_f = $_POST['fecha_f'];
             //$id_usuario = $_POST['id_usuario'];
             $id_caja_numero = $_POST['id_caja_numero'];
+            $id_turno = $_POST['id_turno'];
+            if($id_turno ==1){
+                $tu = 'Dia';
+            }else{
+                $tu = 'Noche';
+            }
             $fecha_ini_caja = $_POST['fecha_i'];
             $fecha_fin_caja = $_POST['fecha_f'];
 
-            $nueva_fecha_i = date('d-m-Y H:i:s',strtotime($fecha_i));
-            $nueva_fecha_f = date('d-m-Y H:i:s',strtotime($fecha_f));
+            $nueva_fecha_i = date('d-m-Y',strtotime($fecha_i));
+            $nueva_fecha_f = date('d-m-Y',strtotime($fecha_f));
             $fecha_filtro = strtotime($_POST['fecha_i']);
             $fecha_filtro_fin = strtotime($_POST['fecha_f']);
             //$listar_egresos = $this->reporte->listar_egresos_descripcion($fecha_ini_caja,$fecha_fin_caja,$id_usuario);
             //$cajas_totales = $this->reporte->datos_por_apertura_caja($id_usuario,$fecha_i,$fecha_f);
-            $cajas_totales = $this->reporte->datos_por_apertura_caja_($fecha_i,$fecha_f);
+            $cajas_totales = $this->reporte->datos_por_apertura_caja_($id_turno,$fecha_i,$fecha_f);
             require _VIEW_PATH_ . 'reporte/ticket_reporte.php';
             $result = 1;
         }catch (Throwable $e){

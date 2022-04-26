@@ -769,4 +769,19 @@ class Ventas
         }
         return $result;
     }
+
+    public function estado_paguito_nota_venta($id_venta){
+        try {
+            $sql = 'update ventas set venta_estado_nota_venta = 0 where id_venta = ?';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$id_venta]);
+            $result = 1;
+        } catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $result = 2;
+        }
+        return $result;
+    }
+
+
 }

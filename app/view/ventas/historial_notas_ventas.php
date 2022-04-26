@@ -81,6 +81,11 @@
                                         }else{
                                             $total = $total + $al->venta_total;
                                         }
+                                        $colorcito = "";
+                                        if($al->venta_estado_nota_venta == 0){
+                                            $colorcito = "style=\"background-color: #a6e389\"";
+                                        }
+
 
                                         $tipo_comprobante = "NOTA DE VENTA";
 
@@ -91,10 +96,10 @@
                                         }
 
                                         ?>
-                                        <tr <?= $stylee?>>
+                                        <tr <?= $colorcito?>>
                                             <td><?= $a;?></td>
                                             <td><?= date('d-m-Y H:i:s', strtotime($al->venta_fecha));?></td>
-                                            <td><?= ($al->id_mesa !="-2")?'RESTAURANT':'MARKET';?></td>
+                                            <td><?= ($al->id_mesa !="-2")?'LA ULTIMA CONCHITA':'MARKET';?></td>
                                             <td><?= $tipo_comprobante;?></td>
                                             <td><?= $al->venta_serie. '-' .$al->venta_correlativo;?></td>
                                             <td>
@@ -125,8 +130,14 @@
                                                     <?php
                                                 }
                                                 ?>
+                                                <?php
+                                                if($al->venta_estado_nota_venta==1){
+                                                    ?>
+                                                    <a type="button" class="btn btn-sm btn-warning" onclick="preguntar('¿La venta ya fue cancelada?','estado_paguito','SI','NO',<?= $al->id_venta?>)"><i class="fa fa-check text-white"></i></a>
+                                                    <?php
+                                                }
+                                                ?>
                                                 <a target="_blank" type="button" title="Anular" id="btn_anular<?= $al->id_venta;?>" class="btn btn-sm btn-danger btne" style="color: white" onclick="preguntar('¿Está seguro que desea anular este Comprobante?','anular_boleta_cambiarestado','Si','No',<?= $al->id_venta;?>, '1')" ><i class="fa fa-ban"></i></a>
-
                                             </td>
                                         </tr>
                                         <?php
@@ -179,5 +190,34 @@
             }
 
         });
+    }
+
+    function estado_paguito(id_venta){
+        var valor = true;
+        if(valor){
+            var cadena = "id_venta=" + id_venta;
+            $.ajax({
+                type: "POST",
+                url: urlweb + "api/Ventas/estado_paguito",
+                data: cadena,
+                dataType: 'json',
+                success: function (r) {
+                    switch (r.result.code) {
+                        case 1:
+                            respuesta('¡Estado cambiado Correctamente!', 'success');
+                            setTimeout(function () {
+                                location.reload()
+                            }, 300);
+                            break;
+                        case 2:
+                            respuesta('Error al cambiar estado', 'error');
+                            break;
+                        default:
+                            respuesta('¡Algo catastrofico ha ocurrido!', 'error');
+                            break;
+                    }
+                }
+            });
+        }
     }
 </script>

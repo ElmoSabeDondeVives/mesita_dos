@@ -10,7 +10,21 @@
             <form method="post" action="<?= _SERVER_ ?>Reporte/reporte_general">
                 <input type="hidden" id="enviar_fecha" name="enviar_fecha" value="1">
                 <div class="row">
-                    <div class="col-lg-3 col-xs-6 col-md-6 col-sm-6">
+                    <div class="col-lg-2">
+                        <label for="">Turno</label>
+                        <select class="form-control" name="id_turno" id="id_turno">
+                            <?php
+                            (isset($turno_))?$turnillo=$turno_->id_turno:$turnillo=0;
+                            foreach ($turnos as $t){
+                                ($t->id_turno == $turnillo)?$sele='selected':$sele='';
+                                ?>
+                                <option value="<?= $t->id_turno?>" <?= $sele; ?>><?= $t->turno_nombre?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-xs-6 col-md-6 col-sm-6">
                         <label for="">Caja</label>
                         <select class="form-control" id="id_caja_numero" name="id_caja_numero">
                             <?php
@@ -18,7 +32,7 @@
                             foreach($caja as $l){
                                 ($l->id_caja_numero == $cajita)?$sele='selected':$sele='';
                                 ?>
-                                <option value="<?php echo $l->id_caja_numero;?>" <?= $sele; ?>><?php echo $l->caja_numero_nombre;?></option>
+                                <option value="<?= $l->id_caja_numero;?>" <?= $sele; ?>><?= $l->caja_numero_nombre;?></option>
                                 <?php
                             }
                             ?>
@@ -38,15 +52,15 @@
                             ?>
                         </select>
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                         <label for="turno">Desde:</label>
                         <input type="date" class="form-control" id="fecha_filtro" name="fecha_filtro" step="1" value="<?php echo $fecha_i;?>">
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                         <label for="turno">Hasta:</label>
                         <input type="date" class="form-control" id="fecha_filtro_fin" name="fecha_filtro_fin" value="<?php echo $fecha_f;?>">
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                         <button style="margin-top: 35px;" class="btn btn-success" ><i class="fa fa-search"></i> Buscar Registro</button>
                     </div>
                 </div>
@@ -63,7 +77,8 @@
                             <div class="card shadow mb-4">
                                 <div class="card-body">
                                     <div class="table">
-                                        <p>Apertura : <?= $datitos->caja_fecha_apertura;?> // Cierre : <?= $datitos->caja_fecha_cierre?> // Monto Cierre : <?= $datitos->caja_cierre;?></p>
+                                        <p>Apertura : <?= $datitos->caja_fecha_apertura;?> // Cierre : <?= $datitos->caja_fecha_cierre?>
+                                            // Monto Cierre : <?= $datitos->caja_cierre;?> // Turno : <?= $datitos->turno_nombre?> // La Ultima Conchita - Borja</p>
                                         <?php
                                         if($datos){
                                             $fecha_ini_caja = $datitos->caja_fecha_apertura;
@@ -439,7 +454,7 @@
                 <br>
             </div>
             <div class="col-lg-12  text-center">
-                <a id="imprimir_ticket" style="color: white;" class="btn btn-primary mr-5" target="_blank" onclick="ticket_venta('<?= $fecha_i; ?>','<?= $fecha_f?>','<?= $id_caja_numero?>')"><i class="fa fa-print"></i> Ticket</a>
+                <a id="imprimir_ticket" style="color: white;" class="btn btn-primary mr-5" target="_blank" onclick="ticket_venta('<?= $fecha_i; ?>','<?= $fecha_f?>')"><i class="fa fa-print"></i> Ticket</a>
                 <a id="imprimir_ticket_productos" style="color: white;" class="btn btn-primary mr-5" target="_blank" onclick="ticket_productos('<?= $fecha_i; ?>','<?= $fecha_f?>','<?= $id_caja_numero?>')"><i class="fa fa-print"></i> Ticket Productos</a>
                 <a href="<?= _SERVER_ ; ?>index.php?c=Reporte&a=reporte_general_pdf&fecha_filtro=<?= $_POST['fecha_filtro']?>&fecha_filtro_fin=<?= $_POST['fecha_filtro_fin']?>&id_usuario=<?= $_POST['id_usuario']?>" target="_blank" class="btn btn-primary ml-2"><i class="fa fa-print"></i> Exportar PDF</a>
             </div>
@@ -449,13 +464,15 @@
 
 <script src="<?php echo _SERVER_ . _JS_;?>domain.js"></script>
 <script>
-    function ticket_venta(fecha_i,fecha_f,id_caja_numero){
+    function ticket_venta(fecha_i,fecha_f){
+        var id_caja_numero = $("#id_caja_numero").val();
+        var id_turno = $("#id_turno").val();
         var boton = 'imprimir_ticket';
 
         $.ajax({
             type: 'POST',
             url: urlweb + "api/Reporte/ticket_reporte",
-            data: "fecha_i=" + fecha_i + "&fecha_f=" + fecha_f + "&id_caja_numero=" + id_caja_numero,
+            data: "fecha_i=" + fecha_i + "&fecha_f=" + fecha_f + "&id_caja_numero=" + id_caja_numero + "&id_turno=" + id_turno,
             dataType: 'json',
             beforeSend: function () {
                 cambiar_estado_boton(boton, 'imprimiendo...', true);

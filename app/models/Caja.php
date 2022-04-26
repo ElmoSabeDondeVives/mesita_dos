@@ -71,6 +71,18 @@ class Caja
         }
     }
 
+    public function turno_elegido($id_turno){
+        try{
+            $sql = 'select * from turno where id_turno = ? and turno_estado = 1';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$id_turno]);
+            return $stm->fetch();
+        } catch (Throwable $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            return [];
+        }
+    }
+
     public function guardar_apertura_caja($model){
         try{
             $sql = 'insert into caja (id_turno,id_caja_numero, caja_fecha, id_usuario_apertura, caja_apertura, caja_fecha_apertura, caja_estado) 

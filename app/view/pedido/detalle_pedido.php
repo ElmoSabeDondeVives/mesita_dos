@@ -790,7 +790,7 @@
                                 }
                                 ?>
                                 <div class="col-lg-3 col-sm-3 col-md-3" style="text-align: right">
-                                    <a class="btn btn-secondary" href="javascript:history.back()" role="button"><i class="fa fa-backward"></i> Regresar</a>
+                                    <a class="btn btn-secondary" href="<?= _SERVER_?>Pedido/gestionar" role="button"><i class="fa fa-backward"></i> Regresar</a>
                                 </div>
                             </div>
                         </div>

@@ -54,6 +54,8 @@ $printer->setFont(Printer::FONT_A);
 $printer->setTextSize(1,1);
 //$printer->text("$dato_pago->empresa_nombre" . "\n");
 $printer->text("DEL DIA : " . "$nueva_fecha_i AL $nueva_fecha_f\n");//AQUI IRIA LA FECHA
+$printer->text("Turno : " . "$tu\n");//TURNO
+$printer->text("Negocio : " . "La Ultima Conchita - Borja\n");//nombre del negocio
 //$printer->text("$empresa->empresa_domiciliofiscal" . "\n");
 //$printer->text("CAL. YAVARI NRO. 1360" . "\n");
 //$printer->text("LORETO - MAYNAS - PUNCHANA" . "\n");

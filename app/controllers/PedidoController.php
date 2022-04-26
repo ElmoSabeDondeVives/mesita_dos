@@ -205,6 +205,13 @@ class PedidoController
                 throw new Exception('ID Sin Declarar');
             }
             $id_rol = $this->encriptar->desencriptar($_SESSION['ru'],_FULL_KEY_);
+            //Validar si la mesa tiene productos activos
+            $buscar_activos = $this->pedido->buscar_comandas_activas_mesa($id);
+            if(count($buscar_activos) >= 1){
+                $this->pedido->cambiar_estado_mesa($id);
+                header('Location: ' . _SERVER_ . 'Pedido/detalle_pedido/' . $id);
+            }
+
             //$tipo_afectacion = $this->pedido->listar_tipo_afectacion();
             $data_mesa=$this->mesa->mesa($id);
             $producto = $this->pedido->listar_productos();
@@ -271,10 +278,17 @@ class PedidoController
             }
             $id_rol = $this->encriptar->desencriptar($_SESSION['ru'],_FULL_KEY_);
 
-            $dato = $this->pedido->jalar($id);
+            //$dato = $this->pedido->jalar($id);
             $ultimo_valor = $this->pedido->ultimo_pedido($id);
+            //Trae pedidos sin pagar a esa comanda, para evitar pedidos perdidos
+            $this->pedido->actualizar_ultimos_pedidos_pendientes($ultimo_valor->id_comanda, $id);
+            $this->pedido->actualizar_total_comanda($ultimo_valor->id_comanda);
+
             $ultimo_valor_ = $ultimo_valor->id_comanda;
             $pedidos = $this->pedido->listar_pedidos_por_mesa($id,$ultimo_valor_);
+            if(count($pedidos) < 1){
+                $this->pedido->actualizar_estado_mesa($id);
+            }
             $dato_pedido = $this->pedido->jalar_comanda($id,$ultimo_valor_);
             $mesas = $this->pedido->listar_mesa();
             $igv = $this->pedido->listar_igv();
@@ -900,80 +914,81 @@ class PedidoController
             $ok_data = true;
             //Validacion de datos
             if($ok_data) {
-                $model = new Pedido();
-                $id_usuario = $this->encriptar->desencriptar($_SESSION['c_u'],_FULL_KEY_);
-                $fecha = date('Y-m-d H:i:s');
-                $microtime = microtime(true);
-                $id_mesa = $_POST['id_mesa'];
-                $model->id_mesa = $id_mesa;
-                $model->id_usuario = $id_usuario;
-                $model->comanda_total = $_POST['comanda_total'];
-                $model->comanda_fecha_registro = $fecha;
-                $model->comanda_cantidad_personas = $_POST['comanda_cantidad_personas'];
-                $model->comanda_estado = 1;
-                $model->comanda_codigo = $microtime;
+                $estado_mesa = $this->mesa->listar_mesa($_POST['id_mesa']);
+                if($estado_mesa->mesa_estado_atencion == 0 || $estado_mesa->mesa_estado_atencion == 5){
+                    $model = new Pedido();
+                    $id_usuario = $this->encriptar->desencriptar($_SESSION['c_u'],_FULL_KEY_);
+                    $fecha = date('Y-m-d H:i:s');
+                    $microtime = microtime(true);
+                    $id_mesa = $_POST['id_mesa'];
+                    $model->id_mesa = $id_mesa;
+                    $model->id_usuario = $id_usuario;
+                    $model->comanda_total = $_POST['comanda_total'];
+                    $model->comanda_fecha_registro = $fecha;
+                    $model->comanda_cantidad_personas = $_POST['comanda_cantidad_personas'];
+                    $model->comanda_estado = 1;
+                    $model->comanda_codigo = $microtime;
 
-                $fecha_buscar = date('Y-m-d');
-                $ultima_comanda = $this->pedido->listar_ultima_comanda($fecha_buscar);
-                if(isset($ultima_comanda->id_comanda)){
-                    $fila = explode('-',$ultima_comanda->comanda_correlativo);
-                    if(count($fila)>0){
-                        for($i=0;$i<count($fila)-1;$i++){
-                            $suma = $fila[1] + 1;
-                            $model->comanda_correlativo = $fila[0].'-'.$suma;
+                    $fecha_buscar = date('Y-m-d');
+                    $ultima_comanda = $this->pedido->listar_ultima_comanda($fecha_buscar);
+                    if(isset($ultima_comanda->id_comanda)){
+                        $fila = explode('-',$ultima_comanda->comanda_correlativo);
+                        if(count($fila)>0){
+                            for($i=0;$i<count($fila)-1;$i++){
+                                $suma = $fila[1] + 1;
+                                $model->comanda_correlativo = $fila[0].'-'.$suma;
+                            }
                         }
+                    }else{
+                        $model->comanda_correlativo = date('dmy').'-'. + 1;
                     }
-                }else{
-                    $model->comanda_correlativo = date('dmy').'-'. + 1;
-                }
-                $guardar_comanda = $this->pedido->guardar_comanda($model);
-                if($guardar_comanda == 1){
-                    $contenido = $_POST['contenido'];
-                    if(count_chars($contenido)>0){
-                        $filas=explode('/./.',$contenido);
-                        $datos = $this->pedido->listar_comanda_por_mt($microtime);
-                        if(count($filas)>0){
-                            for ($i=0;$i<count($filas)-1;$i++){
-                                $modelDSI=new Pedido();
-                                $celdas=explode('-.-.',$filas[$i]);
-                                $modelDSI->id_comanda = $datos->id_comanda;
-                                $modelDSI->id_usuario = $this->encriptar->desencriptar($_SESSION['c_u'],_FULL_KEY_);
-                                $modelDSI->id_producto = $celdas[0];
-                                $modelDSI->comanda_detalle_precio = $celdas[2];
-                                $modelDSI->comanda_detalle_cantidad = $celdas[3];
-                                $modelDSI->comanda_detalle_despacho = $celdas[4];
-                                $modelDSI->comanda_detalle_total = $celdas[6];
-                                $modelDSI->comanda_detalle_observacion = $celdas[5];
-                                $modelDSI->comanda_detalle_fecha_registro = $fecha;
-                                $modelDSI->comanda_detalle_estado = 1;
-                                $result = $this->pedido->guardar_detalle_comanda($modelDSI);
+                    $guardar_comanda = $this->pedido->guardar_comanda($model);
+                    if($guardar_comanda == 1){
+                        $contenido = $_POST['contenido'];
+                        if(count_chars($contenido)>0){
+                            $filas=explode('/./.',$contenido);
+                            $datos = $this->pedido->listar_comanda_por_mt($microtime);
+                            if(count($filas)>0){
+                                for ($i=0;$i<count($filas)-1;$i++){
+                                    $modelDSI=new Pedido();
+                                    $celdas=explode('-.-.',$filas[$i]);
+                                    $modelDSI->id_comanda = $datos->id_comanda;
+                                    $modelDSI->id_usuario = $this->encriptar->desencriptar($_SESSION['c_u'],_FULL_KEY_);
+                                    $modelDSI->id_producto = $celdas[0];
+                                    $modelDSI->comanda_detalle_precio = $celdas[2];
+                                    $modelDSI->comanda_detalle_cantidad = $celdas[3];
+                                    $modelDSI->comanda_detalle_despacho = $celdas[4];
+                                    $modelDSI->comanda_detalle_total = $celdas[6];
+                                    $modelDSI->comanda_detalle_observacion = $celdas[5];
+                                    $modelDSI->comanda_detalle_fecha_registro = $fecha;
+                                    $modelDSI->comanda_detalle_estado = 1;
+                                    $result = $this->pedido->guardar_detalle_comanda($modelDSI);
+                                }
                             }
                         }
                     }
-                }
-                if($result == 1){
-                    $result = $this->pedido->cambiar_estado_mesa($id_mesa);
-                    //INICIO - IMPRESION DE TICKET DE COMANDA
-                    $id_comanda = $datos->id_comanda;
-                    $comanda = $this->pedido->listar_comanda_x_id($id_comanda);
-                    $detalle_comanda =$this->pedido->listar_detalle_x_comanda($id_comanda);
-                    foreach ($detalle_comanda as $de){
-                        $detalle = $this->pedido->listar_detalle_x_comanda_detalle($de->id_comanda_detalle);
-                        if($detalle->id_grupo != 3){
-                            $nombre_ticket = "$detalle->grupo_ticketera";
-                            require _VIEW_PATH_ . 'pedido/ticket_comanda_detalle.php';
-                        }else{
-                            $nombre_ticket = "CALIENTE_2";
-                            require _VIEW_PATH_ . 'pedido/ticket_comanda_detalle.php';
-                            $nombre_ticket = "FRIOS_2";
-                            require _VIEW_PATH_ . 'pedido/ticket_comanda_detalle.php';
+                    if($result == 1){
+                        $result = $this->pedido->cambiar_estado_mesa($id_mesa);
+                        //INICIO - IMPRESION DE TICKET DE COMANDA
+                        $id_comanda = $datos->id_comanda;
+                        $comanda = $this->pedido->listar_comanda_x_id($id_comanda);
+                        $detalle_comanda =$this->pedido->listar_detalle_x_comanda($id_comanda);
+                        foreach ($detalle_comanda as $de){
+                            $detalle = $this->pedido->listar_detalle_x_comanda_detalle($de->id_comanda_detalle);
+                            if($detalle->id_grupo != 3){
+                                $nombre_ticket = "$detalle->grupo_ticketera";
+                                require _VIEW_PATH_ . 'pedido/ticket_comanda_detalle.php';
+                            }else{
+                                $nombre_ticket = "CALIENTE_2";
+                                require _VIEW_PATH_ . 'pedido/ticket_comanda_detalle.php';
+                                $nombre_ticket = "FRIOS_2";
+                                require _VIEW_PATH_ . 'pedido/ticket_comanda_detalle.php';
+                            }
                         }
-
+                        //FIN - IPRESION DE TICKET DE COMANDA
                     }
-
-
-                    //FIN - IPRESION DE TICKET DE COMANDA
-
+                }else {
+                    $result = 2;
                 }
             }else {
                 //Código 6: Integridad de datos erronea

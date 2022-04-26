@@ -126,7 +126,7 @@ class VentasController
         try{
             $this->nav = new Navbar();
             $navs = $this->nav->listar_menus($this->encriptar->desencriptar($_SESSION['ru'],_FULL_KEY_));
-
+            $role = $this->encriptar->desencriptar($_SESSION['ru'], _FULL_KEY_);
             $filtro = false;
             $fecha_ini = date('Y-m-d');
             $fecha_fin = date('Y-m-d');
@@ -1235,6 +1235,7 @@ class VentasController
         $respuesta = array("serie" => $series, "correlativo" =>$correlativo);
         echo json_encode($respuesta);
     }
+
     public function consultar_comprobante(){
         try{
             $tipo_comprobate = $_POST['tipo_comprobate'];
@@ -1391,5 +1392,33 @@ class VentasController
         }
         return $result;
     }
+
+    //FUNCION PARA CAMBIAR EL ESTADO DE LAS NOTAS DE VENTAS
+    public function estado_paguito(){
+        //Código de error general
+        $result = 1;
+        //Mensaje a devolver en caso de hacer consulta por app
+        $message = 'OK';
+        try {
+            $ok_data = true;
+            $ok_data = $this->validar->validar_parametro('id_venta', 'POST',true,$ok_data,11,'texto',0);
+            //Validacion de datos
+            if($ok_data) {
+                $id_venta = $_POST['id_venta'];
+                $result = $this->ventas->estado_paguito_nota_venta($id_venta);
+            }else {
+                //Código 6: Integridad de datos erronea
+                $result = 6;
+                $message = "Integridad de datos fallida. Algún parametro se está enviando mal";
+            }
+        }catch (Exception $e){
+            //Registramos el error generado y devolvemos el mensaje enviado por PHP
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $message = $e->getMessage();
+        }
+        //Retornamos el json
+        echo json_encode(array("result" => array("code" => $result, "message" => $message)));
+    }
+
 
 }

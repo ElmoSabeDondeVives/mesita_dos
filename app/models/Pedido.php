@@ -1593,7 +1593,7 @@ class Pedido
         $result = false;
         try{
             $sql = "Select usuario_contrasenha from usuarios 
-                    where (id_rol = 3 or id_rol = 7) and usuario_estado = 1";
+                    where (id_rol = 3 or id_rol = 5) and usuario_estado = 1";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$pass]);
             $info = $stm->fetchAll();
@@ -1918,5 +1918,53 @@ class Pedido
             return 2;
         }
     }
+
+    //funciones de huevo
+    public function buscar_comandas_activas_mesa($id_mesa){
+        try{
+            $sql = 'select * from comanda c inner join comanda_detalle cd on c.id_comanda = cd.id_comanda where c.id_mesa = ? 
+                    and cd.comanda_detalle_estado = 1 and cd.comanda_detalle_estado_venta = 0';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$id_mesa]);
+            return $stm->fetchAll();
+        }  catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            return [];
+        }
+    }
+
+    public function actualizar_ultimos_pedidos_pendientes($id_comanda, $id_mesa){
+        try{
+            $sql = 'update comanda c inner join comanda_detalle cd on c.id_comanda = cd.id_comanda set cd.id_comanda = ?
+                    where c.id_mesa = ? and cd.comanda_detalle_estado_venta = 0 and cd.comanda_detalle_estado = 1';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$id_mesa, $id_comanda]);
+            $result = 1;
+        } catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $result = 2;
+        }
+        return $result;
+    }
+
+    public function actualizar_total_comanda($id_comanda){
+        try{
+            $sql = 'select sum(comanda_detalle_total) total from comanda_detalle c where c.id_comanda = ?';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$id_comanda]);
+            $resultadito = $stm->fetch();
+
+            $sql2 = 'update comanda set comanda_total = ? where id_comanda = ?';
+            $stm2 = $this->pdo->prepare($sql2);
+            $stm2->execute([$resultadito->total, $id_comanda]);
+            $result = 1;
+        } catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $result = 2;
+        }
+        return $result;
+    }
+
+
 
 }

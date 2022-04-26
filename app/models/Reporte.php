@@ -638,7 +638,7 @@ class Reporte
 
     public function datitos_caja($id_caja){
         try{
-            $sql = 'select * from caja where id_caja = ? limit 1';
+            $sql = 'select * from caja c inner join turno t on c.id_turno = t.id_turno where c.id_caja = ? limit 1';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja]);
             $return = $stm->fetch();
@@ -654,7 +654,8 @@ class Reporte
             $sql = 'select sum(vd.venta_detalle_cantidad) total, p.producto_nombre from ventas v inner join ventas_detalle vd on v.id_venta = vd.id_venta
                     inner join caja c on v.id_caja_numero = c.id_caja_numero
                     inner join comanda_detalle cd on vd.id_comanda_detalle = cd.id_comanda_detalle inner join 
-                    productos p on cd.id_producto = p.id_producto where v.venta_fecha between ? and ? and c.id_caja = ? group by p.id_producto ';
+                    productos p on cd.id_producto = p.id_producto where v.venta_fecha between ? and ? and c.id_caja = ? 
+                    and v.anulado_sunat = 0 and v.venta_cancelar = 1 group by p.id_producto ';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$fecha_filtro,$fecha_filtro_fin,$id_caja]);
             $result = $stm->fetchAll();
@@ -725,10 +726,10 @@ class Reporte
 
     public function ventas_efectivo($id_caja, $fecha_ini_caja, $fecha_fin_caja){
         try{
-            $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
+            $sql = "select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
                     inner join caja c on v.id_caja_numero = c.id_caja_numero
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
-                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 3 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0';
+                    where c.id_caja = ? and v.venta_fecha between ? and ? and v.venta_tipo not in('07','20')
+                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 3 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja, $fecha_ini_caja, $fecha_fin_caja]);
             $return = $stm->fetch();
@@ -741,10 +742,10 @@ class Reporte
 
     public function ventas_tarjeta($id_caja, $fecha_ini_caja, $fecha_fin_caja){
         try{
-            $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
+            $sql = "select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
                     inner join caja c on v.id_caja_numero = c.id_caja_numero
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
-                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 1 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0';
+                    where c.id_caja = ? and v.venta_fecha between ? and ? and v.venta_tipo not in('07','20')
+                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 1 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja, $fecha_ini_caja, $fecha_fin_caja]);
             $return = $stm->fetch();
@@ -757,10 +758,10 @@ class Reporte
 
     public function ventas_trans_plin($id_caja, $fecha_ini_caja, $fecha_fin_caja){
         try{
-            $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
+            $sql = "select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
                     inner join caja c on v.id_caja_numero = c.id_caja_numero
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
-                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 5 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0';
+                    where c.id_caja = ? and v.venta_fecha between ? and ? and v.venta_tipo not in('07','20') 
+                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 5 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja, $fecha_ini_caja, $fecha_fin_caja]);
             $return = $stm->fetch();
@@ -773,10 +774,10 @@ class Reporte
 
     public function ventas_trans_yape($id_caja, $fecha_ini_caja, $fecha_fin_caja){
         try{
-            $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
+            $sql = "select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
                     inner join caja c on v.id_caja_numero = c.id_caja_numero
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
-                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 4 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0';
+                    where c.id_caja = ? and v.venta_fecha between ? and ? and v.venta_tipo not in('07','20')
+                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 4 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja, $fecha_ini_caja, $fecha_fin_caja]);
             $return = $stm->fetch();
@@ -789,10 +790,10 @@ class Reporte
 
     public function ventas_trans_otros($id_caja, $fecha_ini_caja, $fecha_fin_caja){
         try{
-            $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
+            $sql = "select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
                     inner join caja c on v.id_caja_numero = c.id_caja_numero
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
-                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 6 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0';
+                    where c.id_caja = ? and v.venta_fecha between ? and ? and v.venta_tipo not in('07','20')
+                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 6 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa <> 0";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja, $fecha_ini_caja, $fecha_fin_caja]);
             $return = $stm->fetch();
@@ -821,7 +822,8 @@ class Reporte
         try{
             $sql = 'select sum(vd.venta_detalle_cantidad) total, p.producto_nombre from ventas v inner join ventas_detalle vd on v.id_venta = vd.id_venta 
                     inner join comanda_detalle cd on vd.id_comanda_detalle = cd.id_comanda_detalle inner join 
-                    productos p on cd.id_producto = p.id_producto where v.id_caja_numero = 1 and v.venta_fecha between ? and ? group by p.id_producto ';
+                    productos p on cd.id_producto = p.id_producto where v.id_caja_numero = 1 and v.venta_fecha 
+                    between ? and ? and v.anulado_sunat = 0 and v.venta_cancelar = 1 group by p.id_producto ';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$fecha_filtro,$fecha_filtro_fin]);
             $result = $stm->fetchAll();
@@ -836,10 +838,10 @@ class Reporte
 
     public function listar_datos_ingresos_delivery_($id_caja, $fecha_ini_caja, $fecha_fin_caja){
         try{
-            $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
+            $sql = "select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
                     inner join caja c on v.id_caja_numero = c.id_caja_numero
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
-                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 3 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa = 0';
+                    where c.id_caja = ? and v.venta_fecha between ? and ? and v.venta_tipo not in('07','20') 
+                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 3 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa = 0";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja, $fecha_ini_caja, $fecha_fin_caja]);
             $return = $stm->fetch();
@@ -852,10 +854,10 @@ class Reporte
 
     public function listar_datos_ingresos_tarjeta_delivery_($id_caja, $fecha_ini_caja, $fecha_fin_caja){
         try{
-            $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
+            $sql = "select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
                     inner join caja c on v.id_caja_numero = c.id_caja_numero
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
-                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 1 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa = 0';
+                    where c.id_caja = ? and v.venta_fecha between ? and ? and v.venta_tipo not in('07','20') 
+                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 1 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa = 0";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja, $fecha_ini_caja, $fecha_fin_caja]);
             $return = $stm->fetch();
@@ -868,10 +870,10 @@ class Reporte
 
     public function listar_datos_ingresos_transferencia_delivery_plin($id_caja, $fecha_ini_caja, $fecha_fin_caja){
         try{
-            $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
+            $sql = "select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
                     inner join caja c on v.id_caja_numero = c.id_caja_numero
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
-                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 5 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa = 0';
+                    where c.id_caja = ? and v.venta_fecha between ? and ? and v.venta_tipo not in('07','20')
+                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 5 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa = 0";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja, $fecha_ini_caja, $fecha_fin_caja]);
             $return = $stm->fetch();
@@ -884,10 +886,10 @@ class Reporte
 
     public function listar_datos_ingresos_transferencia_delivery_yape($id_caja, $fecha_ini_caja, $fecha_fin_caja){
         try{
-            $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
+            $sql = "select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
                     inner join caja c on v.id_caja_numero = c.id_caja_numero
-                    where c.id_caja = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
-                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 4 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa = 0';
+                    where c.id_caja = ? and v.venta_fecha between ? and ? and v.venta_tipo not in('07','20')
+                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 4 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa = 0";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja, $fecha_ini_caja, $fecha_fin_caja]);
             $return = $stm->fetch();
@@ -900,10 +902,10 @@ class Reporte
 
     public function listar_datos_ingresos_transferencia_delivery_otros($id_caja, $fecha_ini_caja, $fecha_fin_caja){
         try{
-            $sql = 'select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
+            $sql = "select SUM(vdp.venta_detalle_pago_monto) total from ventas v inner join ventas_detalle_pagos vdp on v.id_venta = vdp.id_venta
                     inner join caja c on v.id_caja_numero = c.id_caja_numero
-                    where v.id_usuario = ? and v.venta_fecha between ? and ? and venta_tipo <> 07 
-                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 6 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa = 0';
+                    where v.id_usuario = ? and v.venta_fecha between ? and ? and v.venta_tipo not in('07','20')
+                    and anulado_sunat = 0 and venta_cancelar = 1 and vdp.id_tipo_pago = 6 and vdp.venta_detalle_pago_estado = 1 and v.id_mesa = 0";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_caja, $fecha_ini_caja, $fecha_fin_caja]);
             $return = $stm->fetch();
@@ -988,11 +990,11 @@ class Reporte
     }
 
     //FUNCIONES NUEVAS PARA EL REPORTE POR CAJAS ULTIMA CONCHITA DE PUNCHANA
-    public function datos_por_apertura_caja_($fecha_i,$fecha_f){
+    public function datos_por_apertura_caja_($id_turno,$fecha_i,$fecha_f){
         try{
-            $sql = 'select id_caja from caja where date(caja_fecha_apertura) between ? and ?';
+            $sql = 'select id_caja from caja where id_turno = ? and date(caja_fecha_apertura) between ? and ?';
             $stm = $this->pdo->prepare($sql);
-            $stm->execute([$fecha_i,$fecha_f]);
+            $stm->execute([$id_turno,$fecha_i,$fecha_f]);
             return $stm->fetchAll();
         } catch (Throwable $e){
             $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);

@@ -241,7 +241,9 @@
                                                     <a target="_blank" type="button" title="Ver detalle" class="btn btn-sm btn-primary" style="color: white" href="<?php echo _SERVER_. 'Ventas/ver_detalle_venta/' . $al->id_venta;?>" ><i class="fa fa-eye ver_detalle"></i></a>
                                                     <a type="button" title="Enviar Correo" data-toggle="modal" data-target="#enviar_correo_al_cliente" onclick="poner_id_venta(<?= $al->id_venta ;?>);" class="btn btn-sm btn-success" style="color: white"  ><i class="fa fa-envelope-o ver_detalle"></i></a>
                                                     <?php
-
+                                                    if($role == 2 || $role == 3 || $role == 7) {
+                                                    ?>
+                                                    <?php
                                                     if($al->anulado_sunat == 0){
                                                         $date2 = new DateTime(date('Y-m-d H:i:s'));
                                                         $date1 = new DateTime($al->venta_fecha_envio);
@@ -270,7 +272,9 @@
                                                             }
                                                         }
                                                     }
-
+                                                    }
+                                                    ?>
+                                                    <?php
                                                     if($al->anulado_sunat == 0 && ($al->venta_tipo == '01' || $al->venta_tipo == '03')){
                                                     ?>
                                                     <a type="button" style="color: white" class="btn btn-sm btn-success btne" title="GENERAR NOTA" href="<?= _SERVER_ ?>Ventas/generar_nota/<?= $al->id_venta; ?>" target="_blank" ><i class="fa fa-clipboard"></i></a>
