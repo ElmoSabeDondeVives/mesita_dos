@@ -833,6 +833,8 @@ class Pedido
         return $result;
     }
 
+
+
     public function listar_detallecomanda_x_id_comanda_detalle($id_detalle_comanda){
         try{
             $sql = 'select * from comanda c inner join comanda_detalle cd on c.id_comanda = cd.id_comanda inner join mesas m on c.id_mesa = m.id_mesa
@@ -851,13 +853,18 @@ class Pedido
 
     public function cambiar_estado_mesa($id_mesa){
         try {
-            $sql = "update mesas set
-                mesa_estado_atencion = 1
-                where id_mesa = ?";
+            $sql = "update mesas set mesa_estado_atencion = 1 where id_mesa = ?";
             $stm = $this->pdo->prepare($sql);
             $stm->execute([
                 $id_mesa
             ]);
+            $fecha_hoy = date('Y-m-d H:i:s');
+            $sql2 = 'insert into mesa_log (id_mesa, mesa_log_estado_atencion, mesa_log_fecha_hora, mesa_log_estado) values (?,?,?,?)';
+            $stm2 = $this->pdo->prepare($sql2);
+            $stm2->execute([
+                $id_mesa, 1 , $fecha_hoy , 1
+            ]);
+
             $result = 1;
         }catch (Exception $e){
             $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
@@ -866,14 +873,36 @@ class Pedido
         return $result;
     }
 
+    public function actualizar_estado_mesa($id_mesa){
+        try{
+            $sql = 'update mesas set mesa_estado_atencion = 2 where id_mesa = ?';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$id_mesa]);
+            $fecha_hoy = date('Y-m-d H:i:s');
+
+            $sql2 = 'insert into mesa_log (id_mesa, mesa_log_estado_atencion, mesa_log_fecha_hora, mesa_log_estado) values (?,?,?,?)';
+            $stm2 = $this->pdo->prepare($sql2);
+            $stm2->execute([
+                $id_mesa, 2 , $fecha_hoy , 1
+            ]);
+            return 1;
+        }  catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            return 2;
+        }
+    }
+
     public function mesa_estado_limpio($id_mesa){
         try {
-            $sql = "update mesas set
-                mesa_estado_atencion = 0
-                where id_mesa = ?";
+            $sql = "update mesas set mesa_estado_atencion = 0 where id_mesa = ?";
             $stm = $this->pdo->prepare($sql);
-            $stm->execute([
-                $id_mesa
+            $stm->execute([$id_mesa]);
+
+            $fecha_hoy = date('Y-m-d H:i:s');
+            $sql2 = 'insert into mesa_log (id_mesa, mesa_log_estado_atencion, mesa_log_fecha_hora, mesa_log_estado) values (?,?,?,?)';
+            $stm2 = $this->pdo->prepare($sql2);
+            $stm2->execute([
+                $id_mesa, 0 , $fecha_hoy , 1
             ]);
             $result = 1;
         }catch (Exception $e){
@@ -889,8 +918,14 @@ class Pedido
                 mesa_estado_atencion = 5
                 where id_mesa = ?";
             $stm = $this->pdo->prepare($sql);
-            $stm->execute([
-                $id_mesa
+            $stm->execute([$id_mesa]);
+
+            $fecha_hoy = date('Y-m-d H:i:s');
+
+            $sql2 = 'insert into mesa_log (id_mesa, mesa_log_estado_atencion, mesa_log_fecha_hora, mesa_log_estado) values (?,?,?,?)';
+            $stm2 = $this->pdo->prepare($sql2);
+            $stm2->execute([
+                $id_mesa, 5 , $fecha_hoy , 1
             ]);
             $result = 1;
         }catch (Exception $e){
@@ -1430,18 +1465,6 @@ class Pedido
         }
     }
 
-    public function actualizar_estado_mesa($id_mesa){
-        try{
-            $sql = 'update mesas set mesa_estado_atencion = 2 where id_mesa = ?';
-            $stm = $this->pdo->prepare($sql);
-            $stm->execute([$id_mesa]);
-            return 1;
-        }  catch (Exception $e){
-            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
-            return 2;
-        }
-    }
-
     public function ocultar_reserva($id_mesa){
         try{
             $sql = 'update reservas set reserva_estado = 2 where id_mesa = ?';
@@ -1459,6 +1482,13 @@ class Pedido
             $sql = 'update mesas set mesa_estado_atencion = ? where id_mesa = ?';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$mesa_estado_atencion,$id_mesa]);
+
+            $fecha_hoy = date('Y-m-d H:i:s');
+            $sql2 = 'insert into mesa_log (id_mesa, mesa_log_estado_atencion, mesa_log_fecha_hora, mesa_log_estado) values (?,?,?,?)';
+            $stm2 = $this->pdo->prepare($sql2);
+            $stm2->execute([
+                $id_mesa, $mesa_estado_atencion , $fecha_hoy , 1
+            ]);
             return 1;
         }  catch (Exception $e){
             $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
@@ -1479,6 +1509,8 @@ class Pedido
             return 2;
         }
     }
+
+
 
     public function cambiar_cantidad_personas($id_comanda , $comanda_cantidad_personas){
         try{
