@@ -1981,7 +1981,7 @@ class Pedido
 
     public function actualizar_total_comanda($id_comanda){
         try{
-            $sql = 'select sum(comanda_detalle_total) total from comanda_detalle c where c.id_comanda = ?';
+            $sql = 'select sum(comanda_detalle_total) total from comanda_detalle c where c.id_comanda = ? and c.comanda_detalle_estado = 1';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_comanda]);
             $resultadito = $stm->fetch();
