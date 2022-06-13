@@ -1968,8 +1968,7 @@ class Pedido
     public function actualizar_ultimos_pedidos_pendientes($id_comanda, $id_mesa){
         try{
             $sql = 'update comanda c inner join comanda_detalle cd on c.id_comanda = cd.id_comanda set cd.id_comanda = ?
-                    where c.id_mesa = ? and cd.comanda_detalle_estado_venta = 0 and cd.comanda_detalle_estado = 1
-                    order by c.id_comanda desc limit 1';
+                    where c.id_mesa = ? and cd.comanda_detalle_estado_venta = 0 and cd.comanda_detalle_estado = 1';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_mesa, $id_comanda]);
             $result = 1;
