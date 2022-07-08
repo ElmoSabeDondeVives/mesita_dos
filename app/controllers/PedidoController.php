@@ -1825,7 +1825,7 @@ class PedidoController
                                     for ($i=0;$i<count($celdas)-1;$i++){
                                         $model->id_venta = $id_venta;
                                         $id_comanda_detalle = $celdas[$i];
-                                        if($id_comanda_detalle != 1){
+                                        if($id_comanda_detalle != 0){
                                             $jalar_datos = $this->pedido->jalar_datos($id_comanda_detalle);
                                             $cantidad = $jalar_datos->comanda_detalle_cantidad;
                                             $precio_unitario = $jalar_datos->comanda_detalle_precio;
