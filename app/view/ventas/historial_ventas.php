@@ -162,14 +162,14 @@
                                                     <a id="btn_enviar<?= $al->id_venta;?>" type="button" title="Enviar a Sunat" class="btn btn-sm btn-success btne" style="color: white" onclick="preguntar('¿Está seguro que desea enviar a la Sunat este Comprobante?','enviar_comprobante_sunat','Si','No',<?= $al->id_venta;?>)"><i class="fa fa-check margen"></i></a>
                                                     <?php
                                                 }
-                                                if($al->venta_tipo == "03" and $al->anulado_sunat == "0"){
-                                                ?>
-                                                <?php
-                                                if($role == 2 || $role == 3 || $role == 7) {
+                                                if(($al->venta_tipo == "03" || $al->venta_tipo == "01") and $al->anulado_sunat == "0"){
                                                     ?>
-                                                    <a target="_blank" type="button" id="btn_anular_anular<?= $al->id_venta;?>" class="btn btn-sm btn-danger btne" style="color: white" onclick="preguntar('¿Está seguro que desea anular este Comprobante?','anular_boleta_cambiarestado','Si','No',<?= $al->id_venta;?>, '1')" ><i class="fa fa-ban"></i></a>
                                                     <?php
-                                                }
+                                                    if($role == 2 || $role == 3 || $role == 7) {
+                                                        ?>
+                                                        <a target="_blank" type="button" id="btn_anular_anular<?= $al->id_venta;?>" class="btn btn-sm btn-danger btne" style="color: white" onclick="preguntar('¿Está seguro que desea anular este Comprobante?','anular_boleta_cambiarestado','Si','No',<?= $al->id_venta;?>, '1')" ><i class="fa fa-ban"></i></a>
+                                                        <?php
+                                                    }
                                                     ?>
                                                     <?php
                                                 }else{
@@ -177,6 +177,21 @@
                                                         <h5 style="color: red">ANULADO, ir a resumen diario para enviar a sunat</h5>
                                                         <?php
                                                     }
+                                                }
+                                                //boton para cambiar de estado si sale error 1033 (informado anteriormente)
+                                                $error1 = '1033';
+                                                $error2 = '1032';
+                                                $respuesta = $al->venta_respuesta_sunat;
+                                                $error1033 = strrpos($respuesta, $error1);
+                                                $error1032 = strrpos($respuesta, $error2);
+                                                if(!empty($error1033)){
+                                                    ?>
+                                                    <a target="_blank" type="button" id="btn_actualizar_estado<?= $al->id_venta;?>" class="btn btn-sm btn-warning btne" style="color: white" onclick="cambiarestado_enviado(<?= $al->id_venta ?>)" ><i class="fa fa-circle-o-notch"></i></a>
+                                                    <?php
+                                                }elseif(!empty($error1032)){
+                                                    ?>
+                                                    <a target="_blank" type="button" id="btn_actualizar_estado<?= $al->id_venta;?>" class="btn btn-sm btn-warning btne" style="color: white" onclick="cambiarestado_anulado(<?= $al->id_venta ?>)" ><i class="fa fa-circle-o-notch"></i></a>
+                                                    <?php
                                                 }
                                                 ?>
                                             </td>
@@ -238,4 +253,76 @@
         var total_rs = <?= $total_soles; ?>;
         $("#total_soles").html("<b>"+total_rs+"</b>");
     });
+    function cambiarestado_enviado(id){
+        var boton = "btn_actualizar_estado" + id;
+        var accion = "1033";
+        $.ajax({
+            type: "POST",
+            url: urlweb + "api/Ventas/cambiarestado_enviado",
+            data: 'id=' + id + "&accion=" + accion,
+            dataType: 'json',
+            beforeSend: function () {
+                cambiar_estado_boton(boton, 'actualizando...', true);
+            },
+            success:function (r) {
+
+                switch (r.result.code) {
+                    case 1:
+                        respuesta('¡Fue actualizada como enviada y aceptada!', 'success');
+                        setTimeout(function () {
+                            location.reload();
+                            //location.href = urlweb +  'Pedido/gestionar';
+                        }, 300);
+                        break;
+                    case 2:
+                        respuesta('Error al actualizar', 'error');
+                        setTimeout(function () {
+                            location.reload();
+                            //location.href = urlweb +  'Pedido/gestionar';
+                        }, 300);
+                        break;
+                    default:
+                        respuesta('¡Algo catastrofico ha ocurrido!', 'error');
+                        break;
+                }
+            }
+
+        });
+    }
+    function cambiarestado_anulado(id){
+        var boton = "btn_actualizar_estado" + id;
+        var accion = "1032";
+        $.ajax({
+            type: "POST",
+            url: urlweb + "api/Ventas/cambiarestado_enviado",
+            data: 'id=' + id + "&accion=" + accion,
+            dataType: 'json',
+            beforeSend: function () {
+                cambiar_estado_boton(boton, 'actualizando...', true);
+            },
+            success:function (r) {
+
+                switch (r.result.code) {
+                    case 1:
+                        respuesta('¡Fue actualizada como enviada y aceptada!', 'success');
+                        setTimeout(function () {
+                            location.reload();
+                            //location.href = urlweb +  'Pedido/gestionar';
+                        }, 300);
+                        break;
+                    case 2:
+                        respuesta('Error al actualizar', 'error');
+                        setTimeout(function () {
+                            location.reload();
+                            //location.href = urlweb +  'Pedido/gestionar';
+                        }, 300);
+                        break;
+                    default:
+                        respuesta('¡Algo catastrofico ha ocurrido!', 'error');
+                        break;
+                }
+            }
+
+        });
+    }
 </script>

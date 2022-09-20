@@ -688,6 +688,21 @@ class Ventas
         }
         return $result;
     }
+    public function actualizar_venta_anulado_factura_sinenviar($id_venta){
+        try{
+            $sql = "UPDATE ventas SET venta_condicion_resumen = ?,
+                                             venta_tipo_envio = ?,
+                    anulado_sunat = ?, venta_cancelar = ?, venta_estado_sunat = ?
+                                             where id_venta = ?";
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([1,1,1,0,1,$id_venta]);
+            $result = 1;
+        } catch (Throwable $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $result = 2;
+        }
+        return $result;
+    }
     public function listar_productos_(){
         try {
             $sql = 'select * from productos p inner join producto_precio pp on p.id_producto = pp.id_producto where pp.producto_precio_estado = 1';
@@ -764,6 +779,38 @@ class Ventas
             $stm->execute([$product]);
             $result = $stm->fetch();
         } catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $result = 2;
+        }
+        return $result;
+    }
+    public function actualizar_venta_enviado($id_venta,$respuesta){
+        try{
+            $date = date('Y-m-d H:i:s');
+            $sql = "UPDATE ventas SET venta_tipo_envio = ?,
+                                                 venta_estado_sunat = ?,
+                        venta_fecha_envio = ?, venta_respuesta_sunat = ?
+                                                 where id_venta = ?";
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([1,1,$date,$respuesta,$id_venta]);
+            $result = 1;
+        } catch (Throwable $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $result = 2;
+        }
+        return $result;
+    }
+    public function actualizar_venta_enviado_anulado($id_venta,$respuesta){
+        try{
+            $date = date('Y-m-d H:i:s');
+            $sql = "UPDATE ventas SET venta_tipo_envio = ?,
+                                             venta_estado_sunat = ?,
+                    venta_fecha_envio = ?, venta_respuesta_sunat = ?, anulado_sunat = ?, venta_cancelar = ?
+                                             where id_venta = ?";
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([1,1,$date,$respuesta,1,0,$id_venta]);
+            $result = 1;
+        } catch (Throwable $e){
             $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
             $result = 2;
         }
