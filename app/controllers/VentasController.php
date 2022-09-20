@@ -680,8 +680,8 @@ class VentasController
 
                             }
                         }elseif($result['result'] == 4){
-                            $result = 4;
                             $message = $result['mensaje'];
+                            $result = 4;
                         }elseif($result['result'] == 3){
                             $result = 3;
                         }
