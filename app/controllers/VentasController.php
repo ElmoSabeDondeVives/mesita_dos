@@ -69,7 +69,7 @@ class VentasController
                 $query = "SELECT * FROM ventas v inner join clientes c on v.id_cliente = c.id_cliente inner join monedas mo
                         on v.id_moneda = mo.id_moneda INNER JOIN usuarios u on v.id_usuario = u.id_usuario inner join mesas m 
                         on v.id_mesa = m.id_mesa inner join tipo_pago tp on v.id_tipo_pago = tp.id_tipo_pago 
-                        where v.venta_estado_sunat = 0";
+                        where v.venta_estado_sunat = 0 and v.venta_tipo <> 20";
                 $select = "";
                 $where = true;
                 if($_POST['tipo_venta']!=""){
@@ -134,7 +134,7 @@ class VentasController
                 $query = "SELECT * FROM ventas v inner join clientes c on v.id_cliente = c.id_cliente inner join monedas mo
                         on v.id_moneda = mo.id_moneda INNER JOIN usuarios u on v.id_usuario = u.id_usuario inner join mesas m 
                         on v.id_mesa = m.id_mesa inner join tipo_pago tp on v.id_tipo_pago = tp.id_tipo_pago 
-                        where v.venta_estado_sunat = 1";
+                        where v.venta_estado_sunat = 1 and v.venta_tipo <> 20";
                 $select = "";
                 $where = true;
                 if($_POST['tipo_venta']!=""){
@@ -1176,7 +1176,7 @@ class VentasController
                 $query = "SELECT * FROM ventas v inner join clientes c on v.id_cliente = c.id_cliente inner join monedas mo
                         on v.id_moneda = mo.id_moneda INNER JOIN usuarios u on v.id_usuario = u.id_usuario inner join mesas m 
                         on v.id_mesa = m.id_mesa inner join tipo_pago tp on v.id_tipo_pago = tp.id_tipo_pago 
-                        where v.venta_estado_sunat = 1";
+                        where v.venta_estado_sunat = 1 and v.venta_tipo <> 20";
                 $select = "";
                 $where = true;
                 if ($tipo_venta != "") {
