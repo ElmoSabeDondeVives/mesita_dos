@@ -625,7 +625,7 @@ class Pedido
     public function listar_detalle_x_comanda_para_precuenta($id_comanda){
         try{
             $sql = 'select * from comanda c inner join comanda_detalle cd on c.id_comanda = cd.id_comanda inner join productos p 
-                    on cd.id_producto = p.id_producto where cd.id_comanda = ? and cd.comanda_detalle_estado_venta = 0
+                    on cd.id_producto = p.id_producto where cd.id_comanda = ? and cd.comanda_detalle_estado_venta = 0 and p.producto_estado = 1
                     and cd.comanda_detalle_estado = 1';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([$id_comanda]);
@@ -965,7 +965,7 @@ class Pedido
     public function listar_busqueda_productos($parametro){
         try{
             $sql = "select * from productos p inner join grupos g on p.id_grupo = g.id_grupo inner join producto_precio pp on p.id_producto = pp.id_producto
-                    where pp.producto_precio_estado = 1 and p.producto_nombre like ? and pp.id_producto_precio <> -1";
+                    where pp.producto_precio_estado = 1 and p.producto_estado = 1 and p.producto_nombre like ? and pp.id_producto_precio <> -1";
             $stm = $this->pdo->prepare($sql);
             $stm->execute(['%'.$parametro.'%']);
             $result = $stm->fetchAll();

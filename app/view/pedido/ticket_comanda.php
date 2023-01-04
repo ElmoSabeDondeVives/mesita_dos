@@ -44,6 +44,7 @@ $printer->text(date("Y-m-d H:i:s") . "\n");
 $printer->setFont(Printer::FONT_B);
 $printer->setTextSize(2,2);
 $printer->text("$comanda->mesa_nombre" . "\n");
+$printer->text("$comanda->comanda_nombre_mesa" . "\n");
 $printer->text("NRO. TICKET $comanda->comanda_correlativo" . "\n\n");
 /*
  Ahora datos del cliente
