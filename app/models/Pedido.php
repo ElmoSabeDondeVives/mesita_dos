@@ -1970,7 +1970,7 @@ class Pedido
             $sql = 'update comanda c inner join comanda_detalle cd on c.id_comanda = cd.id_comanda set cd.id_comanda = ?
                     where c.id_mesa = ? and cd.comanda_detalle_estado_venta = 0 and cd.comanda_detalle_estado = 1';
             $stm = $this->pdo->prepare($sql);
-            $stm->execute([$id_mesa, $id_comanda]);
+            $stm->execute([$id_comanda,$id_mesa]);
             $result = 1;
         } catch (Exception $e){
             $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);

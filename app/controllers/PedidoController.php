@@ -979,7 +979,7 @@ class PedidoController
                                 $nombre_ticket = "$detalle->grupo_ticketera";
                                 require _VIEW_PATH_ . 'pedido/ticket_comanda_detalle.php';
                             }else{
-                                $nombre_ticket = "CALIENTE_2";
+                                $nombre_ticket = "CALIENTES_2";
                                 require _VIEW_PATH_ . 'pedido/ticket_comanda_detalle.php';
                                 $nombre_ticket = "FRIOS_2";
                                 require _VIEW_PATH_ . 'pedido/ticket_comanda_detalle.php';

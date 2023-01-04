@@ -214,6 +214,9 @@
                 <div class="row">
                     <?php
                     foreach ($mesas as $m){
+                        //busca comanda anterior
+                        $ultimo_valor = $this->pedido->ultimo_pedido($m->id_mesa);
+
                         if($m->id_mesa == 0){
                             ?>
                             <div class="col-md-3 col-sm-3 col-xs-3">
@@ -221,71 +224,77 @@
                             </div>
                             <?php
                         }else{
-                        if($m->mesa_estado_atencion == 0){
-                            $fecha = date('Y-m-d');
-                            $hora = date('H:i:s');
-                            $buscar_reservas = $this->pedido->buscar_datos_reserva($m->id_mesa,$fecha);
-                            if($buscar_reservas && $hora <= $buscar_reservas->reserva_hora){
-                                $actualizar_mesa = $this->pedido->cambiar_estado_mesa_reserva($buscar_reservas->id_mesa);
-                                echo "<script>
-                                       location.reload();
-                                      </script>";
-                            }
-                            ?>
-                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                                <a style="background: green;margin: 1px;border-radius: 20px;padding: 60px 10px 60px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/asignar/' . $m->id_mesa;?>"><?= $m->mesa_nombre;?>
-                                </a>
-                            </div>
-                            <?php
-                        }elseif($m->mesa_estado_atencion == 1){
-                            $fecha = date('Y-m-d');
-                            $buscar_reservas = $this->pedido->buscar_datos_reserva($m->id_mesa,$fecha);
-                            if(!empty($buscar_reservas)){
-                                $actualizar_mesa = $this->pedido->cambiar_estado_mesa_reserva($buscar_reservas->id_mesa);
+                            if($m->mesa_estado_atencion == 0 && empty($ultimo_valor)){
+                                $fecha = date('Y-m-d');
+                                $hora = date('H:i:s');
+                                $buscar_reservas = $this->pedido->buscar_datos_reserva($m->id_mesa,$fecha);
+                                if($buscar_reservas && $hora <= $buscar_reservas->reserva_hora){
+                                    $actualizar_mesa = $this->pedido->cambiar_estado_mesa_reserva($buscar_reservas->id_mesa);
+                                    echo "<script>
+                                           location.reload();
+                                          </script>";
+                                }
                                 ?>
-                                <div class="col-md-3 col-sm-3 col-xs-3">
-                                    <a style="background: dodgerblue;margin: 1px;border-radius: 20px;padding: 18px 10px 18px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/detalle_pedido/' . $m->id_mesa;?>" ><?= $m->mesa_nombre;?> / RESERVADO
-                                        <p>Por <?= $buscar_reservas->reserva_nombre?> / Cant. <?= $buscar_reservas->reserva_cantidad?> Pers.</p>
-                                        <p>Dia: <?= $buscar_reservas->reserva_fecha?> / Hora: <?= $buscar_reservas->reserva_hora?></p>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                    <a style="background: green;margin: 1px;border-radius: 20px;padding: 60px 10px 60px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/asignar/' . $m->id_mesa;?>"><?= $m->mesa_nombre;?>
                                     </a>
                                 </div>
                                 <?php
                             }else{
-                                ?>
-                                <div class="col-md-3 col-sm-3 col-xs-3">
-                                    <a style="background:  #f4b619;margin: 1px;border-radius: 20px;padding: 60px 10px 60px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/detalle_pedido/' . $m->id_mesa;?>"><?= $m->mesa_nombre;?></a>
-                                </div>
-                                <?php
-                            }
-                            ?>
-                            <?php
-                        }elseif($m->mesa_estado_atencion == 5){
-                            $fecha = date('Y-m-d');
-                            $buscar_reservas = $this->pedido->buscar_datos_reserva($m->id_mesa,$fecha);
-                            if($buscar_reservas->reserva_contacto == NULL){
-                                $numero = "--";
-                            }else{
-                                $numero = $buscar_reservas->reserva_contacto;
-                            }
-                            ?>
-                            <div class="col-md-3 col-sm-3 col-xs-3">
-                                <a style="background: dodgerblue;margin: 1px;border-radius: 20px;padding: 18px 10px 18px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/asignar/' . $m->id_mesa;?>" ><?= $m->mesa_nombre;?> / RESERVADO
-                                    <p>Por <?= $buscar_reservas->reserva_nombre?> / Cant. <?= $buscar_reservas->reserva_cantidad?> Pers.</p>
-                                    <p>Dia: <?= $buscar_reservas->reserva_fecha?> / Hora: <?= $buscar_reservas->reserva_hora?></p>
-                                    <p>N° : <?=$numero ?></p>
-                                </a>
-                            </div>
-                            <?php
-                        }else{
-                            ?>
-                            <div class="col-md-3 col-sm-3 col-xs-3">
-                                <a style="background: red;margin: 1px;border-radius: 20px;padding: 60px 10px 60px 10px;text-align: center;width: 100%" class="text-white"  onclick="preguntar('¿La mesa se encuentra lista para ser usada?','habilitar_mesa','SI','NO',<?= $m->id_mesa?>,0)"><?= $m->mesa_nombre;?></a>
-                            </div>
-                                <?php
+                                if($m->mesa_estado_atencion == 1 || !empty($ultimo_valor)){
+                                    if($m->mesa_estado_atencion == 0){
+                                        $this->pedido->cambiar_estado_mesa($m->id_mesa);
+                                    }
+                                    $fecha = date('Y-m-d');
+                                    $buscar_reservas = $this->pedido->buscar_datos_reserva($m->id_mesa,$fecha);
+                                    if(!empty($buscar_reservas)){
+                                        $actualizar_mesa = $this->pedido->cambiar_estado_mesa_reserva($buscar_reservas->id_mesa);
+                                        ?>
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <a style="background: dodgerblue;margin: 1px;border-radius: 20px;padding: 18px 10px 18px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/detalle_pedido/' . $m->id_mesa;?>" ><?= $m->mesa_nombre;?> / RESERVADO
+                                                <p>Por <?= $buscar_reservas->reserva_nombre?> / Cant. <?= $buscar_reservas->reserva_cantidad?> Pers.</p>
+                                                <p>Dia: <?= $buscar_reservas->reserva_fecha?> / Hora: <?= $buscar_reservas->reserva_hora?></p>
+                                            </a>
+                                        </div>
+                                        <?php
+                                    }else{
+                                        ?>
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <a style="background:  #f4b619;margin: 1px;border-radius: 20px;padding: 60px 10px 60px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/detalle_pedido/' . $m->id_mesa;?>"><?= $m->mesa_nombre;?><?= ($ultimo_valor->comanda_nombre_mesa != Null)?' || '.$ultimo_valor->comanda_nombre_mesa:""?></a>
+
+                                        </div>
+                                        <?php
+                                    }
+                                    ?>
+                                    <?php
+                                }elseif($m->mesa_estado_atencion == 5){
+                                    $fecha = date('Y-m-d');
+                                    $buscar_reservas = $this->pedido->buscar_datos_reserva($m->id_mesa,$fecha);
+                                    if($buscar_reservas->reserva_contacto == NULL){
+                                        $numero = "--";
+                                    }else{
+                                        $numero = $buscar_reservas->reserva_contacto;
+                                    }
+                                    ?>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <a style="background: dodgerblue;margin: 1px;border-radius: 20px;padding: 18px 10px 18px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/asignar/' . $m->id_mesa;?>" ><?= $m->mesa_nombre;?> / RESERVADO
+                                            <p>Por <?= $buscar_reservas->reserva_nombre?> / Cant. <?= $buscar_reservas->reserva_cantidad?> Pers.</p>
+                                            <p>Dia: <?= $buscar_reservas->reserva_fecha?> / Hora: <?= $buscar_reservas->reserva_hora?></p>
+                                            <p>N° : <?=$numero ?></p>
+                                        </a>
+                                    </div>
+                                    <?php
+                                }else{
+                                    ?>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <a style="background: red;margin: 1px;border-radius: 20px;padding: 60px 10px 60px 10px;text-align: center;width: 100%" class="text-white"  onclick="preguntar('¿La mesa se encuentra lista para ser usada?','habilitar_mesa','SI','NO',<?= $m->id_mesa?>,0)"><?= $m->mesa_nombre;?></a>
+                                    </div>
+                                    <?php
+                                }
                             }
                         }
                         ?>
-                    <?php
+                        <?php
                     }
                     ?>
                 </div>
