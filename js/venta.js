@@ -175,41 +175,48 @@ function comunicacion_baja(id_venta){
 
     });
 }
-function anular_boleta_cambiarestado(id_venta, estado){
-    var cadena = "id_venta=" + id_venta + "&estado=" + estado;
+function anular_boleta_cambiarestado(estado){
+    let valor = true;
+    let id_venta = $("#id_venta").val();
+    let venta_motivo_eli = $("#venta_motivo_eli").val();
+    var cadena = "id_venta=" + id_venta + "&estado=" + estado + "&venta_motivo_eli="+venta_motivo_eli;
     var boton = 'btn_anular_boleta'+id_venta;
-    $.ajax({
-        type: "POST",
-        url: urlweb + "api/Ventas/anular_boleta_cambiarestado",
-        data: cadena,
-        dataType: 'json',
-        beforeSend: function () {
-            cambiar_estado_boton(boton, 'Anulando...', true);
-        },
-        success:function (r) {
-            cambiar_estado_boton(boton, "ANULAR", false);
-            switch (r.result.code) {
-                case 1:
-                    respuesta('¡Comprobante Anulado, listo para ser enviado por Resumen Diario!', 'success');
-                    setTimeout(function () {
-                        location.reload();
-                        //location.href = urlweb +  'Pedido/gestionar';
-                    }, 1000);
-                    break;
-                case 2:
-                    respuesta('Error al anular el comprobante electronico', 'error');
-                    setTimeout(function () {
-                        location.reload();
-                        //location.href = urlweb +  'Pedido/gestionar';
-                    }, 1000);
-                    break;
-                default:
-                    respuesta('¡Algo catastrofico ha ocurrido!', 'error');
-                    break;
-            }
-        }
 
-    });
+    valor = validar_campo_vacio('venta_motivo_eli', venta_motivo_eli, valor);
+    if(valor) {
+        $.ajax({
+            type: "POST",
+            url: urlweb + "api/Ventas/anular_boleta_cambiarestado",
+            data: cadena,
+            dataType: 'json',
+            beforeSend: function () {
+                cambiar_estado_boton(boton, 'Anulando...', true);
+            },
+            success: function (r) {
+                cambiar_estado_boton(boton, "ANULAR", false);
+                switch (r.result.code) {
+                    case 1:
+                        respuesta('¡Comprobante Anulado, listo para ser enviado por Resumen Diario!', 'success');
+                        setTimeout(function () {
+                            location.reload();
+                            //location.href = urlweb +  'Pedido/gestionar';
+                        }, 1000);
+                        break;
+                    case 2:
+                        respuesta('Error al anular el comprobante electronico', 'error');
+                        setTimeout(function () {
+                            location.reload();
+                            //location.href = urlweb +  'Pedido/gestionar';
+                        }, 1000);
+                        break;
+                    default:
+                        respuesta('¡Algo catastrofico ha ocurrido!', 'error');
+                        break;
+                }
+            }
+
+        });
+    }
 }
 
 

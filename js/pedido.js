@@ -250,11 +250,11 @@ function agregar(){
     var por_consumo_total_valor = $('#por_consumo_total_valor').val();
     //obtenemos valores si la venta es por consumo - FIN
 
-    $("input:checkbox:checked").each(function() {
+    /*$("input:checkbox:checked").each(function() {
         pedido_check_ += $(this).val() + "-.-.";
     });
     $('#datos_detalle_pedido').val(pedido_check_);
-    var datos_detalle_pedido = $('#datos_detalle_pedido').val();
+    var datos_detalle_pedido = $('#datos_detalle_pedido').val();*/
     //validar campos vacios
     //valor = validar_campo_vacio('cliente_numero', cliente_numero, valor);
     //valor = validar_campo_vacio('select_tipodocumento', select_tipodocumento, valor);
@@ -271,7 +271,16 @@ function agregar(){
     if(gratis == 1){
         valor = validar_campo_vacio('observacion_cortesia', observacion_cortesia, valor);
     }
+    let arraycheck={}
+    $(".cobrar_venta_check:checked").each(function() {
+        pedido_check_ += $(this).val() + "-.-.";
+        arraycheck[`${$(this).val()}`]=$(this).val()
+    });
+    $('#datos_detalle_pedido').val(Object.keys(arraycheck).join("-.-."));
+    console.log($('#datos_detalle_pedido').val())
+    var datos_detalle_pedido = $('#datos_detalle_pedido').val();
 
+    //valor = false;
     if(valor){
         var cadena = "id_cliente=" + id_cliente +
             "&select_tipodocumento=" + select_tipodocumento +
@@ -1112,15 +1121,20 @@ function cambiar_comanda_detalle_cantidad(id, id_comanda){
                 switch (r.result.code) {
                     case 1:
                         respuesta('¡Cantidad Actualizada!', 'success');
-                        location.reload();
-                        /*setTimeout(function () {
+                        //location.reload();
+                        setTimeout(function () {
                             location.reload();
-                        }, 900);*/
+                        }, 900);
                         break;
                     case 2:
                         respuesta('Error al cambiar la cantidad', 'error');
                         break;
-
+                    case 4:
+                        respuesta('La cantidad minima del detalle no puede ser menor que 1', 'error');
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1200);
+                        break;
                     default:
                         respuesta('¡Algo catastrofico ha ocurrido!', 'error');
                         break;

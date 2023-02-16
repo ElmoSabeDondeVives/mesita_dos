@@ -673,14 +673,12 @@ class Ventas
         }
         return $result;
     }
-    public function actualizar_venta_anulado($id_venta, $estado){
+    public function actualizar_venta_anulado($id_usuario,$fecha,$motivo,$estado,$id_venta){
         try{
-            $sql = "UPDATE ventas SET venta_condicion_resumen = ?,
-                                             venta_tipo_envio = ?,
-                    anulado_sunat = ?, venta_cancelar = ?, venta_estado_sunat = ?
-                                             where id_venta = ?";
+            $sql = "update ventas set venta_condicion_resumen = ?, venta_tipo_envio = ?,anulado_sunat = ?, venta_cancelar = ?, venta_estado_sunat = ?, 
+                    venta_usuario_eli = ?,venta_fecha_eli=?,venta_motivo_eli=? where id_venta = ?";
             $stm = $this->pdo->prepare($sql);
-            $stm->execute([$estado,2,1,0,0,$id_venta]);
+            $stm->execute([$estado,2,1,0,0,$id_usuario,$fecha,$motivo,$id_venta]);
             $result = 1;
         } catch (Throwable $e){
             $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
@@ -688,14 +686,13 @@ class Ventas
         }
         return $result;
     }
-    public function actualizar_venta_anulado_factura_sinenviar($id_venta){
+    public function actualizar_venta_anulado_factura_sinenviar($id_usuario,$fecha,$motivo,$id_venta){
         try{
-            $sql = "UPDATE ventas SET venta_condicion_resumen = ?,
-                                             venta_tipo_envio = ?,
-                    anulado_sunat = ?, venta_cancelar = ?, venta_estado_sunat = ?
-                                             where id_venta = ?";
+            $sql = "update ventas set venta_condicion_resumen = ?, venta_tipo_envio = ?,
+                    anulado_sunat = ?, venta_cancelar = ?, venta_estado_sunat = ?,
+                    venta_usuario_eli=?,venta_fecha_eli=?,venta_motivo_eli=? where id_venta = ?";
             $stm = $this->pdo->prepare($sql);
-            $stm->execute([1,1,1,0,1,$id_venta]);
+            $stm->execute([1,1,1,0,1,$id_usuario,$fecha,$motivo,$id_venta]);
             $result = 1;
         } catch (Throwable $e){
             $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
@@ -830,5 +827,54 @@ class Ventas
         return $result;
     }
 
+    public function listar_all_users(){
+        try{
+            $sql = 'select * from personas p inner join usuarios u on p.id_persona = u.id_persona inner join roles r on u.id_rol = r.id_rol 
+                    where r.id_rol = 5';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute();
+            return $stm->fetchAll();
+        } catch (Throwable $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            return [];
+        }
+    }
+
+    public function listar_usuarios_($id_usuario){
+        try{
+            $sql = 'select * from personas p inner join usuarios u on p.id_persona = u.id_persona where u.id_usuario = ?';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$id_usuario]);
+            return $stm->fetch();
+        } catch (Throwable $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            return [];
+        }
+    }
+
+    public function listar_ventas_eliminadas($sql){
+        try{
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute();
+            $result = $stm->fetchAll();
+        } catch (Throwable $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $result = [];
+        }
+        return $result;
+    }
+
+    public function buscar_usuario($id_usuario_eli){
+        try {
+            $sql = 'select * from usuarios u inner join personas p on u.id_persona = p.id_persona where id_usuario = ?';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$id_usuario_eli]);
+            $result = $stm->fetch();
+        } catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $result = 2;
+        }
+        return $result;
+    }
 
 }

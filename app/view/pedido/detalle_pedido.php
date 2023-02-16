@@ -1,6 +1,4 @@
 
-
-
 <div class="modal fade" id="agregar_pedido_nuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 70% !important;">
         <div class="modal-content">
@@ -327,7 +325,7 @@
                                                 //$tipo_afectacion = $this->pedido->tipo_afectacion_x_producto
                                                 ?>
                                                 <div class="col-md-12" style="font-weight: bold;">
-                                                    <input  type="checkbox" onchange="calcular_total(<?= $ls->id_comanda_detalle;?>)" id="id_comanda_detalle_<?= $ls->id_comanda_detalle;?>" name="id_comanda_detalle_<?= $ls->id_comanda_detalle;?>" value="<?= $ls->id_comanda_detalle;?>" class="chk-box">
+                                                    <input  type="checkbox" onchange="calcular_total(<?= $ls->id_comanda_detalle;?>)" id="id_comanda_detalle_<?= $ls->id_comanda_detalle;?>" name="id_comanda_detalle_<?= $ls->id_comanda_detalle;?>" value="<?= $ls->id_comanda_detalle;?>" class="chk-box cobrar_venta_check">
                                                     <label for="id_comanda_detalle_<?= $ls->id_comanda_detalle;?>"> <?php echo $ls->producto_nombre;?> // S/.<?php echo $ls->comanda_detalle_precio;?> // Cant. <?php echo $ls->comanda_detalle_cantidad?> // Total: <?php echo $ls->comanda_detalle_total;?> // Para: <?php echo $ls->comanda_detalle_despacho;?></label>
                                                     <input type="hidden" id="precio_total_detalle<?= $ls->id_comanda_detalle;?>" name="precio_total_detalle<?= $ls->id_comanda_detalle;?>" value="<?= $ls->comanda_detalle_total;?>">
                                                     <input type="hidden" id="tipo_afectacion_producto<?= $ls->id_comanda_detalle;?>" name="tipo_afectacion_producto<?= $ls->id_comanda_detalle;?>" value="<?= $ls->producto_precio_codigoafectacion;?>">
@@ -628,6 +626,82 @@
     </div>
 </div>
 
+<div class="modal fade" id="pre_cuenta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 60% !important;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Imprimir Pre Cuenta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="" enctype="multipart/form-data" id="imprimir_pre_cuenta">
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div id="persona">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card shadow mb-4">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                                    <thead class="text-capitalize">
+                                                    <tr>
+                                                        <th><i class="fa fa-print"></i></th>
+                                                        <th>Producto</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Precio Unitario</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <?php
+                                                    $det = 0;
+                                                    $det_cero = 0;
+                                                    $a = 1;
+                                                    foreach ($pedidos_pre_cuenta as $p){
+                                                        $pre_uni = $p->comanda_detalle_precio;
+                                                        if ($p->id_receta == "131"){
+                                                            $pre_uni = $p->comanda_detalle_precio + $icbper;
+                                                        }
+                                                        $total += $p->comanda_detalle_cantidad * $pre_uni;
+                                                        $subtotal = $p->comanda_detalle_cantidad * $pre_uni;
+                                                        ?>
+                                                        <tr id="detalle<?= $p->id_comanda_detalle;?>" <?= $estilo;?>>
+                                                            <td style="text-align: center"><input checked name='imprimir_detalle[]' type='checkbox' id='imprimir_detalle[]' class='chk-box' value='<?= $p->id_comanda_detalle;?>'></td>
+                                                            <td style="font-size: 13px;">
+                                                                <p><?php echo $p->producto_nombre;?> // S/.<?php echo $p->comanda_detalle_precio;?> // Cant. <?php echo $p->comanda_detalle_cantidad?> // Total: <?php echo $p->comanda_detalle_total;?> // Para: <?php echo $p->comanda_detalle_despacho;?> // Oservación: <?= $p->comanda_detalle_observacion;?>
+                                                                </p>
+                                                            </td>
+                                                            <td><?= $p->comanda_detalle_cantidad;?></td>
+                                                            <td><?= $pre_uni;?></td>
+                                                            <td><?= $subtotal;?></td>
+                                                        </tr>
+                                                        <?php
+                                                        $a++;
+                                                    }
+                                                    ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-lg-12" style="text-align: center">
+                        <input type="hidden" id="comanda_ultimo" name="comanda_ultimo" value="<?= $ultimo_valor_;?>">
+                        <button type="submit" class="btn btn-success" id="btn-print-precuenta"> <i class="fa fa-print"></i> Imprimir</button>
+                        <button type="button" class="btn btn-secondary" onclick="" data-dismiss="modal"><i class="fa fa-close fa-sm text-white-50"></i> Cerrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <div class="main-content">
     <div class="section__content section__content--p30">
@@ -707,7 +781,7 @@
                                             <input type="hidden" id="comanda_detalle_precio<?= $p->id_comanda_detalle;?>" value="<?= $p->comanda_detalle_precio;?>">
                                             <td><?= $p->comanda_detalle_precio;?></td>
                                             <?php
-                                            if($p->comanda_detalle_estado_venta == "0"){ ?>
+                                            if($p->comanda_detalle_estado_venta == "0" && ($id_rol==2 || $id_rol==3)){ ?>
                                                 <td><input class="form-control" type="number" id="cantidad_detalle_cantidad<?= $p->id_comanda_detalle;?>" value="<?= $p->comanda_detalle_cantidad;?>" onchange="cambiar_comanda_detalle_cantidad(<?= $p->id_comanda_detalle;?>, <?= $p->id_comanda;?>)"></td>
                                             <?php
                                             }else{ ?>
@@ -769,7 +843,7 @@
                                     ?>
 
                                     <div class="col-lg-3 col-sm-3 col-md-3">
-                                        <a id="imprimir_ticket" style="color: white;" class="btn btn-success" onclick="ticket_pedido(<?= $ultimo_valor_; ?>)"><i class="fa fa-print"></i> Pre Cuenta</a>
+                                        <a id="imprimir_ticket" style="color: white;" class="btn btn-success"><i class="fa fa-print"></i> Pre Cuenta</a>
                                     </div>
                                     <?php
                                     if($caja_apertura_fecha){
@@ -820,6 +894,45 @@
             }
         });
         checkbox_todo();
+    });
+
+    $('#imprimir_ticket').on('click',function(){
+        $('#pre_cuenta').modal({backdrop: 'static', keyboard: false})
+    })
+
+    $("#imprimir_pre_cuenta").on('submit', function(e){
+        e.preventDefault();
+        var valor = true;
+        var boton = 'btn-print-precuenta';
+
+        if (valor){
+            $.ajax({
+                type:"POST",
+                url: urlweb + "api/Pedido/ticket_pedido",
+                dataType: 'json',
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData:false,
+                beforeSend: function () {
+                    cambiar_estado_boton(boton, 'imprimiendo...', true);
+                },
+                success:function (r) {
+                    cambiar_estado_boton(boton, "<i class=\"fa fa-print\"></i> Imprimir", false);
+                    switch (r.result.code) {
+                        case 1:
+                            respuesta('¡Éxito!...', 'success');
+                            setTimeout(function () {
+                                location.reload();
+                            }, 200);
+                            break;
+                        default:
+                            respuesta('¡Algo catastrofico ha ocurrido!', 'error');
+                            break;
+                    }
+                }
+            });
+        }
     });
 
     var contenido_pedido = "";

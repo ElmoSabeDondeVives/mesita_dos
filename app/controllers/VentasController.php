@@ -217,6 +217,69 @@ class VentasController
             echo "<script language=\"javascript\">window.location.href=\"". _SERVER_ ."\";</script>";
         }
     }
+
+    public function historial_compro_eliminados(){
+        try{
+            $this->nav = new Navbar();
+            $navs = $this->nav->listar_menus($this->encriptar->desencriptar($_SESSION['ru'],_FULL_KEY_));
+            $filtro = false;
+            $fecha_ini = date('Y-m-d');
+            $fecha_fin = date('Y-m-d');
+            $usuario = $this->ventas->listar_all_users();
+            $ventas_cant = $this->ventas->listar_ventas_sin_enviar();
+            $empresas = $this->pedido->listar_empresas();
+
+            if(isset($_POST['enviar_registro'])){
+                $query = "SELECT * FROM ventas v inner join clientes c on v.id_cliente = c.id_cliente inner join monedas mo
+                        on v.id_moneda = mo.id_moneda INNER JOIN usuarios u on v.id_usuario = u.id_usuario inner join mesas m 
+                        on v.id_mesa = m.id_mesa inner join tipo_pago tp on v.id_tipo_pago = tp.id_tipo_pago inner join empresa em on v.id_empresa = em.id_empresa
+                        where v.anulado_sunat = 1";
+                $select = "";
+                $where = true;
+                if($_POST['tipo_venta']!=""){
+                    $where = true;
+                    $select = $select . " and v.venta_tipo = '" . $_POST['tipo_venta'] . "'";
+                    $tipo_venta = $_POST['tipo_venta'];
+                }
+                if($_POST['id_empresa']!=""){
+                    $where = true;
+                    $select = $select . " and v.id_empresa = '" . $_POST['id_empresa'] . "'";
+                }
+                if($_POST['fecha_inicio'] != "" AND $_POST['fecha_final'] != ""){
+                    $where = true;
+                    $select = $select . " and DATE(v.venta_fecha) between '" . $_POST['fecha_inicio'] ."' and '" . $_POST['fecha_final'] ."'";
+                    $fecha_ini = $_POST['fecha_inicio'];
+                    $fecha_fin = $_POST['fecha_final'];
+                }
+                if($_POST['id_usuario'] != ""){
+                    $where = true;
+                    $select = $select ." and v.id_usuario = '".$_POST['id_usuario']."'";
+                    $id_usuario = $_POST['id_usuario'];
+                    $usuario_ = $this->ventas->listar_usuarios_($id_usuario);
+                }
+
+                if($where){
+                    $datos = true;
+                    $order = " order by v.venta_fecha asc";
+                    $query = $query . $select . $order;
+                    $ventas = $this->ventas->listar_ventas_eliminadas($query);
+                }
+
+                $fecha_ini = $_POST['fecha_inicio'];
+                $fecha_fin = $_POST['fecha_final'];
+                $filtro = true;
+            }
+            require _VIEW_PATH_ . 'header.php';
+            require _VIEW_PATH_ . 'navbar.php';
+            require _VIEW_PATH_ . 'ventas/historial_compro_eliminados.php';
+            require _VIEW_PATH_ . 'footer.php';
+        }catch (Throwable $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            echo "<script language=\"javascript\">alert(\"Error Al Mostrar Contenido. Redireccionando Al Inicio\");</script>";
+            echo "<script language=\"javascript\">window.location.href=\"". _SERVER_ ."\";</script>";
+        }
+    }
+
     public function historial_resumen_diario(){
         try{
             $this->nav = new Navbar();
@@ -1085,27 +1148,23 @@ class VentasController
         echo json_encode(array("result" => array("code" => $result, "message" => $message)));
     }
     public function anular_boleta_cambiarestado(){
-        //Código de error general
         $result = 1;
-        //Mensaje a devolver en caso de hacer consulta por app
         $message = 'OK';
         try{
             $ok_data = true;
-            //Validamos que todos los parametros a recibir sean correctos. De ocurrir un error de validación,
-            //$ok_true se cambiará a false y finalizara la ejecucion de la funcion
-            //$ok_data = $this->validar->validar_parametro('id_comanda_detalle', 'POST',true,$ok_data,11,'texto',0);
-
             //Validacion de datos
             if($ok_data) {
+                $id_usuario = $this->encriptar->desencriptar($_SESSION['c_u'], _FULL_KEY_);
+                $fecha =date('Y-m-d H:i:s');
+                $motivo = $_POST['venta_motivo_eli'];
                 $id_venta = $_POST['id_venta'];
                 $estado = $_POST['estado'];
                 $dato = $this->ventas->listar_venta_x_id($id_venta);
                 if($dato->venta_tipo == '01'){
-                    $result = $this->ventas->actualizar_venta_anulado_factura_sinenviar($id_venta);
+                    $result = $this->ventas->actualizar_venta_anulado_factura_sinenviar($id_usuario,$fecha,$motivo,$id_venta);
                 }else{
-                    $result = $this->ventas->actualizar_venta_anulado($id_venta,$estado);
+                    $result = $this->ventas->actualizar_venta_anulado($id_usuario,$fecha,$motivo,$estado,$id_venta);
                 }
-
             }else {
                 //Código 6: Integridad de datos erronea
                 $result = 6;
@@ -1229,6 +1288,158 @@ class VentasController
             echo "<script language=\"javascript\">window.location.href=\"". _SERVER_ ."\";</script>";
         }
     }
+
+    //FUNCION PARA EXCEL DE NOTAS DE VENTAS
+    public function excel_notas_ventas(){
+        try{
+            $usuario_nombre = $this->encriptar->desencriptar($_SESSION['p_n'],_FULL_KEY_);
+            $usuario_apellido = $this->encriptar->desencriptar($_SESSION['p_p'],_FULL_KEY_);
+            $usuario_materno = $this->encriptar->desencriptar($_SESSION['p_m'],_FULL_KEY_);
+            $usuario = $usuario_nombre. ' ' .$usuario_apellido. ' ' .$usuario_materno;
+
+            $tipo_venta = '20';
+            $fecha_ini = $_GET['fecha_inicio'];
+            $fecha_fin = $_GET['fecha_final'];
+            //$id_empresa = $_GET['id_empresa'];
+            //$empresa = $this->ventas->listar_empresa_x_id_empresa($id_empresa);
+
+            if($fecha_ini != "" && $fecha_fin != ""){
+                $fecha_vacio = "Desde el ".date('m-d-Y', strtotime($fecha_ini))." hasta el ".date('m-d-Y', strtotime($fecha_fin));
+            }else{
+                $fecha_vacio = utf8_decode("FECHA SIN LÍMITE");
+            }
+
+            $query = "SELECT * FROM ventas v inner join clientes c on v.id_cliente = c.id_cliente inner join monedas mo on v.id_moneda = mo.id_moneda 
+                        inner join usuarios u on v.id_usuario = u.id_usuario 
+                        inner join personas p on u.id_persona = p.id_persona
+                        inner join mesas m  on v.id_mesa = m.id_mesa inner join tipo_pago tp on v.id_tipo_pago = tp.id_tipo_pago
+                        where v.venta_tipo = 20";
+            $select = "";
+            $where = true;
+            if ($tipo_venta != "") {
+                $where = true;
+                $select = $select . " and v.venta_tipo = '" . $tipo_venta . "'";
+                $tipo_venta_a = $_GET['tipo_venta'];
+            }
+            if($id_empresa!=""){
+                $where = true;
+                $select = $select . " and v.id_empresa = '" . $_GET['id_empresa'] . "'";
+            }
+
+            if ($fecha_ini != "" and $fecha_fin != "") {
+                $where = true;
+                $select = $select . " and DATE(v.venta_fecha) between '" . $_GET['fecha_inicio'] . "' and '" . $_GET['fecha_final'] . "'";
+                $fecha_ini = $_GET['fecha_inicio'];
+                $fecha_fin = $_GET['fecha_final'];
+            }
+
+            if ($where) {
+                $datos = true;
+                $order = " order by v.venta_fecha asc";
+                $query = $query . $select . $order;
+                $ventas = $this->ventas->listar_ventas($query);
+            }
+            $fecha_ini = $_GET['fecha_inicio'];
+            $fecha_fin = $_GET['fecha_final'];
+            $filtro = true;
+            $tipo_comprobante = "NOTA DE VENTA";
+            $fecha_hoy = date("d-m-y");
+            $nombre_excel = 'historial_de_notas_de_Ventas_'.$empresa->empresa_ruc . '_' . $fecha_hoy;
+
+            //creamos el archivo excel
+            header( "Content-Type: application/vnd.ms-excel;charset=utf-8");
+            header("Content-Disposition: attachment; filename=".$nombre_excel.".xls");
+            require _VIEW_PATH_ . 'ventas/excel_notas_ventas.php';
+        } catch (Throwable $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            echo "<script language=\"javascript\">alert(\"Error Al Mostrar Contenido. Redireccionando Al Inicio\");</script>";
+            echo "<script language=\"javascript\">window.location.href=\"". _SERVER_ ."\";</script>";
+        }
+    }
+
+    public function excel_compro_eliminados(){
+        try{
+            $usuario_nombre = $this->encriptar->desencriptar($_SESSION['p_n'],_FULL_KEY_);
+            $usuario_apellido = $this->encriptar->desencriptar($_SESSION['p_p'],_FULL_KEY_);
+            $usuario_materno = $this->encriptar->desencriptar($_SESSION['p_m'],_FULL_KEY_);
+            $usuario = $usuario_nombre. ' ' .$usuario_apellido. ' ' .$usuario_materno;
+
+            $tipo_venta = $_GET['tipo_venta'];
+            $fecha_ini = $_GET['fecha_inicio'];
+            $fecha_fin = $_GET['fecha_final'];
+            $id_empresa = $_GET['id_empresa'];
+            $empresa = $this->ventas->listar_empresa_x_id_empresa($id_empresa);
+
+            if($fecha_ini != "" && $fecha_fin != ""){
+                $fecha_vacio = "Desde el ".date('m-d-Y', strtotime($fecha_ini))." hasta el ".date('m-d-Y', strtotime($fecha_fin));
+            }else{
+                $fecha_vacio = utf8_decode("FECHA SIN LÍMITE");
+            }
+
+            $query = "SELECT * FROM ventas v inner join clientes c on v.id_cliente = c.id_cliente inner join monedas mo on v.id_moneda = mo.id_moneda
+                        inner join usuarios u on v.id_usuario = u.id_usuario inner join personas p on u.id_persona = p.id_persona
+                        inner join mesas m on v.id_mesa = m.id_mesa
+                        inner join tipo_pago tp on v.id_tipo_pago = tp.id_tipo_pago 
+                        where v.anulado_sunat = 1";
+            $select = "";
+            $where = true;
+            if ($tipo_venta != "") {
+                $where = true;
+                $select = $select . " and v.venta_tipo = '" . $tipo_venta . "'";
+                $tipo_venta_a = $_GET['tipo_venta'];
+            }
+            if($id_empresa!=""){
+                $where = true;
+                $select = $select . " and v.id_empresa = '" . $_GET['id_empresa'] . "'";
+            }
+
+            if ($fecha_ini != "" and $fecha_fin != "") {
+                $where = true;
+                $select = $select . " and DATE(v.venta_fecha) between '" . $_GET['fecha_inicio'] . "' and '" . $_GET['fecha_final'] . "'";
+                $fecha_ini = $_GET['fecha_inicio'];
+                $fecha_fin = $_GET['fecha_final'];
+            }
+
+            if ($where) {
+                $datos = true;
+                $order = " order by v.venta_fecha asc";
+                $query = $query . $select . $order;
+                $ventas = $this->ventas->listar_ventas($query);
+            }
+
+            $fecha_ini = $_GET['fecha_inicio'];
+            $fecha_fin = $_GET['fecha_final'];
+            $filtro = true;
+
+            if($tipo_venta_a == "03"){
+                $tipo_comprobante = "BOLETA";
+            }elseif ($tipo_venta_a == "01"){
+                $tipo_comprobante = "FACTURA";
+            }elseif ($tipo_venta_a == "20"){
+                $tipo_comprobante = "NOTA DE VENTA";
+            } elseif($tipo_venta_a == "07"){
+                $tipo_comprobante = "NOTA DE CRÉDITO";
+            }elseif($tipo_venta_a == "08"){
+                $tipo_comprobante = "NOTA DE DÉBITO";
+            }else{
+                $tipo_comprobante = "TODOS";
+            }
+
+            $fecha_hoy = date("d-m-y");
+            $nombre_excel = 'historial_de_ventas_eliminadas_'.$empresa->empresa_ruc . '_' . $fecha_hoy;
+
+            //creamos el archivo excel
+            header( "Content-Type: application/vnd.ms-excel;charset=utf-8");
+            header("Content-Disposition: attachment; filename=".$nombre_excel.".xls");
+            require _VIEW_PATH_ . 'ventas/excel_compro_eliminados.php';
+        } catch (Throwable $e){
+            //En caso de errores insertamos el error generado y redireccionamos a la vista de inicio
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            echo "<script language=\"javascript\">alert(\"Error Al Mostrar Contenido. Redireccionando Al Inicio\");</script>";
+            echo "<script language=\"javascript\">window.location.href=\"". _SERVER_ ."\";</script>";
+        }
+    }
+    //FUNCION PARA CONSULTAR SERIE
 //FUNCION PARA CONSULTAR SERIE
     public function consultar_serie(){
         try{

@@ -1997,6 +1997,59 @@ class Pedido
         return $result;
     }
 
+    public function listar_empresas(){
+        try{
+            $sql = 'select * from empresa where empresa_estado = 1';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute();
+            $return = $stm->fetchAll();
+        } catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $return = [];
+        }
+        return $return;
+    }
 
+    //NUEVA FUNCION
+    public function sacar_canti_total_detalle($id_comanda_detalle){
+        try{
+            $sql = 'select * from comanda_detalle where id_comanda_detalle = ?';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$id_comanda_detalle]);
+            return $stm->fetch();
+        }  catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            return [];
+        }
+    }
+
+    public function guardar_detalle_comanda_eliminado($model){
+        try {
+            $sql = 'insert into comanda_detalle (id_comanda,id_usuario, id_producto, comanda_detalle_precio, comanda_detalle_cantidad, 
+                    comanda_detalle_despacho, comanda_detalle_total, comanda_detalle_eliminacion,comanda_detalle_fecha_eliminacion, comanda_detalle_fecha_registro, 
+                    comanda_detalle_estado,comanda_detalle_eli_id,id_usuario_eli) values(?,?,?,?,?,?,?,?,?,?,?,?,?)';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([
+                $model->id_comanda,
+                $model->id_usuario,
+                $model->id_producto,
+                $model->comanda_detalle_precio,
+                $model->comanda_detalle_cantidad,
+                $model->comanda_detalle_despacho,
+                $model->comanda_detalle_total,
+                $model->comanda_detalle_eliminacion,
+                $model->comanda_detalle_fecha_eliminacion,
+                $model->comanda_detalle_fecha_registro,
+                $model->comanda_detalle_estado,
+                $model->comanda_detalle_eli_id,
+                $model->id_usuario_eli
+            ]);
+            $result = 1;
+        } catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            $result = 2;
+        }
+        return $result;
+    }
 
 }

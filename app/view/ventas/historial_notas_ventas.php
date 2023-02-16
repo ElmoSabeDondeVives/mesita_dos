@@ -7,6 +7,35 @@
  */
 ?>
 
+<div class="modal fade" id="eliminar_venta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 60% !important;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Eliminar Comprobante</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <input type="hidden" id="id_venta" name="id_venta">
+                                <label class="col-form-label">Motivo</label>
+                                <textarea class="form-control" name="venta_motivo_eli" id="venta_motivo_eli" cols="30" rows="2" placeholder="Ingrese Motivo..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="preguntar('¿Está seguro que desea anular este Comprobante?','anular_boleta_cambiarestado','Si','No', '1')" id="btn-cambiar_mesa"><i class="fa fa-save fa-sm text-white-50"></i> Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="main-content">
     <div class="section__content section__content--p30">
         <div class="container-fluid">
@@ -96,7 +125,7 @@
                                         }
 
                                         ?>
-                                        <tr <?= $colorcito?>>
+                                        <tr <?= $stylee?>>
                                             <td><?= $a;?></td>
                                             <td><?= date('d-m-Y H:i:s', strtotime($al->venta_fecha));?></td>
                                             <td><?= ($al->id_mesa !="-2")?'LA ULTIMA CONCHITA':'MARKET';?></td>
@@ -131,13 +160,13 @@
                                                 }
                                                 ?>
                                                 <?php
-                                                if($al->venta_estado_nota_venta==1){
+                                                if($al->anulado_sunat==0){
                                                     ?>
                                                     <a type="button" class="btn btn-sm btn-warning" onclick="preguntar('¿La venta ya fue cancelada?','estado_paguito','SI','NO',<?= $al->id_venta?>)"><i class="fa fa-check text-white"></i></a>
+                                                    <a target="_blank" type="button" data-toggle="modal" data-target="#eliminar_venta" class="btn btn-sm btn-danger btne" style="color: white" onclick="llenar_id_venta_(<?=$al->id_venta?>)" ><i class="fa fa-ban"></i></a>
                                                     <?php
                                                 }
                                                 ?>
-                                                <a target="_blank" type="button" title="Anular" id="btn_anular<?= $al->id_venta;?>" class="btn btn-sm btn-danger btne" style="color: white" onclick="preguntar('¿Está seguro que desea anular este Comprobante?','anular_boleta_cambiarestado','Si','No',<?= $al->id_venta;?>, '1')" ><i class="fa fa-ban"></i></a>
                                             </td>
                                         </tr>
                                         <?php
@@ -149,6 +178,12 @@
 
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4"></div>
+                        <div class="col-lg-4">
+                            <a id="btnExportar" href="<?= _SERVER_ ; ?>index.php?c=Ventas&a=excel_notas_ventas&fecha_inicio=<?= $_POST['fecha_inicio']?>&fecha_final=<?= $_POST['fecha_final']?>" target="_blank" class="btn btn-success" style="width: 100%"><i class="fa fa-download"></i> Generar Excel</a>
                         </div>
                     </div>
                     <?php
@@ -167,6 +202,10 @@
         var total_rs = <?= $total; ?>;
         $("#total_soles").html("<b>"+total_rs+"</b>");
     });
+    function llenar_id_venta_(id_venta){
+        $("#id_venta").val(id_venta);
+        console.log(id_venta)
+    }
     function buscar_comprobante(){
         var tipo_comprobate = $('#type_comprobante').val();
         var comprobante_serie = $('#comprobante_serie').val();

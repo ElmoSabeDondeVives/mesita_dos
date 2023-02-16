@@ -22,6 +22,7 @@
                         <br><br>
                         <tr style="background: deepskyblue;">
                             <th>#</th>
+                            <th>EMPRESA</th>
                             <th>COMPROBANTE</th>
                             <th>SERIE</th>
                             <th>CORRELATIVO</th>
@@ -48,8 +49,11 @@
                         <?php
                         $a = 1;
                         $total = 0;
+                        $total_anulados = 0;
                         foreach ($ventas as $m){
-
+                            if($m->anulado_sunat == 1){
+                                $total_anulados  = $total_anulados + $m->venta_total;
+                            }
                             if($m->id_tipodocumento == 4){
                                 $cliente = $m->cliente_razonsocial;
                             }else{
@@ -93,6 +97,7 @@
                             ?>
                             <tr <?=$stylee?>>
                                 <td><?= $a;?></td>
+                                <td><?= $m->empresa_razon_social; ?></td>
                                 <td><?= utf8_decode($venta_tipo);?></td>
                                 <td><?= $m->venta_serie;?></td>
                                 <td><?= $m->venta_correlativo;?></td>
@@ -139,8 +144,32 @@
                                 <td style="text-align: center;"></td>
                                 <td style="text-align: center;"></td>
                                 <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
                                 <td style="text-align: center;">TOTAL:</td>
                                 <td style="text-align: center;"><?= number_format($total,2);?></td>
+                            </tr>
+
+                            <tr>
+                                <td></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;"></td>
+                                <td style="text-align: center;">T. ELIMINADOS:</td>
+                                <td style="text-align: center;"><?= number_format($total_anulados,2);?></td>
                             </tr>
                         </tfooter>
                     </table>

@@ -1,3 +1,34 @@
+
+
+<div class="modal fade" id="eliminar_venta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 60% !important;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Eliminar Comprobante</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <input type="hidden" id="id_venta" name="id_venta">
+                                <label class="col-form-label">Motivo</label>
+                                <textarea class="form-control" name="venta_motivo_eli" id="venta_motivo_eli" cols="30" rows="2" placeholder="Ingrese Motivo..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="preguntar('¿Está seguro que desea anular este Comprobante?','anular_boleta_cambiarestado','Si','No', '1')" id="btn-cambiar_mesa"><i class="fa fa-save fa-sm text-white-50"></i> Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="main-content">
     <div class="section__content section__content--p30">
         <div class="container-fluid">
@@ -19,14 +50,6 @@
                             <option <?= ($tipo_venta == "08")?'selected':''; ?> value= "08">NOTA DE DÉBITO</option>
                         </select>
                     </div>
-                    <!--<div class="col-lg-3">
-                        <label>Estado de Comprobante</label>
-                        <select  id="estado_cpe" name="estado_cpe" class="form-control">
-                            <option <?= ($estado_cpe == "")?'selected':''; ?> value="">Seleccionar...</option>
-                            <option <?= ($estado_cpe == "0")?'selected':''; ?> value="0">Sin Enviar</option>
-                            <option <?= ($estado_cpe == "1")?'selected':''; ?> value="1">Enviado Sunat</option>
-                        </select>
-                    </div>-->
                     <div class="col-lg-2 col-sm-6 col-md-6">
                         <label for="">Fecha de Inicio</label>
                         <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" value="<?= $fecha_ini; ?>">
@@ -167,7 +190,7 @@
                                                     <?php
                                                     if($role == 2 || $role == 3 || $role == 7) {
                                                         ?>
-                                                        <a target="_blank" type="button" id="btn_anular_anular<?= $al->id_venta;?>" class="btn btn-sm btn-danger btne" style="color: white" onclick="preguntar('¿Está seguro que desea anular este Comprobante?','anular_boleta_cambiarestado','Si','No',<?= $al->id_venta;?>, '1')" ><i class="fa fa-ban"></i></a>
+                                                        <a target="_blank" type="button" data-toggle="modal" data-target="#eliminar_venta" class="btn btn-sm btn-danger btne" style="color: white" onclick="llenar_id_venta(<?=$al->id_venta?>)" ><i class="fa fa-ban"></i></a>
                                                         <?php
                                                     }
                                                     ?>
@@ -253,6 +276,12 @@
         var total_rs = <?= $total_soles; ?>;
         $("#total_soles").html("<b>"+total_rs+"</b>");
     });
+
+    function llenar_id_venta(id_venta){
+        $("#id_venta").val(id_venta);
+        console.log(id_venta)
+    }
+
     function cambiarestado_enviado(id){
         var boton = "btn_actualizar_estado" + id;
         var accion = "1033";

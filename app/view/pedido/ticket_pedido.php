@@ -143,21 +143,52 @@ if($anho == '2021'){
     $icbper = 0.50;
 }
 foreach ($pedidos as $dp) {
-
-    $pre_uni = $dp->comanda_detalle_precio;
-    if ($dp->id_receta == "131"){
-        $pre_uni = $dp->comanda_detalle_precio + $icbper;
+    $valor = false;
+    if (isset($_POST['impresion_check'])){
+        if(is_array($items_seleccionados)){
+            $num_check = count($items_seleccionados);
+            $i = 0;
+            foreach ($items_seleccionados as $ch){
+                if(!$valor){
+                    if($ch == $dp->id_producto){
+                        $valor = true;
+                    }else{
+                        $valor = false;
+                    }
+                }
+            }
+        }
+    }else{
+        if(is_array($items_seleccionados)){
+            $num_check = count($items_seleccionados);
+            $i = 0;
+            foreach ($items_seleccionados as $ch){
+                if(!$valor){
+                    if($ch == $dp->id_comanda_detalle){
+                        $valor = true;
+                    }else{
+                        $valor = false;
+                    }
+                }
+            }
+        }
     }
-    $total += $dp->comanda_detalle_cantidad * $pre_uni;
-    $subtotal = $dp->comanda_detalle_cantidad * $pre_uni;
+    if($valor) {
+        $pre_uni = $dp->comanda_detalle_precio;
+        if ($dp->id_receta == "131") {
+            $pre_uni = $dp->comanda_detalle_precio + $icbper;
+        }
+        $total += $dp->comanda_detalle_cantidad * $pre_uni;
+        $subtotal = $dp->comanda_detalle_cantidad * $pre_uni;
 
-    /*Alinear a la izquierda para la cantidad y el nombre*/
-    $printer->setJustification(Printer::JUSTIFY_LEFT);
-    $printer->text($dp->producto_nombre . "\n");
+        /*Alinear a la izquierda para la cantidad y el nombre*/
+        $printer->setJustification(Printer::JUSTIFY_LEFT);
+        $printer->text($dp->producto_nombre . "\n");
 
-    /*Y a la derecha para el importe*/
-    $printer->setJustification(Printer::JUSTIFY_CENTER);
-    $printer->text($dp->comanda_detalle_cantidad . "         x         " .$pre_uni.'        S/ ' . $subtotal . "\n");
+        /*Y a la derecha para el importe*/
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->text($dp->comanda_detalle_cantidad . "         x         " . $pre_uni . '        S/ ' . $subtotal . "\n");
+    }
 }
 
 /*

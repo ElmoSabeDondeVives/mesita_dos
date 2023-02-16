@@ -272,6 +272,7 @@ class PedidoController
         try {
             $this->nav = new Navbar();
             $navs = $this->nav->listar_menus($this->encriptar->desencriptar($_SESSION['ru'],_FULL_KEY_));
+            $id_rol = $this->encriptar->desencriptar($_SESSION['ru'],_FULL_KEY_);
             $id = $_GET['id'] ?? 0;
             if($id == 0){
                 throw new Exception('ID Sin Declarar');
@@ -283,8 +284,8 @@ class PedidoController
             //Trae pedidos sin pagar a esa comanda, para evitar pedidos perdidos
             $this->pedido->actualizar_ultimos_pedidos_pendientes($ultimo_valor->id_comanda, $id);
             $this->pedido->actualizar_total_comanda($ultimo_valor->id_comanda);
-
             $ultimo_valor_ = $ultimo_valor->id_comanda;
+            $pedidos_pre_cuenta = $this->pedido->listar_detalle_x_comanda_para_precuenta($ultimo_valor_);
             $pedidos = $this->pedido->listar_pedidos_por_mesa($id,$ultimo_valor_);
             if(count($pedidos) < 1){
                 $this->pedido->actualizar_estado_mesa($id);
@@ -409,7 +410,7 @@ class PedidoController
     public function ticket_pedido(){
         try{
 
-            $id = $_POST['id'];
+            $id = $_POST['comanda_ultimo'];
             /*$dato = $this->pedido->jalar($id);
             $ultimo_valor = $this->pedido->ultimo_pedido($id);*/
             $ultimo_valor_ = $id;
@@ -421,7 +422,7 @@ class PedidoController
 
             $jalar_id_caja = $this->pedido->jalar_id_caja_aperturada($id_usuario);
             $caja_dato = $this->pedido->jalar_datos_caja_numero($jalar_id_caja->id_caja_numero);//datos de la caja para la captura del nombre de la impresora
-            
+            $items_seleccionados = $_POST['imprimir_detalle'];
             require _VIEW_PATH_ . 'pedido/ticket_pedido.php';
             $result = 1;
         }catch (Throwable $e){
@@ -1822,7 +1823,7 @@ class PedidoController
                                 $celdas=explode('-.-.',$datos_detalle_pedido);
                                 if(count($celdas)>0){
                                     $igv_porcentaje = 0.18;
-                                    for ($i=0;$i<count($celdas)-1;$i++){
+                                    for ($i=0;$i<count($celdas);$i++){
                                         $model->id_venta = $id_venta;
                                         $id_comanda_detalle = $celdas[$i];
                                         if($id_comanda_detalle != 0){
@@ -2185,16 +2186,56 @@ class PedidoController
             $ok_data = true;
             //Validacion de datos
             if ($ok_data) {
-
                 $id_comanda = $_POST['id_comanda'];
                 $id_comanda_detalle = $_POST['id_comanda_detalle'];
                 $cantidad_detalle_nuevo = $_POST['cantidad_detalle_nuevo'];
                 $total = $_POST['total'];
-                $result = $this->pedido->actualizar_comanda_detalle_cantidad($id_comanda_detalle, $cantidad_detalle_nuevo, $total);
-                if($result == 1){
-                    $jalar_valor = $this->pedido->jalar_valor($id_comanda);
-                    $nuevo_valor = $jalar_valor->total;
-                    $result = $this->pedido->actualizar_nuevo_valor($id_comanda, $nuevo_valor);
+                $sacar_canti_total_detalle = $this->pedido->sacar_canti_total_detalle($id_comanda_detalle);
+                if($cantidad_detalle_nuevo > $sacar_canti_total_detalle->comanda_detalle_cantidad){
+                    $result = $this->pedido->actualizar_comanda_detalle_cantidad($id_comanda_detalle, $cantidad_detalle_nuevo, $total);
+                    if($result == 1){
+                        $jalar_valor = $this->pedido->jalar_valor($id_comanda);
+                        $nuevo_valor = $jalar_valor->total;
+                        $result = $this->pedido->actualizar_nuevo_valor($id_comanda, $nuevo_valor);
+                    }
+                }else{
+                    if($_POST['cantidad_detalle_nuevo']>0) {
+                        $verificacion_cantidad = $sacar_canti_total_detalle->comanda_detalle_cantidad - $cantidad_detalle_nuevo;
+                        //VALIDAMOS SI CUMPLE CON LA CONDICION EN EL CASO DE LA RESTA Y CONTINUAMOS
+                        if ($cantidad_detalle_nuevo > 0 || $verificacion_cantidad > 0 ) {
+                            //LLENAREMOS UN NUEVO REGISTRO DE COMANDA ELIMINADAS CON EL MISMO ID DE LA COMANDA
+                            $model = new Pedido();
+                            $model->id_comanda = $id_comanda;
+                            $model->id_usuario = $sacar_canti_total_detalle->id_usuario;
+                            $model->id_producto = $sacar_canti_total_detalle->id_producto;
+                            $model->comanda_detalle_precio = $sacar_canti_total_detalle->comanda_detalle_precio;
+                            $model->comanda_detalle_cantidad = $verificacion_cantidad;
+                            $model->comanda_detalle_despacho = $sacar_canti_total_detalle->comanda_detalle_despacho;
+                            $model->comanda_detalle_total = $sacar_canti_total_detalle->comanda_detalle_precio * $verificacion_cantidad;
+                            $model->comanda_detalle_eliminacion = 'ELIMINADO POR EL BOTON DE DISMINUIR PEDIDO';
+                            $model->comanda_detalle_fecha_eliminacion = date('Y-m-d H:i:s');
+                            $model->comanda_detalle_fecha_registro = date('Y-m-d H:i:s');
+                            $model->comanda_detalle_estado = 0;
+                            $model->comanda_detalle_eli_id = $_POST['id_comanda_detalle'];
+                            $model->id_usuario_eli = $this->encriptar->desencriptar($_SESSION['c_u'], _FULL_KEY_);
+                            $guardar_comanda_eliminada = $this->pedido->guardar_detalle_comanda_eliminado($model);
+                            if ($guardar_comanda_eliminada == 1) {
+                                $total = $_POST['total'];
+                                $result = $this->pedido->actualizar_comanda_detalle_cantidad($id_comanda_detalle, $cantidad_detalle_nuevo, $total);
+                                if ($result == 1) {
+                                    $jalar_valor = $this->pedido->jalar_valor($id_comanda);
+                                    $nuevo_valor = $jalar_valor->total;
+                                    $result = $this->pedido->actualizar_nuevo_valor($id_comanda, $nuevo_valor);
+                                }
+                            } else {
+                                $result = 6;
+                            }
+                        } else {
+                            $result = 4;
+                        }
+                    }else{
+                        $result = 4;
+                    }
                 }
             } else {
                 //Código 6: Integridad de datos erronea
