@@ -859,7 +859,7 @@
                 valor = validar_campo_vacio('observacion_cortesia', observacion_cortesia, valor);
             }
             if (valor){
-                var cadena = "contenido=" + contenido +
+                /*var cadena = "contenido=" + contenido +
                     "&comanda_total=" + comanda_total +
                     "&id_cliente=" + id_cliente +
                     "&cliente_nombre_d=" + cliente_nombre_d +
@@ -870,7 +870,6 @@
                     "&tipo_moneda=" + tipo_moneda +
                     "&serie=" + serie +
                     "&correlativo=" + correlativo +
-                    "&tipo_moneda=" + tipo_moneda +
                     "&op_gravadas_=" + op_gravadas_ +
                     "&igv_=" + igv_ +
                     "&op_exoneradas_=" + op_exoneradas_ +
@@ -885,12 +884,39 @@
                     "&imprimir=" + imprimir +
                     "&gratis=" + gratis +
                     "&observacion_cortesia=" + observacion_cortesia +
-                    "&id_mesa=" + id_mesa;
+                    "&id_mesa=" + id_mesa;*/
 
                 $.ajax({
                     type:"POST",
                     url: urlweb + "api/Pedido/guardar_delivery_venta",
-                    data: cadena,
+                    data: {
+                        "contenido" : contenido,
+                        "comanda_total" : comanda_total,
+                        "id_cliente" : id_cliente,
+                        "cliente_nombre_d" : cliente_nombre_d ,
+                        "comanda_direccion_delivery" : comanda_direccion_delivery ,
+                        "comanda_telefono_delivery" : comanda_telefono_delivery ,
+                        "id_tipo_pago" : id_tipo_pago ,
+                        "tipo_venta" : tipo_venta ,
+                        "tipo_moneda" : tipo_moneda ,
+                        "serie" : serie ,
+                        "correlativo" : correlativo ,
+                        "op_gravadas_" : op_gravadas_ ,
+                        "igv_" : igv_ ,
+                        "op_exoneradas_" : op_exoneradas_ ,
+                        "op_inafectas_" : op_inafectas_ ,
+                        "op_gratuitas_" : op_gratuitas_ ,
+                        "icbper_" : icbper_ ,
+                        "venta_total" : venta_total ,
+                        "pago_cliente" : pago_cliente ,
+                        "vuelto_" : vuelto_ ,
+                        "contenido_tipopago" : contenido_tipopago ,
+                        "partir_pago" : partir_pago ,
+                        "imprimir" : imprimir ,
+                        "gratis" : gratis ,
+                        "observacion_cortesia" : observacion_cortesia ,
+                        "id_mesa" : id_mesa
+                    },
                     dataType: 'json',
                     success:function (r) {
                         switch (r.result.code) {
@@ -982,66 +1008,117 @@
         var numero_dni =  valor;
         var cliente_nombre = 'cliente_nombre';
 
-        $.ajax({
-            type: "POST",
-            url: urlweb + "api/Cliente/obtener_datos_x_dni",
-            data: "numero_dni="+numero_dni,
-            dataType: 'json',
-            beforeSend: function () {
-                cambiar_estado_boton(cliente_nombre, 'buscando...', true);
-            },
-            success:function (r) {
+        cambiar_estado_boton(cliente_nombre, 'buscando...', true);
+        var formData = new FormData();
+        formData.append("token", "WNxcDmZ1Nftc1QeJcSHpDgdaW5ynN9gL8t2VQvjAQGBYt4HcUlPzxvf03c4c");
+        formData.append("dni", numero_dni);
+        var request = new XMLHttpRequest();
+        request.open("POST", "https://api.migo.pe/api/v1/dni");
+        request.setRequestHeader("Accept", "application/json");
+        request.send(formData);
+        //$('.loader').show();
+        request.onload = function() {
+            var data = JSON.parse(this.response);
+            if(data.success){
+                //$('.loader').hide();
+                console.log("Datos Encontrados");
                 cambiar_estado_boton(cliente_nombre, "", false);
-                $("#cliente_nombre").val(r.result.name+ ' ' + r.result.first_name+ ' ' + r.result.last_name);
+
+                //$('#cotizacion_beneficiario').val(data.nombre);
+                $("#cliente_nombre").val(data.nombre);
+                //$('#cliente_direccion').val('');
+                //$('#cliente_condicion').val("HABIDO");
+            }else{
+                //$('.loader').hide();
+                console.log(data.message);
             }
-        });
+        };
     }
 
     function ObtenerDatosRuc(valor){
         var numero_ruc =  valor;
         var cliente_razonsocial = 'cliente_razonsocial';
 
-        $.ajax({
-            type: "POST",
-            url: urlweb + "api/Cliente/obtener_datos_x_ruc",
-            data: "numero_ruc="+numero_ruc,
-            dataType: 'json',
-            beforeSend: function () {
-                cambiar_estado_boton(cliente_razonsocial, 'buscando...', true);
-            },
-            success:function (r) {
+        cambiar_estado_boton(cliente_razonsocial, 'buscando...', true);
+        cambiar_estado_boton('cliente_direccion', 'buscando...', true);
+        var formData = new FormData();
+        formData.append("token", "WNxcDmZ1Nftc1QeJcSHpDgdaW5ynN9gL8t2VQvjAQGBYt4HcUlPzxvf03c4c");
+        formData.append("ruc", numero_ruc);
+        var request = new XMLHttpRequest();
+        request.open("POST", "https://api.migo.pe/api/v1/ruc");
+        request.setRequestHeader("Accept", "application/json");
+        request.send(formData);
+        $('.loader').show();
+        request.onload = function() {
+            var data = JSON.parse(this.response);
+            if(data.success){
+                //$('.loader').hide();
+                console.log("Datos Encontrados");
                 cambiar_estado_boton(cliente_razonsocial, "", false);
-                $("#cliente_razonsocial").val(r.result.razon_social);
+                cambiar_estado_boton('cliente_direccion', "", false);
+                //$('#cotizacion_beneficiario').val(data.nombre_o_razon_social);
+                $("#cliente_razonsocial").val(data.nombre_o_razon_social);
+                $("#cliente_direccion").val(data.direccion);
+            }else{
+                //$('.loader').hide();
+                console.log(data.message);
             }
-        });
+        };
     }
 
     function ObtenerDatosDni_e(valor){
         var numero_dni =  valor;
 
-        $.ajax({
-            type: "POST",
-            url: urlweb + "api/Cliente/obtener_datos_x_dni",
-            data: "numero_dni="+numero_dni,
-            dataType: 'json',
-            success:function (r) {
-                $("#cliente_nombre_e").val(r.result.name+ ' ' + r.result.first_name+ ' ' + r.result.last_name);
+        var formData = new FormData();
+        formData.append("token", "WNxcDmZ1Nftc1QeJcSHpDgdaW5ynN9gL8t2VQvjAQGBYt4HcUlPzxvf03c4c");
+        formData.append("dni", numero_dni);
+        var request = new XMLHttpRequest();
+        request.open("POST", "https://api.migo.pe/api/v1/dni");
+        request.setRequestHeader("Accept", "application/json");
+        request.send(formData);
+        //$('.loader').show();
+        request.onload = function() {
+            var data = JSON.parse(this.response);
+            if(data.success){
+                //$('.loader').hide();
+                console.log("Datos Encontrados");
+
+                //$('#cotizacion_beneficiario').val(data.nombre);
+                $("#cliente_nombre_e").val(data.nombre);
+                //$('#cliente_direccion').val('');
+                //$('#cliente_condicion').val("HABIDO");
+            }else{
+                //$('.loader').hide();
+                console.log(data.message);
             }
-        });
+        };
     }
 
     function ObtenerDatosRuc_e(valor){
         var numero_ruc =  valor;
+        var cliente_razonsocial = 'cliente_razonsocial';
 
-        $.ajax({
-            type: "POST",
-            url: urlweb + "api/Cliente/obtener_datos_x_ruc",
-            data: "numero_ruc="+numero_ruc,
-            dataType: 'json',
-            success:function (r) {
-                $("#cliente_razonsocial_e").val(r.result.razon_social);
+        var formData = new FormData();
+        formData.append("token", "WNxcDmZ1Nftc1QeJcSHpDgdaW5ynN9gL8t2VQvjAQGBYt4HcUlPzxvf03c4c");
+        formData.append("ruc", numero_ruc);
+        var request = new XMLHttpRequest();
+        request.open("POST", "https://api.migo.pe/api/v1/ruc");
+        request.setRequestHeader("Accept", "application/json");
+        request.send(formData);
+        $('.loader').show();
+        request.onload = function() {
+            var data = JSON.parse(this.response);
+            if(data.success){
+                //$('.loader').hide();
+                console.log("Datos Encontrados");
+                //$('#cotizacion_beneficiario').val(data.nombre_o_razon_social);
+                $("#cliente_razonsocial_e").val(data.nombre_o_razon_social);
+                $("#cliente_direccion_e").val(data.direccion);
+            }else{
+                //$('.loader').hide();
+                console.log(data.message);
             }
-        });
+        };
     }
     //FIN - AGREGAR CLIENTE
     function monto_dividido(valor){

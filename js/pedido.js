@@ -216,7 +216,6 @@ function agregar(){
     var cliente_nombre = $('#cliente_nombre').val();
     var cliente_direccion = $('#cliente_direccion').val();
     var id_mesa = $('#id_mesa').val();
-    var id_tipo_pago = $('#id_tipo_pago').val();
     var tipo_venta = $('#tipo_venta').val();
     var tipo_moneda = $('#tipo_moneda').val();
     var serie = $('#serie').val();
@@ -279,10 +278,17 @@ function agregar(){
     $('#datos_detalle_pedido').val(Object.keys(arraycheck).join("-.-."));
     console.log($('#datos_detalle_pedido').val())
     var datos_detalle_pedido = $('#datos_detalle_pedido').val();
+    //Validar que en el ruc no se guarde con un ruc diferente de 11 digito
+    if(select_tipodocumento === '01'){
+        if(cliente_numero.length !== 11){
+            respuesta('El RUC debe tener 11 dígitos', 'error');
+            valor = false
+        }
+    }
 
     //valor = false;
     if(valor){
-        var cadena = "id_cliente=" + id_cliente +
+        /*var cadena = "id_cliente=" + id_cliente +
             "&select_tipodocumento=" + select_tipodocumento +
             "&cliente_numero=" + cliente_numero +
             "&cliente_nombre=" + cliente_nombre +
@@ -309,12 +315,40 @@ function agregar(){
             "&gratis=" + gratis +
             "&observacion_cortesia=" + observacion_cortesia +
             "&por_consumo_total_valor=" + por_consumo_total_valor +
-            "&id_mesa=" + id_mesa;
+            "&id_mesa=" + id_mesa;*/
 
         $.ajax({
             type: "POST",
             url: urlweb + "api/Pedido/guardar_venta",
-            data: cadena,
+            data: {
+                "id_cliente" : id_cliente,
+                "select_tipodocumento" : select_tipodocumento ,
+                "cliente_numero" : cliente_numero ,
+                "cliente_nombre" : cliente_nombre ,
+                "cliente_direccion" : cliente_direccion ,
+                "datos_detalle_pedido" : datos_detalle_pedido ,
+                "id_tipo_pago" : id_tipo_pago ,
+                "tipo_venta" : tipo_venta ,
+                "tipo_moneda" : tipo_moneda ,
+                "serie" : serie ,
+                "correlativo" : correlativo ,
+                "op_gravadas_" : op_gravadas_ ,
+                "igv_" : igv_ ,
+                "op_exoneradas_" : op_exoneradas_ ,
+                "op_inafectas_" : op_inafectas_ ,
+                "op_gratuitas_" : op_gratuitas_ ,
+                "icbper_" : icbper_ ,
+                "venta_total" : venta_total ,
+                "pago_cliente" : pago_cliente ,
+                "vuelto_" : vuelto_ ,
+                "contenido_tipopago" : contenido_tipopago ,
+                "partir_pago" : partir_pago ,
+                "imprimir" : imprimir ,
+                "gratis" : gratis ,
+                "observacion_cortesia" : observacion_cortesia ,
+                "por_consumo_total_valor" : por_consumo_total_valor ,
+                "id_mesa" : id_mesa
+            },
             dataType: 'json',
             beforeSend: function () {
                 cambiar_estado_boton(boton, 'cobrando...', true);
@@ -357,7 +391,6 @@ function agregar_(){
     var cliente_nombre = $('#cliente_nombre').val();
     var cliente_direccion = $('#cliente_direccion').val();
     var id_mesa = $('#id_mesa').val();
-    var id_tipo_pago = $('#id_tipo_pago').val();
     var tipo_venta = $('#tipo_venta').val();
     var tipo_moneda = $('#tipo_moneda').val();
     var serie = $('#serie').val();
@@ -404,7 +437,7 @@ function agregar_(){
     valor = validar_campo_vacio('venta_total', venta_total, valor);
 
     if(valor){
-        var cadena = "id_cliente=" + id_cliente +
+        /*var cadena = "id_cliente=" + id_cliente +
             "&select_tipodocumento=" + select_tipodocumento +
             "&cliente_numero=" + cliente_numero +
             "&cliente_nombre=" + cliente_nombre +
@@ -415,7 +448,6 @@ function agregar_(){
             "&tipo_moneda=" + tipo_moneda +
             "&serie=" + serie +
             "&correlativo=" + correlativo +
-            "&tipo_moneda=" + tipo_moneda +
             "&op_gravadas_=" + op_gravadas_ +
             "&igv_=" + igv_ +
             "&op_exoneradas_=" + op_exoneradas_ +
@@ -429,11 +461,37 @@ function agregar_(){
             "&partir_pago=" + partir_pago +
             "&imprimir=" + imprimir +
             "&gratis=" + gratis +
-            "&id_mesa=" + id_mesa;
+            "&id_mesa=" + id_mesa;*/
         $.ajax({
             type: "POST",
             url: urlweb + "api/Pedido/guardar_venta",
-            data: cadena,
+            data: {
+                "id_cliente" : id_cliente,
+                "select_tipodocumento" : select_tipodocumento ,
+                "cliente_numero" : cliente_numero ,
+                "cliente_nombre" : cliente_nombre ,
+                "cliente_direccion" : cliente_direccion ,
+                "datos_detalle_pedido" : datos_detalle_pedido ,
+                "id_tipo_pago" : id_tipo_pago ,
+                "tipo_venta" : tipo_venta ,
+                "tipo_moneda" : tipo_moneda ,
+                "serie" : serie ,
+                "correlativo" : correlativo ,
+                "op_gravadas_" : op_gravadas_ ,
+                "igv_" : igv_ ,
+                "op_exoneradas_" : op_exoneradas_ ,
+                "op_inafectas_" : op_inafectas_ ,
+                "op_gratuitas_" : op_gratuitas_ ,
+                "icbper_" : icbper_ ,
+                "venta_total" : venta_total ,
+                "pago_cliente" : pago_cliente ,
+                "vuelto_" : vuelto_ ,
+                "contenido_tipopago" : contenido_tipopago ,
+                "partir_pago" : partir_pago ,
+                "imprimir" : imprimir ,
+                "gratis" : gratis ,
+                "id_mesa" : id_mesa
+            },
             dataType: 'json',
             success: function (r) {
                 switch (r.result.code) {

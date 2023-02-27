@@ -1001,38 +1001,97 @@
     }
     function consultar_documento(valor){
         var tipo_doc = $('#select_tipodocumento').val();
-        if(tipo_doc == "2"){
-            ObtenerDatosDni(valor);
-        }else if(tipo_doc == "4"){
-            ObtenerDatosRuc(valor);
-        }
+        $.ajax({
+            type: "POST",
+            url: urlweb + "api/Clientes/obtener_datos_x_dni",
+            data: "numero="+valor,
+            dataType: 'json',
+            success:function (r) {
+                if(r.result.resultado == 1){
+                    $("#cliente_nombre").val(r.result.name+ ' ' + r.result.first_name+ ' ' + r.result.last_name);
+                    $("#cliente_direccion").val(r.result.direccion);
+                }else{
+                    if(tipo_doc == "2"){
+                        ObtenerDatosDni(valor);
+                    }else if(tipo_doc == "4"){
+                        if(valor.length == 11){
+                            ObtenerDatosRuc(valor)
+                        }else{
+                            respuesta('¡El RUC tiene que teer 11 dígitos!', 'error');
+                            $("#cliente_nombre").val('');
+                            $("#cliente_direccion").val('');
+                        }
+                    }
+                }
+            }
+        });
     }
 
     function ObtenerDatosDni(valor){
         var numero_dni =  valor;
 
-        $.ajax({
-            type: "POST",
-            url: urlweb + "api/Cliente/obtener_datos_x_dni",
-            data: "numero_dni="+numero_dni,
-            dataType: 'json',
-            success:function (r) {
-                $("#cliente_nombre").val(r.result.name+ ' ' + r.result.first_name+ ' ' + r.result.last_name);
+        cambiar_estado_boton('cliente_nombre', 'buscando...', true);
+        var formData = new FormData();
+        formData.append("token", "WNxcDmZ1Nftc1QeJcSHpDgdaW5ynN9gL8t2VQvjAQGBYt4HcUlPzxvf03c4c");
+        formData.append("dni", numero_dni);
+        var request = new XMLHttpRequest();
+        request.open("POST", "https://api.migo.pe/api/v1/dni");
+        request.setRequestHeader("Accept", "application/json");
+        request.send(formData);
+        //$('.loader').show();
+        request.onload = function() {
+            var data = JSON.parse(this.response);
+            if(data.success){
+                //$('.loader').hide();
+                console.log("Datos Encontrados");
+                cambiar_estado_boton('cliente_nombre', "", false);
+                //$('#cotizacion_beneficiario').val(data.nombre);
+                $("#cliente_nombre").val(data.nombre);
+                //$('#cliente_direccion').val('');
+                //$('#cliente_condicion').val("HABIDO");
+            }else{
+                //$('.loader').hide();
+                console.log(data.message);
             }
-        });
+        };
     }
     function ObtenerDatosRuc(valor){
         var numero_ruc =  valor;
 
-        $.ajax({
+        cambiar_estado_boton('cliente_nombre', 'buscando...', true);
+        cambiar_estado_boton('cliente_direccion', 'buscando...', true);
+        var formData = new FormData();
+        formData.append("token", "WNxcDmZ1Nftc1QeJcSHpDgdaW5ynN9gL8t2VQvjAQGBYt4HcUlPzxvf03c4c");
+        formData.append("ruc", numero_ruc);
+        var request = new XMLHttpRequest();
+        request.open("POST", "https://api.migo.pe/api/v1/ruc");
+        request.setRequestHeader("Accept", "application/json");
+        request.send(formData);
+        $('.loader').show();
+        request.onload = function() {
+            var data = JSON.parse(this.response);
+            if(data.success){
+                //$('.loader').hide();
+                console.log("Datos Encontrados");
+                cambiar_estado_boton('cliente_nombre', "", false);
+                cambiar_estado_boton('cliente_direccion', "", false);
+                //$('#cotizacion_beneficiario').val(data.nombre_o_razon_social);
+                $("#cliente_nombre").val(data.nombre_o_razon_social);
+                $("#cliente_direccion").val(data.direccion);
+            }else{
+                //$('.loader').hide();
+                console.log(data.message);
+            }
+        };
+        /*$.ajax({
             type: "POST",
             url: urlweb + "api/Cliente/obtener_datos_x_ruc",
             data: "numero_ruc="+numero_ruc,
             dataType: 'json',
             success:function (r) {
-                $("#cliente_nombre").val(r.result.razon_social);
+                $("#client_name").val(r.result.razon_social);
             }
-        });
+        });*/
     }
     //INICIO - AGREGAR NUEVOS PEDIDOS
     function add_pedido_nuevo(){

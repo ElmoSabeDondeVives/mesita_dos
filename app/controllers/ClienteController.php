@@ -246,41 +246,37 @@ class ClienteController
         $message = 'OK';
         try {
             $ok_data = true;
-            $dni = $_POST['numero_dni'];
-            /*$ws = "https://dni.optimizeperu.com/api/persons/$dni?format=json";
+            $buscar_cliente = $this->cliente->listar_cliente_x_numero($_POST['numero']);
+            if(!empty($buscar_cliente)){
+                $dni	= $buscar_cliente->cliente_numero;
+                if($buscar_cliente->id_tipodocumento == 4){
+                    $nombre = $buscar_cliente->cliente_razonsocial;
+                }else{
+                    $nombre = $buscar_cliente->cliente_nombre;
+                }
+                $paterno = "";
+                $materno = "";
+                $direccion = $buscar_cliente->cliente_direccion;
+                $result = 1;
+            } else {
 
-            $header = array();
+                $result = 2;
 
-            $ch = curl_init();
-            curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,1);
-            curl_setopt($ch,CURLOPT_URL,$ws);
-            curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-            curl_setopt($ch,CURLOPT_HTTPAUTH,CURLAUTH_ANY);
-            curl_setopt($ch,CURLOPT_TIMEOUT,30);
-            curl_setopt($ch,CURLOPT_HTTPHEADER,$header);
-            //para ejecutar los procesos de forma local en windows
-            //enlace de descarga del cacert.pem https://curl.haxx.se/docs/caextract.html
-            curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__)."/../models/cacert.pem");
-
-            $datos = curl_exec($ch);
-            curl_close($ch);
-            $datos = json_decode($datos);*/
-            $result = json_decode(file_get_contents('https://consultaruc.win/api/dni/'.$dni),true);
-
-
-            //var_dump($result);
-
-            $dni	= $result['result']['DNI'];
-            $nombre = $result['result']['Nombre'];
-            $paterno = $result['result']['Paterno'];
-            $materno = $result['result']['Materno'];
-            //echo $result['result']['estado'];
+                $dni	= '';
+                $nombre = '';
+                $paterno = '';
+                $materno = '';
+                $direccion = "";
+                //echo $result['result']['estado'];
+            }
 
             $datos = array(
                 'dni' => $dni,
                 'name' => $nombre,
                 'first_name' => $paterno,
                 'last_name' => $materno,
+                'direccion' => $direccion,
+                'resultado' => $result,
             );
 
             //$datos = json_decode($datos);
