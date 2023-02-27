@@ -2744,5 +2744,60 @@ class PedidoController
         echo json_encode(array("result" => array("code" => $result, "message" => $message, "datos"=>$listar_familias)));
     }
 
+    public function transferir_mesa_x_pedido(){
+        //Código de error general
+        $result = 2;
+        //Mensaje a devolver en caso de hacer consulta por app
+        $message = 'OK';
+        try{
+            $ok_data = true;
+            $ok_data = $this->validar->validar_parametro('id_mesa_transp', 'POST',true,$ok_data,11,'numero',0);
+            $ok_data = $this->validar->validar_parametro('id_comanda_detalle_transferir', 'POST',true,$ok_data,11,'numero',0);
+            if($ok_data){
+                $id_mesa_transp = $_POST['id_mesa_transp'];
+                $id_comanda_detalle_transferir = $_POST['id_comanda_detalle_transferir'];
+                $id_mesa = $_POST['id_mesa'];
+
+                $extraer_id_comanda = $this->pedido->extraer_id_comanda_destino($id_mesa_transp);
+                $extraer_id_comanda_resta = $this->pedido->extraer_id_comanda_destino($id_mesa);
+                $result = $this->pedido->actualizar_id_comanda_en_detalle($extraer_id_comanda->id_comanda,$id_comanda_detalle_transferir);
+
+                if($result==1){
+                    $jalar_pedidos_mesa_actual = $this->pedido->jalar_pedidos_mesa_actual($extraer_id_comanda->id_comanda);
+                    $total_comanda = 0;
+                    foreach ($jalar_pedidos_mesa_actual as $jp) {
+                        $total_comanda = $total_comanda + $jp->comanda_detalle_total;
+                    }
+                    $result = $this->pedido->sumar_valor_comandas_($total_comanda,$extraer_id_comanda->id_comanda);
+                    if($result==1){
+                        $jalar_pedidos_mesa_actual = $this->pedido->jalar_pedidos_mesa_actual($extraer_id_comanda_resta->id_comanda);
+                        $total_comanda = 0;
+                        foreach ($jalar_pedidos_mesa_actual as $jp) {
+                            $total_comanda = $total_comanda + $jp->comanda_detalle_total;
+                        }
+                        $result = $this->pedido->sumar_valor_comandas_($total_comanda,$extraer_id_comanda_resta->id_comanda);
+                        $datos_comanda_detalle = $this->pedido->listar_detalle_x_comanda($extraer_id_comanda_resta->id_comanda);
+                        $mesa_estado = 0; //la mesa no cambia de estado
+                        if(empty($datos_comanda_detalle)){
+                            $result = $this->pedido->actualizar_estado_mesa($id_mesa);
+                            if($result == 1){
+                                $mesa_estado = 1; //la mesa se actualiza a sucia y sale del detalle para que cargue en asignar
+                            }
+                        }
+                    }
+                }
+            }else {
+                //Código 6: Integridad de datos erronea
+                $result = 6;
+                $message = "Integridad de datos fallida. Algún parametro se está enviando mal";
+            }
+        }catch (Exception $e) {
+            $this->log->insertar($e->getMessage(), get_class($this) . '|' . __FUNCTION__);
+            $message = $e->getMessage();
+        }
+        //Retornamos el json
+        echo json_encode(array("result" => array("code" => $result, "message" => $message, "estado_mesa"=>$mesa_estado)));
+    }
+
 
 }

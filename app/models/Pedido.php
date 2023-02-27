@@ -2052,4 +2052,31 @@ class Pedido
         return $result;
     }
 
+    public function actualizar_id_comanda_en_detalle($id_comanda,$id_detalle_comanda){
+        try{
+            $sql = 'update comanda_detalle set id_comanda = ? where id_comanda_detalle = ?';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$id_comanda,$id_detalle_comanda]);
+            return 1;
+        }  catch (Exception $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            return 2;
+        }
+    }
+
+    public function sumar_valor_comandas_($total_comanda,$id_comanda_nuevo){
+        try{
+            $sql = 'update comanda set comanda_total =  ? where id_comanda = ?';
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute([$total_comanda,$id_comanda_nuevo]);
+            return 1;
+        } catch (Throwable $e){
+            $this->log->insertar($e->getMessage(), get_class($this).'|'.__FUNCTION__);
+            return 2;
+        }
+    }
+
+
+
+
 }
