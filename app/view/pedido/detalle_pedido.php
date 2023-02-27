@@ -260,6 +260,45 @@
     </div>
 </div>
 
+<div class="modal fade" id="cambiar_pedido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 35% !important;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Transferir Pedido por Pedido</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <input type="hidden" id="id_comanda_detalle_transferir" name="id_comanda_detalle_transferir">
+                                <label class="col-form-label">Elegir Mesa</label>
+                                <select class="form-control" id="id_mesa_transp" name="id_mesa_transp">
+                                    <option value="">Seleccionar Mesa</option>
+                                    <?php
+                                    foreach ($mesas_pn as $m){
+                                        ?>
+                                        <option value="<?php echo $m->id_mesa;?>"><?php echo $m->mesa_nombre;?></option>
+                                        <?php
+                                    }
+                                    ?>
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="preguntar('¿Está seguro que desea mover este pedido?','transferir_mesa_x_pedido','Si','No')" id="btn-cambiar_mesa_pedido"><i class="fa fa-save fa-sm text-white-50"></i> Transferir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="eliminar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 60% !important;">
         <div class="modal-content">
@@ -796,7 +835,8 @@
                                                 if($p->comanda_detalle_estado_venta == 0){
                                                 ?>
                                                 <a class="btn btn-danger" type="button" id="btn-eliminar_pedido" onclick="cargar_valores(<?= $p->id_comanda_detalle;?>,'<?= $p->id_comanda?>','<?= $p->id_mesa?>')" data-toggle="modal" data-target="#eliminar" title='Eliminar'><i class='fa fa-times text-white eliminar margen'></i></a>
-                                                <?php
+                                                <a class="btn btn-primary" type="button" id="btn-cambiar_pedido" onclick="cargar_transferencia(<?= $p->id_comanda_detalle;?>)" data-toggle="modal" data-target="#cambiar_pedido" title='Transferir'><i class='fa fa-refresh text-white eliminar margen'></i></a>
+                                                    <?php
                                                 }
                                                 else{
                                                 ?>
@@ -945,6 +985,10 @@
         $("#id_comanda_detalle_eliminar").val(id_comanda_detalle);
         $("#id_comanda_eliminar").val(id_comanda);
         $("#id_mesa_eliminar").val(id_mesa);
+    }
+
+    function cargar_transferencia(id_comanda_detalle){
+        $("#id_comanda_detalle_transferir").val(id_comanda_detalle);
     }
 
     function ticket_pedido(id){

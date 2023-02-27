@@ -951,6 +951,47 @@ function mostrar_mesa(id_mesa){
         });
     }
 }
+function transferir_mesa_x_pedido(){
+    var valor = true;
+    var id_mesa_transp = $('#id_mesa_transp').val();
+    var id_comanda_detalle_transferir = $('#id_comanda_detalle_transferir').val();
+    var id_mesa = $('#id_mesa').val();
+
+    if(valor) {
+        var cadena = "id_mesa_transp=" + id_mesa_transp +
+            "&id_comanda_detalle_transferir=" + id_comanda_detalle_transferir +
+            "&id_mesa=" + id_mesa;
+        $.ajax({
+            type: "POST",
+            url: urlweb + "api/Pedido/transferir_mesa_x_pedido",
+            data: cadena,
+            dataType: 'json',
+            success: function (r) {
+                switch (r.result.code) {
+                    case 1:
+                        if(r.result.estado_mesa == 1){
+                            respuesta('¡Cambiado correctamente!', 'success');
+                            setTimeout(function () {
+                                location.href = urlweb +  'Pedido/gestionar';
+                            }, 800);
+                        }else{
+                            respuesta('¡Cambiado correctamente!', 'success');
+                            setTimeout(function () {
+                                location.reload();
+                            }, 800);
+                        }
+                        break;
+                    case 2:
+                        respuesta('Error al transferir pedido. Llame a BufeoTec Company', 'error');
+                        break;
+                    default:
+                        respuesta('¡Algo catastrofico ha ocurrido!', 'error');
+                        break;
+                }
+            }
+        });
+    }
+}
 
 function cambiar_mesa(){
     var valor = true;
