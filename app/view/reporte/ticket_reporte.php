@@ -13,7 +13,7 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 
 
-$nombre_impresora = "Ticketera2";
+$nombre_impresora = "Ticketera";
 
 
 $connector = new WindowsPrintConnector($nombre_impresora);

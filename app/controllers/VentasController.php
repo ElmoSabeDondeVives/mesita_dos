@@ -1057,6 +1057,74 @@ class VentasController
         }
     }
 
+    public function imprimir_ticket_pdf_A4(){
+        try{
+            //include('libs/ApiFacturacion/phpqrcode/qrlib.php');
+            $this->nav = new Navbar();
+            $navs = $this->nav->listar_menus($this->encriptar->desencriptar($_SESSION['ru'], _FULL_KEY_));
+            $id = $_GET['id'] ?? 0;
+            if ($id == 0) {
+                throw new Exception('ID Sin Declarar');
+            }
+            $dato_venta = $this->ventas->listar_venta_x_id_pdf($id);
+            $detalle_venta = $this->ventas->listar_venta_detalle_x_id_venta_pdf($id);
+            $fecha_hoy = date('d-m-Y H:i:s');
+
+            //codigo QR
+            $tiempo_fecha = explode(" ", $dato_venta->pago_fecha_emitida);
+            //$ruta = _SERVER_ .'media/codigo_qr/'.$dato_venta->empresa_ruc. '-' .$dato_venta->venta_tipo. '-' .$dato_venta->venta_serie. '-' .$dato_venta->venta_correlativo.'.png';
+            $ruta_qr = "libs/ApiFacturacion/imagenqr/$dato_venta->empresa_ruc. '-' .$dato_venta->venta_tipo. '-' .$dato_venta->venta_serie. '-' .$dato_venta->venta_correlativo.png";
+
+            if (!file_exists($ruta_qr)) {
+                //INICIO - CREACION QR
+                include('libs/ApiFacturacion/phpqrcode/qrlib.php');
+                $nombre_qr = $dato_venta->empresa_ruc. '-' .$dato_venta->venta_tipo. '-' .$dato_venta->venta_serie. '-' .$dato_venta->venta_correlativo;
+                $contenido_qr = $dato_venta->empresa_ruc.'|'.$dato_venta->venta_tipo.'|'.$dato_venta->venta_serie.'|'.$dato_venta->venta_correlativo. '|'.
+                    $dato_venta->venta_totaligv.'|'.$dato_venta->venta_total.'|'.date('Y-m-d', strtotime($dato_venta->venta_fecha)).'|'.
+                    $dato_venta->tipodocumento_codigo.'|'.$dato_venta->cliente_numero;
+                $ruta = 'libs/ApiFacturacion/imagenqr/';
+                $ruta_qr = $ruta.$nombre_qr.'.png';
+                QRcode::png($contenido_qr, $ruta_qr, 'H - mejor', '3');
+                //FIN - CREACION QR
+            }
+
+            if ($dato_venta->venta_tipo == "03") {
+                $tipo_comprobante = "BOLETA DE VENTA ELECTRONICA";
+                $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
+                $documento = "DNI:                        $dato_venta->cliente_numero";
+            } else if ($dato_venta->venta_tipo == "01") {
+                $tipo_comprobante = "FACTURA DE VENTA ELECTRONICA";
+                $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
+                $documento = "RUC:                      $dato_venta->cliente_numero";
+            } else if ($dato_venta->venta_tipo == "07") {
+                $tipo_comprobante = "NOTA DE CRÉDITO DE VENTA ELECTRONICA";
+                $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
+                $documento = "DOCUMENTO: $dato_venta->cliente_numero";
+            } else if($dato_venta->venta_tipo == "08") {
+                $tipo_comprobante = "NOTA DE DÉBITO DE VENTA ELECTRONICA";
+                $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
+                $documento = "DOCUMENTO: $dato_venta->cliente_numero";
+            }else if($dato_venta->venta_tipo == "20") {
+                $tipo_comprobante = "NOTA DE VENTA";
+                $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
+                $documento = "DOCUMENTO: $dato_venta->cliente_numero";
+
+            }
+            //$fecha_comprobante = $tiempo_fecha[0];
+            //$hora_comprobante = $tiempo_fecha[1];
+            $importe_letra = $this->numLetra->num2letras(intval($dato_venta->venta_total));
+            $arrayImporte = explode(".", $dato_venta->venta_total);
+            $montoLetras = $importe_letra . ' con ' . $arrayImporte[1] . '/100 ' . $dato_venta->moneda;
+            //$qrcode = $dato_venta->pago_seriecorrelativo . '-' . $tiempo_fecha[0] . '.png';
+            $dato_impresion = 'DATOS DE IMPRESIÓN:';
+            require _VIEW_PATH_ . 'ventas/imprimir_ticket_pdf_A4.php';
+        } catch (Throwable $e) {
+            //En caso de errores insertamos el error generado y redireccionamos a la vista de inicio
+            $this->log->insertar($e->getMessage(), get_class($this) . '|' . __FUNCTION__);
+            echo "<script language=\"javascript\">alert(\"Error Al Mostrar Contenido. Redireccionando Al Inicio\");</script>";
+            echo "<script language=\"javascript\">window.location.href=\"" . _SERVER_ . "\";</script>";
+        }
+    }
 
     public function comunicacion_baja(){
         //Código de error general
