@@ -54,7 +54,7 @@ $printer->setFont(Printer::FONT_A);
 $printer->setTextSize(1,1);
 //$printer->text("$dato_pago->empresa_nombre" . "\n");
 $printer->text("RUC Nº $empresa->empresa_ruc" . "\n");
-$printer->text("CAL. BORJA NRO . 641" . "\n");
+$printer->text("CAL. BORJA NRO . 906" . "\n");
 //$printer->text("CAL. YAVARI NRO. 1360" . "\n");
 $printer->text("LORETO - MAYNAS - PUNCHANA" . "\n");
 if($empresa->empresa_telefono1 != NULL){
@@ -118,6 +118,10 @@ foreach ($detalle_venta as $dp) {
 $printer->text("------------------------------------------------");
 /*Alinear a la izquierda para la cantidad y el nombre*/
 $printer->setJustification(Printer::JUSTIFY_LEFT);
+if($venta->venta_totaldescuento > 0){
+    $printer->text("              DESCUENTO  % ". $venta->venta_descuento_global ." = S/. ".$venta->venta_totaldescuento ."\n");
+
+}
 if($venta->venta_totalgratuita > 0){
     $printer->text("                           OP. GRAT: S/ ". $venta->venta_totalgratuita ."\n");
 
