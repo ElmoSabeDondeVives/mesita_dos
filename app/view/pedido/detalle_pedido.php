@@ -401,6 +401,7 @@
                                         <div class="col-lg-12">
                                             <div class="row">
                                                 <div class="col-lg-8 col-sm-8 col-md-8 col-xs-8" style="text-align: right">
+                                                    <label for="">DESCUENTO %</label><br>
                                                     <label for="" style="font-size: 14px;">OP. GRAVADAS</label><br>
                                                     <label for="" style="font-size: 14px;">IGV(18%)</label><br>
                                                     <label for="" style="font-size: 14px;">OP. EXONERADAS</label><br>
@@ -408,35 +409,39 @@
                                                     <label for="" style="font-size: 14px;">OP. GRATUITAS</label><br>
                                                     <label for="" style="font-size: 14px;">ICBPER</label><br>
                                                     <label for="" style="font-size: 17px;"><strong>TOTAL</strong></label><br>
-                                                    <label for="" style="font-size: 14px;">VUELTO</label>
+                                                    <label for="" style="font-size: 14px;">VUELTO</label><br>
+                                                    <label for="">DESCUENTO TOTAL</label>
                                                 </div>
                                                 <div class="col-lg-2 col-sm-2 col-md-2 col-xs-2" style="text-align: right">
+                                                    <label for=""><input style="border: 1px solid black;width: 70%" id="descuento_fizca" type="text" onkeyup="validar_numeros_decimales_dos(this.id);calcular_descuento_fizca(this.value)"></label>
+                                                    <input type="hidden" id="descuento_f" name="descuento_f">
                                                     <label for="" style="font-size: 14px;"><span id="op_gravadas">0.00</span></label><br>
                                                     <input type="hidden" id="op_gravadas_" name="op_gravadas_">
+                                                    <input type="hidden" id="op_gravadas__" name="op_gravadas__">
                                                     <label for="" style="font-size: 14px;"><span id="igv">0.00</span></label><br>
                                                     <input type="hidden" id="igv_" name="igv_">
+                                                    <input type="hidden" id="igv__" name="igv__">
                                                     <label for="" style="font-size: 14px;"><span id="op_exoneradas">0.00</span></label><br>
                                                     <input type="hidden" id="op_exoneradas_" name="op_exoneradas_">
+                                                    <input type="hidden" id="op_exoneradas__" name="op_exoneradas__">
                                                     <label for="" style="font-size: 14px;"><span id="op_inafectas">0.00</span></label><br>
                                                     <input type="hidden" id="op_inafectas_" name="op_inafectas_">
+                                                    <input type="hidden" id="op_inafectas__" name="op_inafectas__">
                                                     <label for="" style="font-size: 14px;"><span id="op_gratuitas">0.00</span></label><br>
                                                     <input type="hidden" id="op_gratuitas_" name="op_gratuitas_">
+                                                    <input type="hidden" id="op_gratuitas__" name="op_gratuitas__">
                                                     <label for="" style="font-size: 14px;"><span id="icbper">0.00</span></label><br>
                                                     <input type="hidden" id="icbper_" name="icbper_">
+                                                    <input type="hidden" id="icbper__" name="icbper__">
                                                     <label for="" style="font-size: 17px;"><span id="venta_total">0.00</span></label><br>
                                                     <input type="hidden" id="venta_total_" name="venta_total_">
-                                                    <label for="" style="font-size: 14px;"><span id="vuelto">0.00</span></label>
+                                                    <input type="hidden" id="venta_total__" name="venta_total__">
+                                                    <label for="" style="font-size: 14px;"><span id="vuelto">0.00</span></label><br>
                                                     <input type="hidden" id="vuelto_" name="vuelto_">
+                                                    <label for=""><span id="des_global">0.00</span></label>
+                                                    <input type="hidden" id="des_global_" name="des_global_">
                                                 </div>
                                             </div>
-
-                                            <!--<div class="form-group">
-                                                <label for="">Monto Total</label>
-                                                <input class="form-control" type="text" id="venta_total" name="venta_total" readonly>
-                                                <label for=""><span id="igv_total">0.00</span></label>
-
-                                            </div>-->
-
                                         </div>
                                     </div>
                                 </div>
@@ -1280,5 +1285,70 @@
         }
         ?>
     }
+
+    //FUNCIONES PARA EL DESCUENTO
+    function calcular_descuento_fizca(valor){
+        if(valor >= 99.9){
+            $("#contrita").show();
+        }else{
+            $("#contrita").hide();
+
+        }
+        if(valor > 99.90){
+            valor = 99.90;
+            $("#descuento_fizca").val(valor);
+            $("#descuento_f").val(valor);
+        }
+
+        var desc_porcentaje = valor / 100 * 1;
+        var des_item_ = $('#des_item').val() * 1;
+        var montototal = $('#venta_total__').val() * 1;
+
+        var exonerada = $('#op_exoneradas__').val();
+        var inafecta = $('#op_inafectas__').val();
+        var gravada = $('#op_gravadas__').val();
+        //var montototal = $('#montototal').val();
+        var desc_total_ = montototal * desc_porcentaje;
+        var desc_total = desc_total_.toFixed(2);
+
+        $('#des_global_').val(desc_total);
+        $('#des_global').html(desc_total);
+
+        var total_descuento = desc_total_ + des_item_;
+        $('#des_total_').html(total_descuento.toFixed(2));
+        $('#des_total').val(total_descuento.toFixed(2));
+        $('#descuento_global').val(desc_porcentaje);
+        var total_exonerado = 0;
+        var total_gravada = 0;
+        var igv = 0;
+        var total_ = 0;
+        if(exonerada > 0){
+            var desc_exonerado_ = exonerada * desc_porcentaje * 1;
+            var desc_exonerado = exonerada - desc_exonerado_;
+            total_exonerado = desc_exonerado.toFixed(2);
+            $('#op_exoneradas').html(total_exonerado);
+            $('#op_exoneradas_').val(total_exonerado);
+        }
+        if(gravada > 0){
+            var desc_gravada_ = gravada * desc_porcentaje * 1;
+            var desc_gravada = gravada - desc_gravada_;
+            total_gravada = desc_gravada.toFixed(2);
+            var igv_ = desc_gravada * 0.18 ;
+            igv = igv_.toFixed(2) * 1;
+            $('#op_gravadas_').html(total_gravada);
+            $('#op_gravadas').val(total_gravada);
+            $('#igv').html(igv);
+            $('#igv_').val(igv);
+        }
+        var exo = $('#op_exoneradas_').val() * 1;
+        var gra = $('#op_gravadas_').val() * 1;
+        var ig = $('#igv_').val() * 1;
+        total_ = (exo + gra + ig) * 1;
+        var total = total_.toFixed(2);
+        var total = total_.toFixed(2);
+        $('#venta_total').html(total);
+        $('#venta_total_').val(total);
+    }
+
 
 </script>

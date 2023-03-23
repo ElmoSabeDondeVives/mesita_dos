@@ -1202,10 +1202,10 @@ class Pedido
     public function guardar_venta($model){
         try {
             $sql = 'insert into ventas (id_caja_numero, id_usuario,id_mesa, id_cliente, id_tipo_pago, id_moneda, venta_direccion, venta_tipo, venta_serie,
-                    venta_correlativo, venta_totalgratuita, venta_totalexonerada, venta_totalinafecta, venta_totalgravada, venta_totaligv, 
+                    venta_correlativo,venta_descuento_global, venta_totalgratuita, venta_totalexonerada, venta_totalinafecta, venta_totalgravada, venta_totaligv, venta_totaldescuento,
                     venta_icbper ,venta_total, venta_pago_cliente, venta_vuelto, venta_fecha, tipo_documento_modificar, 
                     correlativo_modificar, venta_codigo_motivo_nota, venta_fecha_de_baja) 
-                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([
                 $model->id_caja_numero,
@@ -1218,11 +1218,13 @@ class Pedido
                 $model->venta_tipo,
                 $model->venta_serie,
                 $model->venta_correlativo,
+                $model->venta_descuento_global,
                 $model->venta_totalgratuita,
                 $model->venta_totalexonerada,
                 $model->venta_totalinafecta,
                 $model->venta_totalgravada,
                 $model->venta_totaligv,
+                $model->venta_totaldescuento,
                 $model->venta_icbper,
                 $model->venta_total,
                 $model->pago_cliente,

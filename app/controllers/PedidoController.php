@@ -1320,6 +1320,17 @@ class PedidoController
                             $correlativo = $serie_->correlativo + 1;
                         }
                         $modelv->venta_correlativo = $correlativo;
+                        if(empty($_POST['descuento_fizca'])){
+                            $model->venta_descuento_global  = 0;
+                        }else{
+                            $model->venta_descuento_global  = $_POST['descuento_fizca'];
+                        }
+                        if(empty($_POST['des_global_'])){
+                            $model->venta_totaldescuento = 0;
+                        }else{
+                            $model->venta_totaldescuento = $_POST['des_global_'];
+                        }
+
                         $modelv->venta_tipo_moneda = $_POST['tipo_moneda'];
                         $modelv->id_tipo_pago = $tipo_pago;
                         //AL HACER LA VENTA AUTOMATICAMENTE SE LLENA EL CORRELATIVO DE LA VENTA
@@ -1771,6 +1782,17 @@ class PedidoController
                             $correlativo = $serie_->correlativo + 1;
                         }
                         $model->venta_correlativo = $correlativo;
+                        if(empty($_POST['descuento_fizca'])){
+                            $model->venta_descuento_global  = 0;
+                        }else{
+                            $model->venta_descuento_global  = $_POST['descuento_fizca'];
+                        }
+                        if(empty($_POST['des_global_'])){
+                            $model->venta_totaldescuento = 0;
+                        }else{
+                            $model->venta_totaldescuento = $_POST['des_global_'];
+                        }
+
                         $model->venta_tipo_moneda = $_POST['tipo_moneda'];
                         $model->id_tipo_pago = $tipo_pago;
                         //$correlativo = $this->pedido->listar_correlativos();
@@ -1829,9 +1851,18 @@ class PedidoController
                                         if($id_comanda_detalle != 0){
                                             $jalar_datos = $this->pedido->jalar_datos($id_comanda_detalle);
                                             $cantidad = $jalar_datos->comanda_detalle_cantidad;
-                                            $precio_unitario = $jalar_datos->comanda_detalle_precio;
                                             $codigo_afectacion = $jalar_datos->producto_precio_codigoafectacion;
                                             $igv_detalle = 0;
+                                            if(empty($_POST['descuento_fizca'])){
+                                                $calculo_porcentaje = 1;
+                                                $precio_unitario = $jalar_datos->comanda_detalle_precio;
+                                            }else{
+                                                $calculo_porcentaje = $_POST['descuento_fizca'] / 100;
+                                                $multi = $jalar_datos->comanda_detalle_precio * $calculo_porcentaje;
+                                                $valor_capturado = $jalar_datos->comanda_detalle_precio - $multi;
+                                                $precio_unitario = $valor_capturado;
+                                            }
+
                                             $factor_porcentaje = 1;
                                             if($codigo_afectacion == 10){
                                                 $igv_detalle = $precio_unitario * $cantidad * $igv_porcentaje;

@@ -136,7 +136,7 @@ function calcular_total(id){
             }
             if(id_receta == "131"){
                 icbper = icbper * cantidad;
-                total_icbper = icbper;
+                total_icbper = total_icbper + icbper;
                 total_pedido_detalle = total_pedido_detalle + icbper;
             }
 
@@ -172,19 +172,25 @@ function calcular_total(id){
 
     $('#op_gravadas').html(gravada.toFixed(2));
     $('#op_gravadas_').val(gravada.toFixed(2));
+    $('#op_gravadas__').val(gravada.toFixed(2));
     $('#igv').html(igv.toFixed(2));
     $('#igv_').val(igv.toFixed(2));
+    $('#igv__').val(igv.toFixed(2));
     $('#op_exoneradas').html(exonerado.toFixed(2));
     $('#op_exoneradas_').val(exonerado.toFixed(2));
+    $('#op_exoneradas__').val(exonerado.toFixed(2));
     $('#op_inafectas').html(inafecto.toFixed(2));
     $('#op_inafectas_').val(inafecto.toFixed(2));
+    $('#op_inafectas__').val(inafecto.toFixed(2));
     $('#op_gratuitas').html(gratuito.toFixed(2));
     $('#op_gratuitas_').val(gratuito.toFixed(2));
+    $('#op_gratuitas__').val(gratuito.toFixed(2));
     $('#icbper').html(total_icbper.toFixed(2));
     $('#icbper_').val(total_icbper.toFixed(2));
+    $('#icbper__').val(total_icbper.toFixed(2));
     $('#venta_total').html(total_pedido_detalle.toFixed(2));
     $('#venta_total_').val(total_pedido_detalle.toFixed(2));
-
+    $('#venta_total__').val(total_pedido_detalle.toFixed(2));
    // var calcular_igv = tot * 0.18 ;
     //igv = calcular_igv;
     //$('#igv_total').html(igv);
@@ -227,6 +233,10 @@ function agregar(){
     var op_gratuitas_ = $('#op_gratuitas_').val();
     var icbper_ = $('#icbper_').val();
     var venta_total = $('#venta_total_').val();
+    //PARA EL DESCUNTO
+    var des_global_ = $('#des_global_').val();
+    var descuento_fizca = $('#descuento_fizca').val();
+    //FIN DEL DESCUENTO
     var pago_cliente = $('#pago_cliente').val();
     var vuelto_ = $('#vuelto_').val();
     var imprimir = $('#imprimir').val();
@@ -285,7 +295,6 @@ function agregar(){
             valor = false
         }
     }
-
     //valor = false;
     if(valor){
         /*var cadena = "id_cliente=" + id_cliente +
@@ -316,7 +325,6 @@ function agregar(){
             "&observacion_cortesia=" + observacion_cortesia +
             "&por_consumo_total_valor=" + por_consumo_total_valor +
             "&id_mesa=" + id_mesa;*/
-
         $.ajax({
             type: "POST",
             url: urlweb + "api/Pedido/guardar_venta",
@@ -341,6 +349,8 @@ function agregar(){
                 "venta_total" : venta_total ,
                 "pago_cliente" : pago_cliente ,
                 "vuelto_" : vuelto_ ,
+                "des_global_" : des_global_ ,
+                "descuento_fizca" : descuento_fizca ,
                 "contenido_tipopago" : contenido_tipopago ,
                 "partir_pago" : partir_pago ,
                 "imprimir" : imprimir ,
