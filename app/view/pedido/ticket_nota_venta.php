@@ -56,7 +56,7 @@ $printer->setTextSize(1,1);
 $printer->text("RUC Nº $empresa->empresa_ruc" . "\n");
 $printer->text("$empresa->empresa_domiciliofiscal" . "\n");
 //$printer->text("CAL. YAVARI NRO. 1360" . "\n");
-$printer->text("LORETO - MAYNAS - SAN JUAN BAUTISTA" . "\n");
+$printer->text("LORETO - MAYNAS - PUNCHANA" . "\n");
 if($empresa->empresa_telefono1 != NULL){
     $printer->text("Tel. $empresa->empresa_telefono1" . "\n");
 }

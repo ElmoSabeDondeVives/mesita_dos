@@ -24,9 +24,9 @@ class ApiFacturacion
         $result = 2; //result 2 es error y 1 es ok
 
         //$ruta_firma = $rutacertificado. 'certificado_prueba.pfx'; //ruta del archivo del certicado para firmar
-        $ruta_firma = $rutacertificado. 'certificado_20567274421.pfx';
+        $ruta_firma = $rutacertificado. 'certificado_20608482050.pfx';
         //$pass_firma = '12345678'; //contraseña del certificado
-        $pass_firma = 'cOnch1t4Buf30';
+        $pass_firma = 'lAuLtImACoNcHiTa01';
 
         $resp = $objfirma->signature_xml($flg_firma, $ruta, $ruta_firma, $pass_firma);
         //print_r($resp);
@@ -202,9 +202,9 @@ class ApiFacturacion
         $ruta = $ruta_archivo_xml.$nombre.'.XML';
 
         //$ruta_firma = $rutacertificado. 'certificado_prueba.pfx'; //ruta del archivo del certicado para firmar
-        $ruta_firma = $rutacertificado. 'certificado_20567274421.pfx';
+        $ruta_firma = $rutacertificado. 'certificado_20608482050.pfx';
         //$pass_firma = '12345678'; //contraseña del certificado
-        $pass_firma = 'cOnch1t4Buf30';
+        $pass_firma = 'lAuLtImACoNcHiTa01';
 
         $resp = $objSignature->signature_xml($flg_firma, $ruta, $ruta_firma, $pass_firma);
         //print_r($resp); //hash
@@ -341,8 +341,8 @@ class ApiFacturacion
         $flg_firma = "0";
         $ruta = $ruta_archivo_xml.$nombre_xml;
 
-        $ruta_firma = "certificado_20567274421.pfx";
-        $pass_firma = "cOnch1t4Buf30";
+        $ruta_firma = $rutacertificado. 'certificado_20608482050.pfx';
+        $pass_firma = 'lAuLtImACoNcHiTa01';
 
         //===============================================================//
 
