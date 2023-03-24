@@ -1290,9 +1290,9 @@ class Pedido
         try {
             $sql = 'insert into ventas_detalle (id_venta,id_comanda_detalle, venta_detalle_valor_unitario, 
                     venta_detalle_precio_unitario, venta_detalle_nombre_producto, venta_detalle_cantidad, venta_detalle_total_igv,
-                    venta_detalle_porcentaje_igv, venta_detalle_total_icbper, venta_detalle_valor_total, venta_detalle_importe_total
-                    , id_producto_precio)
-                    values(?,?,?,?,?,?,?,?,?,?,?,?)';
+                    venta_detalle_porcentaje_igv, venta_detalle_total_icbper, venta_detalle_valor_total, venta_detalle_importe_total,id_producto_precio,
+                    venta_precio_antiguo,venta_total_antiguo)
+                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
             $stm = $this->pdo->prepare($sql);
             $stm->execute([
                 $model->id_venta,
@@ -1306,7 +1306,9 @@ class Pedido
                 $model->venta_detalle_total_icbper,
                 $model->venta_detalle_valor_total,
                 $model->venta_detalle_total_price,
-                $model->id_producto_precio
+                $model->id_producto_precio,
+                $model->venta_precio_antiguo,
+                $model->venta_total_antiguo
             ]);
             $result = 1;
         } catch (Exception $e){

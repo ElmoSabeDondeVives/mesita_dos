@@ -102,8 +102,8 @@
                                         <!--<td><?php //echo $p->id_productforsale;?></td>-->
                                         <td><?php echo $p->venta_detalle_cantidad;?></td>
                                         <td><?php echo $p->venta_detalle_nombre_producto;?></td>
-                                        <td>S/. <?php echo $p->venta_detalle_valor_unitario;?></td>
-                                        <td>S/. <?php echo $p->venta_detalle_valor_total;?></td>
+                                        <td>S/. <?php echo $p->venta_precio_antiguo;?></td>
+                                        <td>S/. <?php echo $p->venta_total_antiguo;?></td>
                                     </tr>
                                     <?php
                                 }
@@ -143,6 +143,10 @@
 
                             <div class="col-lg-3 col-md-4 col-sm-4">
                                 <?php
+                                if ($venta->venta_totaldescuento > 0){ ?>
+                                <h4>DESCUENTO </h4>
+                                <?php
+                                }
                                 if ($venta->venta_totalgratuita > 0){ ?>
                                     <h4>OP. GRATUITA:</h4>
                                 <?php
@@ -174,7 +178,12 @@
                             </div>
 
                             <div class="col-lg-3 col-md-4 col-sm-4" style="text-align: left">
+
                                 <?php
+                                if ($venta->venta_totaldescuento > 0){ ?>
+                                    <h4><?php echo number_format($venta->venta_descuento_global ,0);?>%  =  S/. <?php echo number_format($venta->venta_totaldescuento ,2);?></h4>
+                                    <?php
+                                }
                                 if ($venta->venta_totalgratuita > 0){ ?>
                                     <h4>S/. <?php echo number_format($venta->venta_totalgratuita ,2);?></h4>
                                     <?php

@@ -95,8 +95,8 @@ foreach ($detalle_venta as $f){
     $pdf->Cell(15, $he, "$f->venta_detalle_cantidad", 1, 0,'C');
     $pdf->MultiAlignCell(115,4,"$f->venta_detalle_nombre_producto",1,0,'L');
     //$pdf->CellFitSpace(100,5,"$f->venta_detalle_nombre_producto",1,0,'L');
-    $pdf->Cell(20, $he, number_format(round("$f->venta_detalle_precio_unitario",2), 2, '.', ' '),1,0,'C');
-    $pdf->Cell(20, $he, number_format(round("$f->venta_detalle_valor_total",2), 2, '.', ' '),1,1,'C');
+    $pdf->Cell(20, $he, number_format(round("$f->venta_precio_antiguo",2), 2, '.', ' '),1,0,'C');
+    $pdf->Cell(20, $he, number_format(round("$f->venta_total_antiguo",2), 2, '.', ' '),1,1,'C');
     $aa++;
 }
 $pdf->Ln(7);
@@ -111,11 +111,16 @@ if ($dato_venta->venta_tipo != "20") {
 
 //$pdf->Cell(110, 1, "Descuento: $dato_venta->simbolo $dato_venta->venta_totaldescuento", 0,1,'R');
 $pdf->Ln(7);
+if($dato_venta->venta_totaldescuento > 0){
+    $pdf->Cell(180, 1, "Descuento: $dato_venta->venta_descuento_global% =  $dato_venta->simbolo $dato_venta->venta_totaldescuento", 0,1,'R');
+    $pdf->Ln(3);
+}
 if($dato_venta->venta_tipo != "20"){
     $pdf->Cell(70,1,'BIENES TRANSFERIDOS EN LA',0,0,'R');
 }else{
     $pdf->Cell(70,1,'ESTE NO ES UN COMPROBANTE',0,0,'R');
 }
+
 $pdf->Cell(110, 1, "Op.Grat: $dato_venta->simbolo $dato_venta->venta_totalgratuita", 0,1,'R');
 $pdf->Ln(3);
 if($dato_venta->venta_tipo != "20"){

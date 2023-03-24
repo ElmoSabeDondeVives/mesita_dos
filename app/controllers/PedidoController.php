@@ -1381,7 +1381,6 @@ class PedidoController
                                         $model->id_venta = $id_venta;
                                         $id_comanda_detalle = $celdas[$i];
 
-
                                         $jalar_datos = $this->pedido->jalar_datos($id_comanda_detalle);
                                         $cantidad = $jalar_datos->comanda_detalle_cantidad;
                                         $precio_unitario = $jalar_datos->comanda_detalle_precio;
@@ -1405,7 +1404,9 @@ class PedidoController
                                         $model->venta_detalle_total_icbper = 0.00;
                                         $model->venta_detalle_valor_total = $precio_unitario * $cantidad;
                                         $model->venta_detalle_total_price = $precio_unitario * $cantidad * $factor_porcentaje;
-
+                                        //LLENADO DE LOS PRECIOS ANTERIORES ANTES DEL DESCUENTO
+                                        $model->venta_precio_antiguo = $jalar_datos->comanda_detalle_precio;
+                                        $model->venta_total_antiguo = $jalar_datos->comanda_detalle_cantidad * $jalar_datos->comanda_detalle_precio;
                                         if ($_POST['tipo_venta'] == "20") {
                                             //$result = $this->pedido->guardar_nota_venta_detalle($model);
                                             $result = $this->pedido->guardar_venta_detalle($model);
@@ -1881,6 +1882,9 @@ class PedidoController
                                             $model->venta_detalle_total_icbper = 0.00;
                                             $model->venta_detalle_valor_total = $precio_unitario * $cantidad;
                                             $model->venta_detalle_total_price = $precio_unitario * $cantidad * $factor_porcentaje;
+                                            //LLENADO DE LOS PRECIOS ANTERIORES ANTES DEL DESCUENTO
+                                            $model->venta_precio_antiguo = $jalar_datos->comanda_detalle_precio;
+                                            $model->venta_total_antiguo = $jalar_datos->comanda_detalle_cantidad * $jalar_datos->comanda_detalle_precio;
 
                                             if($_POST['tipo_venta']=="20"){
                                                 //$result = $this->pedido->guardar_nota_venta_detalle($model);

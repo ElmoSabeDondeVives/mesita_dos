@@ -1091,11 +1091,13 @@ class VentasController
             if ($dato_venta->venta_tipo == "03") {
                 $tipo_comprobante = "BOLETA DE VENTA ELECTRONICA";
                 $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
-                $documento = "DNI:                        $dato_venta->cliente_numero";
+                $dnni = 'DNI ';
+                $documento = $dato_venta->cliente_numero;
             } else if ($dato_venta->venta_tipo == "01") {
                 $tipo_comprobante = "FACTURA DE VENTA ELECTRONICA";
                 $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;
-                $documento = "RUC:                      $dato_venta->cliente_numero";
+                $dnni = 'RUC ';
+                $documento =$dato_venta->cliente_numero;
             } else if ($dato_venta->venta_tipo == "07") {
                 $tipo_comprobante = "NOTA DE CRÉDITO DE VENTA ELECTRONICA";
                 $serie_correlativo = $dato_venta->venta_serie."-".$dato_venta->venta_correlativo;

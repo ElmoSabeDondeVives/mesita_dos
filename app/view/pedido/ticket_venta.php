@@ -14,6 +14,7 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 
 $nombre_impresora = $caja_dato->caja_numero_impresora;
+//$nombre_impresora = 'Ticketera';
 
 
 $connector = new WindowsPrintConnector($nombre_impresora);
@@ -49,7 +50,7 @@ try{
 */
 $printer->setFont(Printer::FONT_B);
 $printer->setTextSize(2,2);
-$printer->text("$empresa->empresa_nombrecomercial" . "\n");
+$printer->text("$empresa->empresa_razon_social" . "\n");
 $printer->setFont(Printer::FONT_A);
 $printer->setTextSize(1,1);
 //$printer->text("$dato_pago->empresa_nombre" . "\n");
@@ -108,7 +109,7 @@ foreach ($detalle_venta as $dp) {
 
     /*Y a la derecha para el importe*/
     $printer->setJustification(Printer::JUSTIFY_CENTER);
-    $printer->text($dp->venta_detalle_cantidad . "         x         " .$dp->venta_detalle_valor_unitario.'        S/ ' . $dp->venta_detalle_valor_total . "\n");
+    $printer->text($dp->venta_detalle_cantidad . "         x         " .$dp->venta_precio_antiguo.'        S/ ' . $dp->venta_total_antiguo . "\n");
 }
 
 /*
