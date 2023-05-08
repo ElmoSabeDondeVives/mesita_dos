@@ -16,7 +16,7 @@ define('_MANTENIMIENTO_WEB', 0);
 //Establecer Zona Horaria
 date_default_timezone_set('America/Lima');
 //Definicion de servidor del aplicativo
-define('_SERVER_', 'http://192.168.1.4/laultimaconchita/');
+define('_SERVER_', 'http://localhost:8080/mesita_punchana/');
 //Definicion de variables para conexion de base de datos
 define('_SERVER_DB_', 'localhost');
 define('_DB_', 'mesitabd');
@@ -30,6 +30,7 @@ define('_TITLE_', 'La Última Conchita');
 //Rutas de Archivos
 define('_STYLES_ALL_', 'styles/');
 define('_STYLES_ADMIN_', 'styles/pollitoconpapas/');
+define('_STYLES_bt5_', 'styles/bt5/');
 define('_STYLES_LOGIN_', 'styles/login/');
 define('_STYLES_INDEX_', 'styles/inicio/');
 define('_ICON_', 'styles/bufeotec-original.png');

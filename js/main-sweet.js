@@ -21,6 +21,8 @@ function respuesta(mensaje, tipo,tiempo = 3000){
         icon: tipo,
         title: mensaje
     })
+    const element = document.getElementsByClassName("modal fade show");
+    $('#'+element[0].id).removeClass('show')
 }
 //Función para preguntar antes de realizar una operación
 function preguntar(mensaje, funcion_usar, confirmar, denegar, id, id2 = '', id3 = ''){

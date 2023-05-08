@@ -84,7 +84,7 @@
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <h1 class="h3 mb-0 text-gray-800"><?= $_SESSION['controlador'] . '/' . $_SESSION['accion'];?></h1>
-                <button data-toggle="modal" data-target="#gestionMenu" onclick="cambiar_texto_formulario('exampleModalLabel', 'Agregar Nuevo Menú'); agregacion_menu()" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fa fa-plus fa-sm text-white-50"></i> Agregar Nuevo</button>
+                <button data-bs-toggle="modal" data-bs-target="#gestionMenu" onclick="cambiar_texto_formulario('exampleModalLabel', 'Agregar Nuevo Menú'); agregacion_menu()" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fa fa-plus fa-sm text-white-50"></i> Agregar Nuevo</button>
             </div>
             <!-- /.row (main row) -->
             <div class="row">
@@ -138,7 +138,7 @@
                                             <td <?= $estilo_estado;?> id="menuestado<?= $m->id_menu;?>"><?= $estado;?></td>
                                             <td <?= $estilo_mostrar;?> id="menumostrar<?= $m->id_menu;?>"><?= $mostrar;?></td>
                                             <td id="botonmenu<?= $m->id_menu;?>">
-                                                <button data-toggle="modal" data-target="#gestionMenu" class="btn btn-sm btn-warning btne" onclick="cambiar_texto_formulario('exampleModalLabel', 'Editar Menú'); edicion_menu(<?= $m->id_menu;?>, '<?= $m->menu_nombre;?>', '<?= $m->menu_controlador;?>', '<?= $m->menu_icono;?>', <?= $m->menu_orden;?>, <?= $m->menu_mostrar;?>, <?= $m->menu_estado;?>)">Editar</button>
+                                                <button data-bs-toggle="modal" data-bs-target="#gestionMenu" class="btn btn-sm btn-warning btne" onclick="cambiar_texto_formulario('exampleModalLabel', 'Editar Menú'); edicion_menu(<?= $m->id_menu;?>, '<?= $m->menu_nombre;?>', '<?= $m->menu_controlador;?>', '<?= $m->menu_icono;?>', <?= $m->menu_orden;?>, <?= $m->menu_mostrar;?>, <?= $m->menu_estado;?>)">Editar</button>
                                             </td>
                                             <td>
                                                 <a type="button" class="btn btn-sm btn-primary btne" href="<?php echo _SERVER_ . 'Menu/roles/' . $m->id_menu;?>" >Ver Acceso de Roles</a>

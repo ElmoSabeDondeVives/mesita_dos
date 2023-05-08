@@ -18,270 +18,352 @@
                 if($role == 2 || $role == 3 || $role == 7) {
                     ?>
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="overview-wrap">
-                            <h2 class="title-1">Datos de Ventas</h2>
+                        <div class="col-md-12">
+                            <div class="overview-wrap">
+                                <h2 class="title-1">Datos de Ventas</h2>
+                            </div>
+                        </div>
+                    </div>
+                <div class="row mt-2">
+                    <div class="col-lg-3 col-md-12 col-3 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title d-flex align-items-start justify-content-between">
+                                    <div class="avatar flex-shrink-0">
+                                        <img
+                                                src="<?= _SERVER_._STYLES_bt5_ ?>assets/img/icons/unicons/chart-success.png"
+                                                alt="Credit Card"
+                                                class="rounded"
+                                        />
+                                    </div>
+                                    <!--<div class="dropdown">
+                                        <button
+                                                class="btn p-0"
+                                                type="button"
+                                                id="cardOpt6"
+                                                data-bs-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                        >
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
+                                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                                        </div>
+                                    </div>-->
+                                </div>
+                                <span >Ventas del Dia</span>
+                                <h3 class="card-title text-nowrap mb-2"><?= count($venta_dia);?></h3>
+                                <!--<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +28.42%</small>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-12 col-3 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title d-flex align-items-start justify-content-between">
+                                    <div class="avatar flex-shrink-0">
+                                        <img
+                                                src="<?= _SERVER_._STYLES_bt5_ ?>assets/img/icons/unicons/wallet-info.png"
+                                                alt="Credit Card"
+                                                class="rounded"
+                                        />
+                                    </div>
+                                    <!--<div class="dropdown">
+                                        <button
+                                                class="btn p-0"
+                                                type="button"
+                                                id="cardOpt6"
+                                                data-bs-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                        >
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
+                                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                                        </div>
+                                    </div>-->
+                                </div>
+                                <span>Ingresos del Día</span>
+                                <h3 class="card-title text-nowrap mb-1"><?= number_format($total_dia, 2); ?></h3>
+                                <!--<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +28.42%</small>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-12 col-3 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title d-flex align-items-start justify-content-between">
+                                    <div class="avatar flex-shrink-0">
+                                        <img
+                                                src="<?= _SERVER_._STYLES_bt5_ ?>assets/img/icons/unicons/cc-primary.png"
+                                                alt="Credit Card"
+                                                class="rounded"
+                                        />
+                                    </div>
+                                    <!--<div class="dropdown">
+                                        <button
+                                                class="btn p-0"
+                                                type="button"
+                                                id="cardOpt6"
+                                                data-bs-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                        >
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
+                                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                                        </div>
+                                    </div>-->
+                                </div>
+                                <span>Ventas del Mes</span>
+                                <h3 class="card-title text-nowrap mb-1"><?= number_format($total_mes, 2);?></h3>
+                                <!--<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +28.42%</small>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-12 col-3 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title d-flex align-items-start justify-content-between">
+                                    <div class="avatar flex-shrink-0">
+                                        <img
+                                                src="<?= _SERVER_._STYLES_bt5_ ?>assets/img/icons/unicons/cc-warning.png"
+                                                alt="Credit Card"
+                                                class="rounded"
+                                        />
+                                    </div>
+                                    <!--<div class="dropdown">
+                                        <button
+                                                class="btn p-0"
+                                                type="button"
+                                                id="cardOpt6"
+                                                data-bs-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                        >
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
+                                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                                        </div>
+                                    </div>-->
+                                </div>
+                                <span>Ingreso del Mes</span>
+                                <h3 class="card-title text-nowrap mb-1"><?= number_format($total_mes, 2);?></h3>
+                                <!--<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +28.42%</small>-->
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row m-t-25">
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="overview-item overview-item--c1">
-                            <div class="overview__inner">
-                                <div class="overview-box clearfix">
-                                    <div class="icon">
-                                        <i class="zmdi zmdi-shopping-cart"></i>
-                                    </div>
-                                    <div class="text">
-                                        <h2><?= count($venta_dia);?></h2>
-                                        <span>Ventas del Día</span>
-                                    </div>
-                                </div>
-                                <div class="overview-chart">
-                                    <canvas id="widgetChart1"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="overview-item overview-item--c2">
-                            <div class="overview__inner">
-                                <div class="overview-box clearfix">
-                                    <div class="icon">
-                                        <i class="zmdi zmdi-shopping-cart"></i>
-                                    </div>
-                                    <div class="text">
-                                        <h2><?= number_format($total_dia, 2); ?></h2>
-                                        <span>Ingresos del Día</span>
-                                    </div>
-                                </div>
-                                <div class="overview-chart">
-                                    <canvas id="widgetChart2"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="overview-item overview-item--c3">
-                            <div class="overview__inner">
-                                <div class="overview-box clearfix">
-                                    <div class="icon">
-                                        <i class="zmdi zmdi-calendar-note"></i>
-                                    </div>
-                                    <div class="text">
-                                        <h2><?= $total_venta_mes;?></h2>
-                                        <span>Ventas del Mes</span>
-                                    </div>
-                                </div>
-                                <div class="overview-chart">
-                                    <canvas id="widgetChart3"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="overview-item overview-item--c4">
-                            <div class="overview__inner">
-                                <div class="overview-box clearfix">
-                                    <div class="icon">
-                                        <i style="font-size: 25px;">S/.</i>
-                                    </div>
-                                    <div class="text">
-                                        <h2><?= number_format($total_mes, 2);?></h2>
-                                        <span>Ingreso del Mes</span>
-                                    </div>
-                                </div>
-                                <div class="overview-chart">
-                                    <canvas id="widgetChart4"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
                 <?php
                 }
                 ?>
                 <?php
                 if($role == 2 || $role == 3 || $role == 5 || $role == 7){
                 ?>
+
                 <div class="row">
-                    <div class="col-lg-6">
-                        <?php if(!$fecha_open){ ?>
-                        <div class="card-header py-3">
-                            <h3 style="text-align: center;" class="font-weight-bold">APERTURA DE CAJA - DÍA DE HOY</h3>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-6 col-xs-6 col-sm-6 col-md-6">
-                                <label>Turno:</label>
-                                <select class="form-control" id= "id_turno" name="id_turno">
-                                    <?php
-                                    foreach($turnos as $l){
-                                        ?>
-                                        <option value="<?php echo $l->id_turno;?>"><?php echo $l->turno_nombre;?></option>
-                                        <?php
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="col-lg-6 col-xs-6 col-sm-6 col-md-6">
-                                <label>Caja:</label>
-                                <select class="form-control" id= "id_caja_numero" name="id_caja_numero">
-                                    <?php
-                                    foreach($caja as $l){
-                                        $fecha = date('Y-m-d');
-                                        $buscar_caja = $this->caja->buscar_caja_disponible($l->id_caja_numero);
-                                        if(empty($buscar_caja)){
+                    <?php if(!$fecha_open){ ?>
+                        <!-- Apertura de Caja -->
+                        <div class="col-lg-12 mb-12 order-0">
+                            <div class="card">
+                                <div class="d-flex align-items-end row">
+                                    <div class="col-sm-7">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-primary">REALIZAR APERTURA DE CAJA ! 🎉</h5>
+                                            <div class="row">
+                                                <div class="row">
+                                                    <div class="col-lg-4 col-xs-4 col-sm-4 col-md-4">
+                                                        <label>Turno:</label>
+                                                        <select class="form-control" id= "id_turno" name="id_turno">
+                                                            <?php
+                                                            foreach($turnos as $l){
+                                                                ?>
+                                                                <option value="<?php echo $l->id_turno;?>"><?php echo $l->turno_nombre;?></option>
+                                                                <?php
+                                                            }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-4 col-xs-4 col-sm-4 col-md-4">
+                                                        <label>Caja:</label>
+                                                        <select class="form-control" id= "id_caja_numero" name="id_caja_numero">
+                                                            <?php
+                                                            foreach($caja as $l){
+                                                                $fecha = date('Y-m-d');
+                                                                $buscar_caja = $this->caja->buscar_caja_disponible($l->id_caja_numero);
+                                                                if(empty($buscar_caja)){
 
-                                            ?>
-                                            <option value="<?php echo $l->id_caja_numero;?>"><?php echo $l->caja_numero_nombre;?></option>
-                                                <?php
+                                                                    ?>
+                                                                    <option value="<?php echo $l->id_caja_numero;?>"><?php echo $l->caja_numero_nombre;?></option>
+                                                                    <?php
 
-                                        }
-                                    }
-                                    ?>
-                                </select>
+                                                                }
+                                                            }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-4 col-xs-4 col-sm-4 col-md-4" >
+                                                        <label >MONTO </label>
+                                                        <input type="text" class="form-control" id="caja_apertura" name="caja_apertura" onkeyup="validar_numeros_decimales_dos(this.id)" >
+                                                    </div>
+                                                    <div class="col-lg-12 col-xs-12 col-sm-12 col-md-12 mt-2" >
+                                                        <button id="btn-agregar-apertura" class="btn btn-sm btn-outline-primary mt-2" style="align-content: center;width: 100%" onclick="apertura()"><i class="fa fa-save fa-sm text-white-50"></i> APERTURAR CAJA</button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5 text-center text-sm-left">
+                                        <div class="card-body pb-0 px-0 px-md-4">
+                                            <img
+                                                    src="<?=_SERVER_._STYLES_bt5_?>assets/img/illustrations/man-with-laptop-light.png"
+                                                    height="140"
+                                                    alt="View Badge User"
+                                                    data-app-dark-img="illustrations/man-with-laptop-dark.png"
+                                                    data-app-light-img="illustrations/man-with-laptop-light.png"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-3"></div>
-                            <div class="col-lg-6" style="text-align: center">
-                                <label >MONTO APERTURA CAJA - Para HOY <?php echo date('Y-m-d');?></label>
-                                <input type="text" class="form-control" id="caja_apertura" name="caja_apertura" onkeyup="validar_numeros_decimales_dos(this.id)" >
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-lg-3 col-sm-3 col-md-3"></div>
-                            <div class="col-lg-6 col-sm-6 col-md-6" >
-                                <button id="btn-agregar-apertura" class="btn btn-primary" style="align-content: center;width: 100%" onclick="apertura()"><i class="fa fa-save fa-sm text-white-50"></i> APERTURAR CAJA</button>
-                            </div>
-                            <div class="col-lg-3 col-sm-3 col-md-3"></div>
-                        </div>
+                        <!-- ////////////////// -->
                         <?php
-                        } else {
-                            $monto_apertura = $this->caja->mostrar_valor_apertura($id_usuario);
-                            $valor_por_caja = $this->caja->valor_por_caja($id_usuario);
+                    } else {
+                    $monto_apertura = $this->caja->mostrar_valor_apertura($id_usuario);
+                    $valor_por_caja = $this->caja->valor_por_caja($id_usuario);
 
-                                //$nombre = $vc->caja_numero_nombre;
-                            $jalar_turno = $this->caja->jalar_turno_($id_usuario);
+                    //$nombre = $vc->caja_numero_nombre;
+                    $jalar_turno = $this->caja->jalar_turno_($id_usuario);
 
-                            ?>
-                            <br>
-                            <div class="row">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-5">
-                                    <h3>► CAJA :</h3>
-                                </div>
-                                <div class="col-md-2">
-                                    <h3 style=""><?= $valor_por_caja->caja_numero_nombre;?></h3>
-                                </div>
-                                <div class="col-md-3"></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-5">
-                                    <h3>► TURNO :</h3>
-                                </div>
-                                <div class="col-md-2">
-                                    <h3 style=""><?= $jalar_turno;?></h3>
-                                </div>
-                                <div class="col-md-3"></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-5">
-                                    <h3>► USUARIO :</h3>
-                                </div>
-                                <div class="col-md-2">
-                                    <h3 style=""><?php echo $usuario->usuario_nickname;?></h3>
-                                </div>
-                                <div class="col-md-3"></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-5">
-                                    <h3 style="">► El Monto de Apertura para Hoy es :</h3>
-                                </div>
-                                <div class="col-md-2">
-                                    <h3 style=""> S/.<?= $monto_apertura ?? 0?></h3>
-                                </div>
-                                <div class="col-md-3"></div>
-                            </div>
-                            <br>
-                            <?php
-                            $buscar_cierre_caja = $this->caja->buscar_cierre_caja($listar_ultima_caja->id_caja,$id_usuario);
-                            if(empty($buscar_cierre_caja)){
-                                ?>
-                                <div class="row">
-                                    <div class="col-lg-2"></div>
-                                    <div class="col-lg-5">
-                                        <h3>► Cierre de Caja :</h3>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <input class="form-control" type="text" id="caja_monto_cierre" name="caja_monto_cierre" onkeyup="validar_numeros_decimales_dos(this.id)">
-                                    </div>
-                                    <div class="col-lg-4"></div>
-                                </div>
-                                <br>
-                                <div class="row">
-                                    <div class="col-lg-12" style="text-align: center">
-                                        <button id="btn-agregar-cierre"  class="btn btn-success" onclick="guardar_cierre_caja(<?= $id_usuario;?>)"><i class="fa fa-save"></i> Guardar Cierre</button>
-                                    </div>
-                                </div>
-                                <?php
-                            }
-                        }
-                        ?>
-                    </div>
+                    ?>
+                        <!--  Datos de Apertura de Caja  -->
+                        <div class="row">
+                            <div class="col-lg-12 mb-4 order-0">
+                                <div class="card">
+                                    <div class="d-flex align-items-end row">
+                                        <div class="col-sm-7">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <h5 class="card-title text-primary">Datos de Apertura 🎉</h5>
+                                                        <p class="mb-2">
+                                                            <i class="bx bx-spa"></i>  CAJA  :<span class="fw-bold text-uppercase"><?= $valor_por_caja->caja_numero_nombre;?></span>
 
-                    <div class="col-lg-6" style="text-align: center; padding-bottom:5px; "><h2>Recordatorio de Insumos </h2>
-                        <div class="col-lg-12">
+                                                        </p>
+                                                        <p class="mb-2">
+                                                            <i class="bx bx-spa"></i>  TURNO :<span class="fw-bold text-uppercase"><?= $jalar_turno;?></span>
+                                                        </p>
+                                                        <p class="mb-2">
+                                                            <i class="bx bx-spa"></i>  USUARIO :<span class="fw-bold text-uppercase"><?php echo $usuario->usuario_nickname;?></span>
+                                                        </p>
+                                                        <p class="mb-2">
+                                                            <i class="bx bx-spa"></i>  MONTO :<span class="fw-bold text-uppercase">S/.<?= $monto_apertura ?? 0?></span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-lg-6 text-left">
+                                                        <p class="mb-2">
+                                                            <i class="bx bx-spa"></i>  Cierre de Caja :<span class="fw-bold text-uppercase"></span>
+                                                        </p>
+                                                        <input class="form-control" placeholder="---------------" type="text" id="caja_monto_cierre" name="caja_monto_cierre" onkeyup="validar_numeros_decimales_dos(this.id)">
+                                                        <a href="javascript:;" id="btn-agregar-cierre" class="btn btn-sm btn-outline-primary mt-2" onclick="guardar_cierre_caja(<?= $id_usuario;?>)" >Guardar Cierre</a>
+                                                    </div>
+                                                </div>
+                    <?php
+                    $buscar_cierre_caja = $this->caja->buscar_cierre_caja($listar_ultima_caja->id_caja,$id_usuario);
+                    if(empty($buscar_cierre_caja)){
+                    ?>
+                        </div>
+                        </div>
+                        <div class="col-sm-5 text-center text-sm-left">
+                            <div class="card-body pb-0 px-0 px-md-4">
+                                <img
+                                        src="<?= _SERVER_._STYLES_bt5_ ?>assets/img/illustrations/man-with-laptop-light.png"
+                                        height="140"
+                                        alt="View Badge User"
+                                        data-app-dark-img="illustrations/man-with-laptop-dark.png"
+                                        data-app-light-img="illustrations/man-with-laptop-light.png"
+                                />
+                            </div>
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+                        <!-- //////////////////////////// -->
+
+
+                        <?php
+                    }
+                    }
+                    ?>
+
+                </div>
+                <div class="row mt-4">
+                    <div class="col-lg-12">
                         <div class="card shadow mb-4">
                             <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="dataTable2">
-                                        <thead class="text-capitalize">
-                                        <tr>
-                                            <th>Recurso</th>
-                                            <th>Stock Actual</th>
-                                            <th>Stock Minimo</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php
-                                        $nuevo_valor = 0;
-                                        foreach ($recurso_sede as $ar){
-                                                $recurso_actual = $ar->recurso_sede_stock;
-                                                $recurso_limite = $ar->recurso_sede_stock_minimo;
-                                                $nuevo_valor = $recurso_limite + 20;
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h2>Recordatorio de Insumos </h2>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-light" id="dataTable2">
+                                                <thead class="text-capitalize">
+                                                <tr>
+                                                    <th>Recurso</th>
+                                                    <th>Stock Actual</th>
+                                                    <th>Stock Minimo</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <?php
+                                                $nuevo_valor = 0;
+                                                foreach ($recurso_sede as $ar){
+                                                    $recurso_actual = $ar->recurso_sede_stock;
+                                                    $recurso_limite = $ar->recurso_sede_stock_minimo;
+                                                    $nuevo_valor = $recurso_limite + 20;
 
-                                                if($recurso_actual <= $recurso_limite){
-                                                    $estilo_ = "style=\"background-color: lightcoral\"";
-                                                }else{
-                                                    $estilo_ = "style=\"background-color: yellow\"";
-                                                }
+                                                    if($recurso_actual <= $recurso_limite){
+                                                        $estilo_ = "style=\"background: #FADBD8\"";
+                                                    }else{
+                                                        $estilo_ = "style=\"background: #FCF3CF\"";
+                                                    }
 
-                                                if($recurso_actual <= $nuevo_valor){
+                                                    if($recurso_actual <= $nuevo_valor){
 
-                                                    ?>
-                                                    <tr <?= $estilo_;?>>
-                                                        <td><?= $ar->recurso_nombre;?></td>
-                                                        <td><?= $ar->recurso_sede_stock;?></td>
-                                                        <td><?= $ar->recurso_sede_stock_minimo;?></td>
-                                                    </tr>
+                                                        ?>
+                                                        <tr <?= $estilo_;?>>
+                                                            <td <?= $estilo_;?> ><?= $ar->recurso_nombre;?></td>
+                                                            <td <?= $estilo_;?> ><?= $ar->recurso_sede_stock;?></td>
+                                                            <td <?= $estilo_;?> ><?= $ar->recurso_sede_stock_minimo;?></td>
+                                                        </tr>
                                                         <?php
+                                                    }
+                                                    ?>
+                                                    <?php
+                                                    $a++;
                                                 }
                                                 ?>
-                                            <?php
-                                            $a++;
-                                        }
-                                        ?>
-                                        </tbody>
-                                    </table>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>

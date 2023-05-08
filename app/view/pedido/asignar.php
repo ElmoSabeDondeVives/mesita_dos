@@ -1,7 +1,4 @@
-
-
-
-<div class="modal fade" id="asignar_pedido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade " id="asignar_pedido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document" style="max-width: 70% !important;">
         <div class="modal-content">
             <div class="modal-header">
@@ -57,7 +54,6 @@
         </div>
     </div>
 </div>
-
 <div class="main-content">
     <div class="section__content section__content--p30">
         <div class="container-fluid">
@@ -68,159 +64,167 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="row">
-                        <div class="col-lg-5">
-                        
-                            <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" >
-                                <div class="row">
-                                    <div class="form-group col-lg-8">
-                                        <input required autocomplete="off" name="parametro" type="text" value="<?= $parametro;?>" class="form-control" id="parametro" placeholder="Buscar Productos">
-                                    </div>
-                                    <div class="form-group col-lg-4">
-                                        <button type="submit" class="btn btn-success" onclick="productos()" style="width: 80%"><i class="fa fa-search"></i> Buscar</button>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <table class='table table-responsive table-bordered' width='100%'>
-                                        <thead class='text-capitalize'>
-                                        <tr>
-                                            <th>Producto</th>
-                                            <th>Precio</th>
-                                            <th>Acción</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="producto">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col-lg-5">
 
-                            <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
-                                <?php
-                                foreach ($familia as $f){
-                                    $productos_familia = $this->pedido->listar_productos_x_familia($f->id_producto_familia);
-                                    ?>
-                                    <h3 data-toggle="collapse" href="#tipo_<?= $f->id_producto_familia;?>"><?= $f->producto_familia_nombre?><i class="fa fa-arrow-down" style="float: right"></i></h3><br>
+                                            <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" >
+                                                <div class="row mb-2">
+                                                    <div class="form-group col-lg-8">
+                                                        <input required autocomplete="off" name="parametro" type="text" value="<?= $parametro;?>" class="form-control" id="parametro" placeholder="Buscar Productos">
+                                                    </div>
+                                                    <div class="form-group col-lg-4">
+                                                        <button type="submit" class="btn btn-sm btn-success" onclick="productos()" style="width: 80%"><i class="fa fa-search"></i> Buscar</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <table class='table table-responsive table-bordered' width='100%'>
+                                                        <thead class='text-capitalize'>
+                                                        <tr>
+                                                            <th>Producto</th>
+                                                            <th>Precio</th>
+                                                            <th>Acción</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody id="producto">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
 
-                                    <div id="tipo_<?= $f->id_producto_familia;?>" class="collapse">
-                                        <table class='table table-bordered' width='100%'>
-                                            <thead class='text-capitalize'>
-                                            <tr>
-                                                <th></th>
-                                                <th></th>
-                                                <th></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <?php
-                                            foreach ($productos_familia as $pf){
-                                                $anho = date('Y');
-                                                if($anho == "2021"){
-                                                    $icbper = 0.30;
-                                                }elseif($anho == "2022"){
-                                                    $icbper = 0.40;
-                                                }else{
-                                                    $icbper = 0.50;
-                                                }
-                                                $op_gravadas=0.00;
-                                                $op_exoneradas=0.00;
-                                                $op_inafectas=0.00;
-                                                $op_gratuitas=0.00;
-                                                $igv=0.0;
-                                                $igv_porcentaje=0.18;
-                                                if($pf->producto_precio_codigoafectacion == 10){
-                                                    $op_gravadas = $pf->producto_precio_venta;
-                                                    $igv = $op_gravadas * $igv_porcentaje;
-                                                    $total = $op_gravadas + $igv;
-                                                }else{
-                                                    $total = $pf->producto_precio_venta;
-                                                }
-                                                /*if($pf->id_receta == "0"){
-                                                    $total = $total + $icbper;
-                                                }*/
-                                                ?>
-                                                <tr>
-                                                    <td><?=$pf->producto_nombre?></td>
-                                                    <td><?=$total ?></td>
-                                                    <td>
-                                                        <button class='btn btn-success' data-toggle='modal' onclick="guardar_pedido(<?=$pf->id_producto?>,'<?=$pf->producto_nombre?>','<?=$total?>','<?= $pf->producto_precio_codigoafectacion?>')" data-target='#asignar_pedido'><i class='fa fa-check'></i></button>
-                                                        <a class="btn btn-primary" href="<?= _SERVER_ . $pf->producto_foto?>" target="_blank"><i class="fa fa-eye"></i></a>
-                                                    <td>
-                                                </tr>
+                                            <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
                                                 <?php
-                                            }
-                                            ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <?php
-                                }
-                                ?>
-                            </div>
-                        </div>
-                        <div class="col-lg-7">
-                            <div class="col-md-12 col-lg-12 col-xs-12">
-                                <form class="" enctype="multipart/form-data" id="guardar_comanda">
-                                    <input type="hidden" id="contenido" name="contenido">
-                                    <input type="hidden" class="form-control" id="id_producto" name="id_producto">
-                                    <input type="hidden" class="form-control" id="comanda_total" name="comanda_total">
-                                    <input type="hidden" id="id_mesa" name="id_mesa" value="<?= $id;?>">
+                                                foreach ($familia as $f){
+                                                    $productos_familia = $this->pedido->listar_productos_x_familia($f->id_producto_familia);
+                                                    ?>
+                                                    <h5 data-toggle="collapse" href="#tipo_<?= $f->id_producto_familia;?>" style="margin-bottom: -1rem !important;"><?= $f->producto_familia_nombre?><i class="bx bx-chevron-down" style="float: right"></i></h5><br>
+
+                                                    <div id="tipo_<?= $f->id_producto_familia;?>" class="collapse">
+                                                        <table class='table table-bordered' width='100%'>
+                                                            <thead class='text-capitalize'>
+                                                            <tr>
+                                                                <th></th>
+                                                                <th></th>
+                                                                <th></th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <?php
+                                                            foreach ($productos_familia as $pf){
+                                                                $anho = date('Y');
+                                                                if($anho == "2021"){
+                                                                    $icbper = 0.30;
+                                                                }elseif($anho == "2022"){
+                                                                    $icbper = 0.40;
+                                                                }else{
+                                                                    $icbper = 0.50;
+                                                                }
+                                                                $op_gravadas=0.00;
+                                                                $op_exoneradas=0.00;
+                                                                $op_inafectas=0.00;
+                                                                $op_gratuitas=0.00;
+                                                                $igv=0.0;
+                                                                $igv_porcentaje=0.18;
+                                                                if($pf->producto_precio_codigoafectacion == 10){
+                                                                    $op_gravadas = $pf->producto_precio_venta;
+                                                                    $igv = $op_gravadas * $igv_porcentaje;
+                                                                    $total = $op_gravadas + $igv;
+                                                                }else{
+                                                                    $total = $pf->producto_precio_venta;
+                                                                }
+                                                                /*if($pf->id_receta == "0"){
+                                                                    $total = $total + $icbper;
+                                                                }*/
+                                                                ?>
+                                                                <tr>
+                                                                    <td><?=$pf->producto_nombre?></td>
+                                                                    <td><?=$total ?></td>
+                                                                    <td>
+                                                                        <button class='btn btn-success' data-toggle='modal' onclick="guardar_pedido(<?=$pf->id_producto?>,'<?=$pf->producto_nombre?>','<?=$total?>','<?= $pf->producto_precio_codigoafectacion?>')" data-target='#asignar_pedido'><i class='fa fa-check'></i></button>
+                                                                        <a class="btn btn-primary" href="<?= _SERVER_ . $pf->producto_foto?>" target="_blank"><i class="fa fa-eye"></i></a>
+                                                                    <td>
+                                                                </tr>
+                                                                <?php
+                                                            }
+                                                            ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-7">
+                                            <div class="col-md-12 col-lg-12 col-xs-12">
+                                                <form class="" enctype="multipart/form-data" id="guardar_comanda">
+                                                    <input type="hidden" id="contenido" name="contenido">
+                                                    <input type="hidden" class="form-control" id="id_producto" name="id_producto">
+                                                    <input type="hidden" class="form-control" id="comanda_total" name="comanda_total">
+                                                    <input type="hidden" id="id_mesa" name="id_mesa" value="<?= $id;?>">
 
 
-                                    <table class="table table-bordered" style="background: darksalmon;">
-                                            <thead>
-                                            <tr style="font-weight: bold;text-align: center">
-                                                <td>PRODUCTO</td>
-                                                <td>PU</td>
-                                                <td>CANT</td>
-                                                <td>ENTR</td>
-                                                <td>OBS</td>
-                                                <td>TOTAL</td>
-                                                <td>ACCIÓN</td>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="contenido_detalle_compra">
-                                            </tbody>
-                                            <!--<tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>-->
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>Total</td>
-                                                <td><span id="comanda_total_">S/ 0.00</span></td>
-                                            </tr>
-                                        </table>
+                                                    <table class="table table-bordered" style="background: darksalmon;">
+                                                        <thead>
+                                                        <tr style="font-weight: bold;text-align: center">
+                                                            <td>PRODUCTO</td>
+                                                            <td>PU</td>
+                                                            <td>CANT</td>
+                                                            <td>ENTR</td>
+                                                            <td>OBS</td>
+                                                            <td>TOTAL</td>
+                                                            <td>ACCIÓN</td>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody id="contenido_detalle_compra">
+                                                        </tbody>
+                                                        <!--<tr>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                        </tr>-->
+                                                        <tr>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td>Total</td>
+                                                            <td><span id="comanda_total_">S/ 0.00</span></td>
+                                                        </tr>
+                                                    </table>
 
-                                    <div class="row">
-                                        <div class="col-lg-3 col-xs-4 col-md-4 col-sm-4">
-                                            <label for="">Cant. de Personas</label>
-                                            <input type="number" value="1" class="form-control" id="comanda_cantidad_personas" name="comanda_cantidad_personas">
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-xs-4 col-md-4 col-sm-4">
+                                                            <label for="">Cant. de Personas</label>
+                                                            <input type="number" value="1" class="form-control" id="comanda_cantidad_personas" name="comanda_cantidad_personas">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-sm-2 col-md-2 col-xs-2"></div>
+                                                        <div class="col-lg-2 col-sm-3 col-md-3 col-xs-3" style="margin-top: 12px">
+                                                            <button type="submit" class="btn btn-primary submitBtn"><i class="fa fa-check"></i> Generar</button>
+                                                        </div>
+                                                        <div class="col-lg-1 col-sm-2 col-md-2 col-xs-2"></div>
+                                                        <div class="col-lg-2 col-sm-3 col-md-3 col-xs-3" style="margin-top: 12px">
+                                                            <a class="btn btn-secondary" href="javascript:history.back()" role="button"><i class="fa fa-backward"></i> Regresar</a>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-lg-6 col-sm-2 col-md-2 col-xs-2"></div>
-                                        <div class="col-lg-2 col-sm-3 col-md-3 col-xs-3" style="margin-top: 12px">
-                                            <button type="submit" class="btn btn-primary submitBtn"><i class="fa fa-check"></i> Generar</button>
-                                        </div>
-                                        <div class="col-lg-1 col-sm-2 col-md-2 col-xs-2"></div>
-                                        <div class="col-lg-2 col-sm-3 col-md-3 col-xs-3" style="margin-top: 12px">
-                                            <a class="btn btn-secondary" href="javascript:history.back()" role="button"><i class="fa fa-backward"></i> Regresar</a>
-                                        </div>
-                                    </div>
-                                </form>
+
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

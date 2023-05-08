@@ -117,7 +117,7 @@
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <h1 class="h3 mb-0 text-gray-800"><?= $_SESSION['controlador'] . '/' . $_SESSION['accion'];?></h1>
-                <button data-toggle="modal" data-target="#gestionOpciones" onclick="cambiar_texto_formulario('exampleModalLabel', 'Agregar Nueva Opción'); agregacion_opcion()" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fa fa-plus fa-sm text-white-50"></i> Agregar Nuevo</button>
+                <button data-bs-toggle="modal" data-bs-target="#gestionOpciones" onclick="cambiar_texto_formulario('exampleModalLabel', 'Agregar Nueva Opción'); agregacion_opcion()" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fa fa-plus fa-sm text-white-50"></i> Agregar Nuevo</button>
             </div>
             <!-- /.row (main row) -->
             <div class="row">
@@ -177,11 +177,11 @@
                                             <td id="opcionmostrar<?=$m->id_opcion;?>" <?= $estilo_mostrar;?>><?= $mostrar;?></td>
                                             <td id="opcionestado<?=$m->id_opcion;?>" <?= $estilo_estado;?>><?= $estado;?></td>
                                             <td id="botonopcion<?=$m->id_opcion;?>">
-                                                <button data-toggle="modal" data-target="#gestionOpciones" class="btn btn-xs btn-warning btne" onclick="cambiar_texto_formulario('exampleModalLabel', 'Editar Opción'); edicion_opcion(<?= $m->id_opcion;?>, '<?= $m->opcion_nombre;?>', '<?= $m->opcion_funcion;?>', '<?= $m->opcion_icono;?>', <?= $m->opcion_orden;?>, <?= $m->opcion_mostrar;?>, <?= $m->opcion_estado;?>)" >Editar</button>
+                                                <button data-bs-toggle="modal" data-bs-target="#gestionOpciones" class="btn btn-xs btn-warning btne" onclick="cambiar_texto_formulario('exampleModalLabel', 'Editar Opción'); edicion_opcion(<?= $m->id_opcion;?>, '<?= $m->opcion_nombre;?>', '<?= $m->opcion_funcion;?>', '<?= $m->opcion_icono;?>', <?= $m->opcion_orden;?>, <?= $m->opcion_mostrar;?>, <?= $m->opcion_estado;?>)" >Editar</button>
                                             </td>
                                             <td>
-                                                <button data-toggle="modal" data-target="#gestionPermisos" onclick="cargar_permisos(<?= $m->id_opcion;?>)" class="btn btn-xs btn-success btne">Ver Permisos</button>
-                                                <button data-toggle="modal" data-target="#gestionRestricciones" onclick="cargar_restricciones(<?= $m->id_opcion;?>)"  class="btn btn-xs btn-warning btne">Ver Restricciones</button>
+                                                <button data-bs-toggle="modal" data-bs-target="#gestionPermisos" onclick="cargar_permisos(<?= $m->id_opcion;?>)" class="btn btn-xs btn-success btne">Ver Permisos</button>
+                                                <button data-bs-toggle="modal" data-bs-target="#gestionRestricciones" onclick="cargar_restricciones(<?= $m->id_opcion;?>)"  class="btn btn-xs btn-warning btne">Ver Restricciones</button>
                                             </td>
                                         </tr>
                                         <?php

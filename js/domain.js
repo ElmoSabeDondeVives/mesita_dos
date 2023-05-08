@@ -1,5 +1,5 @@
-var urlweb = "http://192.168.1.4/laultimaconchita/";
-var ruta_web = "http://192.168.1.4/laultimaconchita/";
+var urlweb = "http://localhost:8080/mesita_punchana/";
+var ruta_web = "http://localhost:8080/mesita_punchana/";
 //var ruta_web = "http://localhost:8081/mesita/";
 //var ruta_web = "http://192.168.43.54:8081/mesita/";
 
@@ -19,6 +19,7 @@ function validar_correo(id) {
     if(expreg.test(text)){
         return true;
     } else {
+        error("Formato de Correo Inválido");
         error("Formato de Correo Inválido");
         document.getElementById(id).value = '';
         return false;

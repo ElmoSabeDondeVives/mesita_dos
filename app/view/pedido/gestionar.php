@@ -202,16 +202,16 @@
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <h1 class="h3 mb-0 text-gray-800"><?= $_SESSION['controlador'] . ' / ' . $_SESSION['accion'];?></h1>
             </div>
-                <div class="row">
-                    <div class="col-lg-2 col-xs-3 col-md-3 col-sm-3">
+                <div class="row mt-4">
+                    <div class="col-lg-3 col-xs-3 col-md-3 col-sm-3">
                         <button class="btn btn-primary" data-toggle="modal" data-target="#reservas" ><i class="fa fa-calendar"></i> Reservar Mesa</button>
                     </div>
-                    <div class="col-lg-2 col-xs-3 col-md-3 col-sm-3">
+                    <div class="col-lg-3 col-xs-3 col-md-3 col-sm-3">
                         <button class="btn btn-primary" data-toggle="modal" data-target="#ocultar"><i class="fa fa-history"></i> Ocultar Mesa</button>
                     </div>
                 </div>
-                <br>
-                <div class="row">
+
+                <div class="row mt-4">
                     <?php
                     foreach ($mesas as $m){
                         //busca comanda anterior
@@ -219,8 +219,13 @@
 
                         if($m->id_mesa == 0){
                             ?>
-                            <div class="col-md-3 col-sm-3 col-xs-3">
-                                <a style="background: green;margin: 1px;border-radius: 20px;padding: 60px 10px 60px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/delivery';?>"><?= $m->mesa_nombre;?></a>
+                            <div class="col-md-3 col-lg-3 col-sm-3 col-xs-3 p-1  text-center text-center " >
+                                <div class="card" style="background: green;">
+                                    <div class="card-body">
+                                        <a style="background: green;margin: 1px;border-radius: 20px;text-align: center;width: 100px" class="text-white" href="<?php echo _SERVER_ . 'Pedido/delivery';?>"><?= $m->mesa_nombre;?></a>
+
+                                    </div>
+                                </div>
                             </div>
                             <?php
                         }else{
@@ -235,9 +240,12 @@
                                           </script>";
                                 }
                                 ?>
-                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                                    <a style="background: green;margin: 1px;border-radius: 20px;padding: 60px 10px 60px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/asignar/' . $m->id_mesa;?>"><?= $m->mesa_nombre;?>
-                                    </a>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 p-1 text-center">
+                                    <div class="card" style="background: green;">
+                                        <div class="card-body">
+                                            <a style="background: green;margin: 1px;border-radius: 20px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/asignar/' . $m->id_mesa;?>"><?= $m->mesa_nombre;?></a>
+                                        </div>
+                                    </div>
                                 </div>
                                 <?php
                             }else{
@@ -250,18 +258,25 @@
                                     if(!empty($buscar_reservas)){
                                         $actualizar_mesa = $this->pedido->cambiar_estado_mesa_reserva($buscar_reservas->id_mesa);
                                         ?>
-                                        <div class="col-md-3 col-sm-3 col-xs-3">
-                                            <a style="background: dodgerblue;margin: 1px;border-radius: 20px;padding: 18px 10px 18px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/detalle_pedido/' . $m->id_mesa;?>" ><?= $m->mesa_nombre;?> / RESERVADO
-                                                <p>Por <?= $buscar_reservas->reserva_nombre?> / Cant. <?= $buscar_reservas->reserva_cantidad?> Pers.</p>
-                                                <p>Dia: <?= $buscar_reservas->reserva_fecha?> / Hora: <?= $buscar_reservas->reserva_hora?></p>
-                                            </a>
+                                        <div class="col-md-3 col-sm-3 p-1 col-xs-3">
+                                            <div class="card" style="background: dodgerblue">
+                                                <div class="card-body">
+                                                    <a style="background: dodgerblue;margin: 1px;border-radius: 20px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/detalle_pedido/' . $m->id_mesa;?>" ><?= $m->mesa_nombre;?> / RESERVADO
+                                                        <p>Por <?= $buscar_reservas->reserva_nombre?> / Cant. <?= $buscar_reservas->reserva_cantidad?> Pers.</p>
+                                                        <p>Dia: <?= $buscar_reservas->reserva_fecha?> / Hora: <?= $buscar_reservas->reserva_hora?></p>
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                         <?php
                                     }else{
                                         ?>
-                                        <div class="col-md-3 col-sm-3 col-xs-3">
-                                            <a style="background:  #f4b619;margin: 1px;border-radius: 20px;padding: 60px 10px 60px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/detalle_pedido/' . $m->id_mesa;?>"><?= $m->mesa_nombre;?><?= ($ultimo_valor->comanda_nombre_mesa != Null)?' || '.$ultimo_valor->comanda_nombre_mesa:""?></a>
-
+                                        <div class="col-md-3 col-sm-3 col-xs-3 p-1 text-center">
+                                            <div class="card" style="background:  #f4b619">
+                                                <div class="card-body">
+                                                    <a style="background:  #f4b619;margin: 1px;border-radius: 20px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/detalle_pedido/' . $m->id_mesa;?>"><?= $m->mesa_nombre;?><?= ($ultimo_valor->comanda_nombre_mesa != Null)?' || '.$ultimo_valor->comanda_nombre_mesa:""?></a>
+                                                </div>
+                                            </div>
                                         </div>
                                         <?php
                                     }
@@ -276,18 +291,27 @@
                                         $numero = $buscar_reservas->reserva_contacto;
                                     }
                                     ?>
-                                    <div class="col-md-3 col-sm-3 col-xs-3">
-                                        <a style="background: dodgerblue;margin: 1px;border-radius: 20px;padding: 18px 10px 18px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/asignar/' . $m->id_mesa;?>" ><?= $m->mesa_nombre;?> / RESERVADO
-                                            <p>Por <?= $buscar_reservas->reserva_nombre?> / Cant. <?= $buscar_reservas->reserva_cantidad?> Pers.</p>
-                                            <p>Dia: <?= $buscar_reservas->reserva_fecha?> / Hora: <?= $buscar_reservas->reserva_hora?></p>
-                                            <p>N° : <?=$numero ?></p>
-                                        </a>
+                                    <div class="col-md-3 col-sm-3 col-xs-3 text-center p-1">
+                                        <div class="card">
+                                            <div class="card-body" style="background: dodgerblue;">
+                                                <a style="background: dodgerblue;margin: 1px;border-radius: 20px;padding: 18px 10px 18px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/asignar/' . $m->id_mesa;?>" ><?= $m->mesa_nombre;?> / RESERVADO
+                                                    <p>Por <?= $buscar_reservas->reserva_nombre?> / Cant. <?= $buscar_reservas->reserva_cantidad?> Pers.</p>
+                                                    <p>Dia: <?= $buscar_reservas->reserva_fecha?> / Hora: <?= $buscar_reservas->reserva_hora?></p>
+                                                    <p>N° : <?=$numero ?></p>
+                                                </a>
+
+                                            </div>
+                                        </div>
                                     </div>
                                     <?php
                                 }else{
                                     ?>
-                                    <div class="col-md-3 col-sm-3 col-xs-3">
-                                        <a style="background: red;margin: 1px;border-radius: 20px;padding: 60px 10px 60px 10px;text-align: center;width: 100%" class="text-white"  onclick="preguntar('¿La mesa se encuentra lista para ser usada?','habilitar_mesa','SI','NO',<?= $m->id_mesa?>,0)"><?= $m->mesa_nombre;?></a>
+                                    <div class="col-md-3 col-sm-3 col-xs-3 text-center p-1" >
+                                        <div class="card" style="background: red">
+                                            <div class="card-body">
+                                                <a style="background: red;margin: 1px;border-radius: 20px;text-align: center;width: 100%" class="text-white"  onclick="preguntar('¿La mesa se encuentra lista para ser usada?','habilitar_mesa','SI','NO',<?= $m->id_mesa?>,0)"><?= $m->mesa_nombre;?></a>
+                                            </div>
+                                        </div>
                                     </div>
                                     <?php
                                 }
@@ -306,21 +330,35 @@
                     foreach ($mesas_tg as $m){
                     if($m->mesa_estado_atencion == 0){
                         ?>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                        <a style="background: green;margin: 1px;border-radius: 20px;padding: 40px 10px 40px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/asignar/' . $m->id_mesa;?>"><?= $m->mesa_nombre;?></a>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 p-1 text-center">
+                        <div class="card" style="background: green">
+                            <div class="card-body">
+                                <a style="background: green;margin: 1px;border-radius: 20px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/asignar/' . $m->id_mesa;?>"><?= $m->mesa_nombre;?></a>
+
+                            </div>
+                        </div>
                     </div>
                     <?php
                         }else if($m->mesa_estado_atencion == 1){
                         ?>
-                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                            <a style="background: #f4b619;margin: 1px;border-radius: 20px;padding: 40px 10px 40px 10px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/detalle_pedido/' . $m->id_mesa;?>" ><?= $m->mesa_nombre;?>
-                            </a>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 p-1 text-center">
+                            <div class="card" style="background: #f4b619">
+                                <div class="card-body">
+                                    <a style="background: #f4b619;margin: 1px;border-radius: 20px;text-align: center;width: 100%" class="text-white" href="<?php echo _SERVER_ . 'Pedido/detalle_pedido/' . $m->id_mesa;?>" ><?= $m->mesa_nombre;?>
+                                    </a>
+
+                                </div>
+                            </div>
                         </div>
                     <?php
                         }else{
                         ?>
-                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                            <a style="background: red;margin: 1px;border-radius: 20px;padding: 40px 10px 40px 10px;text-align: center;width: 100%" class="text-white"  onclick="preguntar('¿La mesa se encuentra lista para ser usada?','habilitar_mesa','SI','NO',<?= $m->id_mesa?>,0)"><?= $m->mesa_nombre;?></a>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 p-1 text-center">
+                            <div class="card">
+                                <div class="card-body" style="background: red">
+                                    <a style="background: red;margin: 1px;border-radius: 20px;text-align: center;width: 100%" class="text-white"  onclick="preguntar('¿La mesa se encuentra lista para ser usada?','habilitar_mesa','SI','NO',<?= $m->id_mesa?>,0)"><?= $m->mesa_nombre;?></a>
+                                </div>
+                            </div>
                         </div>
                     <?php
                     }
