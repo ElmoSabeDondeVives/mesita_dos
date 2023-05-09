@@ -627,8 +627,8 @@ class PedidoController
                                 <td>". $r->producto_nombre ."</td>
                                 <td>". $total . "</td>
                                 <td>
-                                    <button class='btn btn-success' data-toggle='modal' onclick='guardar_pedido(".$r->id_producto. ",\"".$r->producto_nombre."\",\"".$total."\",\"".$r->producto_precio_codigoafectacion."\")' data-target='#asignar_pedido'><i class='fa fa-check'></i> </button>
-                                    <a class='btn btn-primary' href='"._SERVER_ .$r->producto_foto."' target='_blank'><i class='fa fa-eye'></i></a>
+                                    <button class='btn btn-sm btn-success' data-toggle='modal' onclick='guardar_pedido(".$r->id_producto. ",\"".$r->producto_nombre."\",\"".$total."\",\"".$r->producto_precio_codigoafectacion."\")' data-target='#asignar_pedido'><i class='fa fa-check'></i> </button>
+                                    <a class='btn btn-sm btn-primary' href='"._SERVER_ .$r->producto_foto."' target='_blank'><i class='fa fa-eye'></i></a>
                                     <input type='hidden' id='".$r->producto_precio_codigoafectacion."'>
                                 <td>
                             </tr>";
@@ -689,7 +689,9 @@ class PedidoController
                 $producto_nuevo .= " <tr>
                                 <td>". $r->producto_nombre ."</td>
                                 <td>". $total . "</td>
-                                <td><button class='btn btn-success' onclick='guardar_pedido_nuevo(".$r->id_producto. ",\"".$r->producto_nombre."\",\"".$total."\")' ><i class='fa fa-check'></i> Agregar</button><td>
+                                <td>
+                                    <button class='btn btn-success' onclick='guardar_pedido_nuevo(".$r->id_producto. ",\"".$r->producto_nombre."\",\"".$total."\")' ><i class='fa fa-check'></i> Agregar</button>
+                                <td>
                             </tr>";
                 $resultado = $this->pedido->listar_busqueda_productos_seleccion($r->id_producto);
                 $ver_seleccion = "<label>Precio por Producto ".$resultado->producto_nombre." : ".$resultado->producto_precio_venta."</label>

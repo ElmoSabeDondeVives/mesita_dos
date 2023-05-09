@@ -92,8 +92,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Agregar</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+
                 </button>
             </div>
             <div class="modal-body">
@@ -156,302 +156,313 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" >
-                                <div class="row">
-                                    <div class="form-group col-lg-7">
-                                        <input required autocomplete="off" name="parametro" type="text" value="<?= $parametro;?>" class="form-control" id="parametro" placeholder="Buscar Productos...">
-                                    </div>
-                                    <div class="form-group col-lg-5">
-                                        <button type="submit" onclick="productos()" class="btn btn-success" style="width: 80%"><i class="fa fa-search"></i> Buscar</button>
-                                    </div>
-                                </div>
-                                <div class="form-group col-lg-12">
-                                    <div id="producto" class="table-responsive">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <?php
-                                foreach ($familia as $f){
-                                    $productos_familia = $this->pedido->listar_productos_x_familia($f->id_producto_familia);
-                                    ?>
-                                    <h3 data-toggle="collapse" href="#tipo_<?= $f->id_producto_familia;?>"><?= $f->producto_familia_nombre?><i class="fa fa-arrow-down" style="float: right"></i></h3><br>
-
-                                    <div id="tipo_<?= $f->id_producto_familia;?>" class="collapse">
-                                        <table class='table table-bordered' width='100%'>
-                                            <thead class='text-capitalize'>
-                                            <tr>
-                                                <th></th>
-                                                <th></th>
-                                                <th></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <?php
-                                            foreach ($productos_familia as $pf){
-                                                $anho = date('Y');
-                                                if($anho == "2021"){
-                                                    $icbper = 0.30;
-                                                }elseif($anho == "2022"){
-                                                    $icbper = 0.40;
-                                                }else{
-                                                    $icbper = 0.50;
-                                                }
-                                                $op_gravadas=0.00;
-                                                $op_exoneradas=0.00;
-                                                $op_inafectas=0.00;
-                                                $op_gratuitas=0.00;
-                                                $igv=0.0;
-                                                $igv_porcentaje=0.18;
-                                                if($pf->producto_precio_codigoafectacion == 10){
-                                                    /*$op_gravadas = $pf->producto_precio_venta;
-                                                    $igv = $op_gravadas * $igv_porcentaje;
-                                                    $total = $op_gravadas + $igv;*/
-                                                    $total = $pf->producto_precio_venta;
-                                                }else{
-                                                    $total = $pf->producto_precio_venta;
-                                                }
-                                                /*if($pf->id_receta == "131"){
-                                                    $total = $total + $icbper;
-                                                }*/
-                                                ?>
-                                                <tr>
-                                                    <td><?=$pf->producto_nombre?></td>
-                                                    <td><?=$total ?></td>
-                                                    <td><button class='btn btn-success' data-toggle='modal' onclick="guardar_pedido(<?=$pf->id_producto?>,'<?=$pf->producto_nombre?>','<?=$total?>','<?= $pf->producto_precio_codigoafectacion?>')" data-target='#asignar_pedido'><i class='fa fa-check'></i></button><td>
-                                                    <a class="btn btn-primary" href="<?= _SERVER_ . $pf->producto_foto?>" target="_blank"><i class="fa fa-eye"></i></a>
-                                                </tr>
-                                                <?php
-                                            }
-                                            ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <?php
-                                }
-                                ?>
-                            </div>
-                        </div>
-                        <div class="col-lg-8">
-                            <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
-                                <input type="hidden" id="contenido" name="contenido">
-                                <input type="hidden" class="form-control" id="id_producto" name="id_producto">
-
-                                <div class="form-group col-md-12">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                        <tr style="font-weight: bold;text-align: center">
-                                            <td>PRODUCTO</td>
-                                            <td>PU</td>
-                                            <td>CANT</td>
-                                            <td>ENTR</td>
-                                            <td>OBS</td>
-                                            <td>TOTAL</td>
-                                            <td>ACCIÓN</td>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="contenido_detalle_compra">
-                                        </tbody>
-                                        <!--<tr>
-                                            <td id="conteo"></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>-->
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </table>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-12">
                                     <div class="row">
-                                        <div class="col-lg-8" style="text-align: right" id="div_titulo_span">
-                                            <!--<label for="" style="font-size: 14px;">OP. GRAVADAS</label><br>
-                                            <label for="" style="font-size: 14px;">IGV(18%)</label><br>
-                                            <label for="" style="font-size: 14px;">OP. EXONERADAS</label><br>
-                                            <label for="" style="font-size: 14px;">OP. INAFECTAS</label><br>
-                                            <label for="" style="font-size: 14px;">OP. GRATUITAS</label><br>
-                                            <label for="" style="font-size: 14px;">ICBPER</label><br>-->
-                                            <label for="" style="font-size: 17px;"><strong>TOTAL</strong></label><br>
-                                            <label for="" style="font-size: 14px;">VUELTO</label>
-                                        </div>
-                                        <div class="col-lg-2" style="text-align: right" id="div_totales_span">
-                                            <label for="" style="font-size: 17px;"><span id="venta_total">0.00</span></label><br>
-                                            <label for="" style="font-size: 14px;"><span id="vuelto">0.00</span></label>
-
-                                        </div>
-                                        <div class="col-lg-2" style="text-align: right">
-<!--                                            <label for="" style="font-size: 14px;"><span id="op_gravadas">0.00</span></label><br>-->
-                                            <input type="hidden" id="op_gravadas_" name="op_gravadas_">
-<!--                                            <label for="" style="font-size: 14px;"><span id="igv">0.00</span></label><br>-->
-                                            <input type="hidden" id="igv_" name="igv_">
-<!--                                            <label for="" style="font-size: 14px;"><span id="op_exoneradas">0.00</span></label><br>-->
-                                            <input type="hidden" id="op_exoneradas_" name="op_exoneradas_">
-<!--                                            <label for="" style="font-size: 14px;"><span id="op_inafectas">0.00</span></label><br>-->
-                                            <input type="hidden" id="op_inafectas_" name="op_inafectas_">
-<!--                                            <label for="" style="font-size: 14px;"><span id="op_gratuitas">0.00</span></label><br>-->
-                                            <input type="hidden" id="op_gratuitas_" name="op_gratuitas_">
-<!--                                            <label for="" style="font-size: 14px;"><span id="icbper">0.00</span></label><br>-->
-                                            <input type="hidden" id="icbper_" name="icbper_">
-                                            <input type="hidden" id="venta_total_" name="venta_total_">
-                                            <input type="hidden" id="vuelto_" name="vuelto_">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-lg-2">
-                                        <label class="col-form-label">Partir Pago</label>
-                                        <select class="form-control" id="partir_pago" name="partir_pago" onchange="partir_pago()">
-                                            <option value="1">SI</option>
-                                            <option value="2" selected>NO</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-lg-3">
-                                        <label class="col-form-label">Tipo de Pago</label>
-                                        <select class="form-control" id="id_tipo_pago" name="id_tipo_pago">
-                                            <?php
-                                            foreach ($tipo_pago as $tp){
-                                                ?>
-                                                <option <?php echo ($tp->id_tipo_pago == 3) ? 'selected' : '';?> value="<?php echo $tp->id_tipo_pago;?>"><?php echo $tp->tipo_pago_nombre;?></option>
+                                        <div class="col-lg-4">
+                                            <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" >
+                                                <div class="row">
+                                                    <div class="form-group col-lg-7">
+                                                        <input required autocomplete="off" name="parametro" type="text" value="<?= $parametro;?>" class="form-control" id="parametro" placeholder="Buscar Productos...">
+                                                    </div>
+                                                    <div class="form-group col-lg-5">
+                                                        <button type="submit" onclick="productos()" class="btn btn-sm btn-success" style="width: 80%"><i class="fa fa-search"></i> Buscar</button>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-lg-12">
+                                                    <div id="producto" class="table-responsive">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <?php
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-lg-2" id="div_monto_1">
-                                        <label class="col-form-label">Monto 1</label>
-                                        <input type="text" class="form-control" id="monto_1" onblur="monto_dividido(this.value)">
-                                    </div>
-                                    <div class="form-group col-lg-3" id="div_tipo_pago_2">
-                                        <label class="col-form-label">Tipo de Pago 2</label>
-                                        <select class="form-control" id="id_tipo_pago_2" name="id_tipo_pago_2">
-                                            <?php
-                                            foreach ($tipo_pago as $tp){
-                                                ?>
-                                                <option <?php echo ($tp->id_tipo_pago == 3) ? 'selected' : '';?> value="<?php echo $tp->id_tipo_pago;?>"><?php echo $tp->tipo_pago_nombre;?></option>
-                                                <?php
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-lg-2" id="div_monto_2">
-                                        <label class="col-form-label">Monto 2</label>
-                                        <input type="text" class="form-control" id="monto_2" readonly>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-lg-2">
-                                        <label for="">Pagó con:</label><br>
-                                        <input type="text" class="form-control" name="pago_cliente" id="pago_cliente" onkeyup="calcular_vuelto()">
-                                    </div>
-                                    <div class="form-group col-lg-3">
-                                        <label for="tipo_igv">Tipo Venta</label><br>
-                                        <select class="form-control" id="tipo_venta" name="tipo_venta" onchange="Consultar_serie_delivery()">
-                                            <option value="">Seleccionar...</option>
-                                            <option value="20">NOTA DE VENTA</option>
-                                            <option value="03" selected>BOLETA</option>
-                                            <option value="01">FACTURA</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-lg-3">
-                                        <label for="serie">Serie</label><br>
-                                        <select class="form-control" id="serie" name="serie" onchange="ConsultarCorrelativo()">
-                                            <option value="">Seleccionar...</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-lg-2">
-                                        <label for="correlativo">Correlativo</label><br>
-                                        <input type="text" class="form-control" id="correlativo" readonly>
-                                    </div>
-                                    <div class="form-group col-lg-2">
-                                        <label for="tipo_moneda">Moneda</label><br>
-                                        <select class="form-control" id="tipo_moneda" name="tipo_moneda">
-                                            <option value="1">SOLES</option>
-                                            <option value="2">DOLARES</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                                foreach ($familia as $f){
+                                                    $productos_familia = $this->pedido->listar_productos_x_familia($f->id_producto_familia);
+                                                    ?>
+                                                    <h5 data-toggle="collapse" href="#tipo_<?= $f->id_producto_familia;?>"><?= $f->producto_familia_nombre?><i class="bx bx-chevron-down" style="float: right"></i></h5>
 
-                                <div class="row">
-                                    <div class="form-group col-lg-2">
-                                        <label for="gratis">Cortesía</label><br>
-                                        <select class="form-control" onchange="select_cortesia()" id="gratis" name="gratis">
-                                            <option value="1">SI</option>
-                                            <option value="2" selected>NO</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-lg-7">
-                                        <label for="">Buscar Cliente</label>
-                                        <input required autocomplete="off" name="parametro_delivery" onkeyup="buscar_cliente_delivery()" type="text" class="form-control" id="parametro_delivery" placeholder="Buscar Cliente">
-                                    </div>
-                                    <div class="form-group col-lg-3" style="margin-top: 35px">
-                                        <button data-toggle="modal" data-target="#agregar_cliente_nuevo" class="btn btn-success" style="width: 99%"> Cliente Nuevo</button>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div id="cliente_delivery" class="table-responsive">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-5" id="div_observacion_cortesia">
-                                        <label>Observación de Cortesía</label><br>
-                                        <textarea class="form-control" name="observacion_cortesia" id="observacion_cortesia" cols="30" rows="2"></textarea>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <input type="hidden" id="id_mesa" name="id_mesa" value="0">
-                                            <label for="">Cliente</label><br>
-                                            <!--<label for="" id="cliente_nombre"></label>-->
-                                            <input class="form-control" id="cliente_nombre_d" name="cliente_nombre_d" value="ANONIMO">
-                                            <input type="hidden" id="id_cliente" name="id_cliente" value="3">
+                                                    <div id="tipo_<?= $f->id_producto_familia;?>" class="collapse">
+                                                        <table class='table table-bordered' width='100%'>
+                                                            <thead class='text-capitalize'>
+                                                            <tr>
+                                                                <th></th>
+                                                                <th></th>
+                                                                <th></th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <?php
+                                                            foreach ($productos_familia as $pf){
+                                                                $anho = date('Y');
+                                                                if($anho == "2021"){
+                                                                    $icbper = 0.30;
+                                                                }elseif($anho == "2022"){
+                                                                    $icbper = 0.40;
+                                                                }else{
+                                                                    $icbper = 0.50;
+                                                                }
+                                                                $op_gravadas=0.00;
+                                                                $op_exoneradas=0.00;
+                                                                $op_inafectas=0.00;
+                                                                $op_gratuitas=0.00;
+                                                                $igv=0.0;
+                                                                $igv_porcentaje=0.18;
+                                                                if($pf->producto_precio_codigoafectacion == 10){
+                                                                    /*$op_gravadas = $pf->producto_precio_venta;
+                                                                    $igv = $op_gravadas * $igv_porcentaje;
+                                                                    $total = $op_gravadas + $igv;*/
+                                                                    $total = $pf->producto_precio_venta;
+                                                                }else{
+                                                                    $total = $pf->producto_precio_venta;
+                                                                }
+                                                                /*if($pf->id_receta == "131"){
+                                                                    $total = $total + $icbper;
+                                                                }*/
+                                                                ?>
+                                                                <tr>
+                                                                    <td><?=$pf->producto_nombre?></td>
+                                                                    <td><?=$total ?></td>
+                                                                    <td><button class='btn btn-sm btn-success' data-toggle='modal' onclick="guardar_pedido(<?=$pf->id_producto?>,'<?=$pf->producto_nombre?>','<?=$total?>','<?= $pf->producto_precio_codigoafectacion?>')" data-target='#asignar_pedido'><i class='fa fa-check'></i></button>
+                                                                        <a class="btn btn-sm btn-primary" href="<?= _SERVER_ . $pf->producto_foto?>" target="_blank"><i class="fa fa-eye"></i></a>
+                                                                    <td>
+
+                                                                </tr>
+                                                                <?php
+                                                            }
+                                                            ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="">DNI / RUC </label><br>
-                                            <input class="form-control" id="cliente_numero_d" name="cliente_numero_d" value="11111111">
+                                        <div class="col-lg-8">
+                                            <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+                                                <input type="hidden" id="contenido" name="contenido">
+                                                <input type="hidden" class="form-control" id="id_producto" name="id_producto">
+
+                                                <div class="form-group col-md-12">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                        <tr style="font-weight: bold;text-align: center">
+                                                            <td>PRODUCTO</td>
+                                                            <td>PU</td>
+                                                            <td>CANT</td>
+                                                            <td>ENTR</td>
+                                                            <td>OBS</td>
+                                                            <td>TOTAL</td>
+                                                            <td>ACCIÓN</td>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody id="contenido_detalle_compra">
+                                                        </tbody>
+                                                        <!--<tr>
+                                                            <td id="conteo"></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                        </tr>-->
+                                                        <tr>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    </table>
+                                                    <div class="row">
+                                                        <div class="col-lg-8" style="text-align: right" id="div_titulo_span">
+                                                            <!--<label for="" style="font-size: 14px;">OP. GRAVADAS</label><br>
+                                                            <label for="" style="font-size: 14px;">IGV(18%)</label><br>
+                                                            <label for="" style="font-size: 14px;">OP. EXONERADAS</label><br>
+                                                            <label for="" style="font-size: 14px;">OP. INAFECTAS</label><br>
+                                                            <label for="" style="font-size: 14px;">OP. GRATUITAS</label><br>
+                                                            <label for="" style="font-size: 14px;">ICBPER</label><br>-->
+                                                            <label for="" style="font-size: 17px;"><strong>TOTAL</strong></label><br>
+                                                            <label for="" style="font-size: 14px;">VUELTO</label>
+                                                        </div>
+                                                        <div class="col-lg-2" style="text-align: right" id="div_totales_span">
+                                                            <label for="" style="font-size: 17px;"><span id="venta_total">0.00</span></label><br>
+                                                            <label for="" style="font-size: 14px;"><span id="vuelto">0.00</span></label>
+
+                                                        </div>
+                                                        <div class="col-lg-2" style="text-align: right">
+                                                            <!--                                            <label for="" style="font-size: 14px;"><span id="op_gravadas">0.00</span></label><br>-->
+                                                            <input type="hidden" id="op_gravadas_" name="op_gravadas_">
+                                                            <!--                                            <label for="" style="font-size: 14px;"><span id="igv">0.00</span></label><br>-->
+                                                            <input type="hidden" id="igv_" name="igv_">
+                                                            <!--                                            <label for="" style="font-size: 14px;"><span id="op_exoneradas">0.00</span></label><br>-->
+                                                            <input type="hidden" id="op_exoneradas_" name="op_exoneradas_">
+                                                            <!--                                            <label for="" style="font-size: 14px;"><span id="op_inafectas">0.00</span></label><br>-->
+                                                            <input type="hidden" id="op_inafectas_" name="op_inafectas_">
+                                                            <!--                                            <label for="" style="font-size: 14px;"><span id="op_gratuitas">0.00</span></label><br>-->
+                                                            <input type="hidden" id="op_gratuitas_" name="op_gratuitas_">
+                                                            <!--                                            <label for="" style="font-size: 14px;"><span id="icbper">0.00</span></label><br>-->
+                                                            <input type="hidden" id="icbper_" name="icbper_">
+                                                            <input type="hidden" id="venta_total_" name="venta_total_">
+                                                            <input type="hidden" id="vuelto_" name="vuelto_">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-lg-2">
+                                                        <label class="col-form-label">Partir Pago</label>
+                                                        <select class="form-control" id="partir_pago" name="partir_pago" onchange="partir_pago()">
+                                                            <option value="1">SI</option>
+                                                            <option value="2" selected>NO</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-lg-3">
+                                                        <label class="col-form-label">Tipo de Pago</label>
+                                                        <select class="form-control" id="id_tipo_pago" name="id_tipo_pago">
+                                                            <?php
+                                                            foreach ($tipo_pago as $tp){
+                                                                ?>
+                                                                <option <?php echo ($tp->id_tipo_pago == 3) ? 'selected' : '';?> value="<?php echo $tp->id_tipo_pago;?>"><?php echo $tp->tipo_pago_nombre;?></option>
+                                                                <?php
+                                                            }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-lg-2" id="div_monto_1">
+                                                        <label class="col-form-label">Monto 1</label>
+                                                        <input type="text" class="form-control" id="monto_1" onblur="monto_dividido(this.value)">
+                                                    </div>
+                                                    <div class="form-group col-lg-3" id="div_tipo_pago_2">
+                                                        <label class="col-form-label">Tipo de Pago 2</label>
+                                                        <select class="form-control" id="id_tipo_pago_2" name="id_tipo_pago_2">
+                                                            <?php
+                                                            foreach ($tipo_pago as $tp){
+                                                                ?>
+                                                                <option <?php echo ($tp->id_tipo_pago == 3) ? 'selected' : '';?> value="<?php echo $tp->id_tipo_pago;?>"><?php echo $tp->tipo_pago_nombre;?></option>
+                                                                <?php
+                                                            }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-lg-2" id="div_monto_2">
+                                                        <label class="col-form-label">Monto 2</label>
+                                                        <input type="text" class="form-control" id="monto_2" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-lg-2">
+                                                        <label for="">Pagó con:</label><br>
+                                                        <input type="text" class="form-control" name="pago_cliente" id="pago_cliente" onkeyup="calcular_vuelto()">
+                                                    </div>
+                                                    <div class="form-group col-lg-3">
+                                                        <label for="tipo_igv">Tipo Venta</label><br>
+                                                        <select class="form-control" id="tipo_venta" name="tipo_venta" onchange="Consultar_serie_delivery()">
+                                                            <option value="">Seleccionar...</option>
+                                                            <option value="20">NOTA DE VENTA</option>
+                                                            <option value="03" selected>BOLETA</option>
+                                                            <option value="01">FACTURA</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-lg-3">
+                                                        <label for="serie">Serie</label><br>
+                                                        <select class="form-control" id="serie" name="serie" onchange="ConsultarCorrelativo()">
+                                                            <option value="">Seleccionar...</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-lg-2">
+                                                        <label for="correlativo">Correlativo</label><br>
+                                                        <input type="text" class="form-control" id="correlativo" readonly>
+                                                    </div>
+                                                    <div class="form-group col-lg-2">
+                                                        <label for="tipo_moneda">Moneda</label><br>
+                                                        <select class="form-control" id="tipo_moneda" name="tipo_moneda">
+                                                            <option value="1">SOLES</option>
+                                                            <option value="2">DOLARES</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group col-lg-2">
+                                                        <label for="gratis">Cortesía</label><br>
+                                                        <select class="form-control" onchange="select_cortesia()" id="gratis" name="gratis">
+                                                            <option value="1">SI</option>
+                                                            <option value="2" selected>NO</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-lg-7">
+                                                        <label for="">Buscar Cliente</label>
+                                                        <input required autocomplete="off" name="parametro_delivery" onkeyup="buscar_cliente_delivery()" type="text" class="form-control" id="parametro_delivery" placeholder="Buscar Cliente">
+                                                    </div>
+                                                    <div class="form-group col-lg-3" style="margin-top: 35px">
+                                                        <button data-toggle="modal" data-target="#agregar_cliente_nuevo" class="btn btn-success" style="width: 99%"> Cliente Nuevo</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div id="cliente_delivery" class="table-responsive">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-5" id="div_observacion_cortesia">
+                                                        <label>Observación de Cortesía</label><br>
+                                                        <textarea class="form-control" name="observacion_cortesia" id="observacion_cortesia" cols="30" rows="2"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group">
+                                                            <input type="hidden" id="id_mesa" name="id_mesa" value="0">
+                                                            <label for="">Cliente</label><br>
+                                                            <!--<label for="" id="cliente_nombre"></label>-->
+                                                            <input class="form-control" id="cliente_nombre_d" name="cliente_nombre_d" value="ANONIMO">
+                                                            <input type="hidden" id="id_cliente" name="id_cliente" value="3">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group">
+                                                            <label for="">DNI / RUC </label><br>
+                                                            <input class="form-control" id="cliente_numero_d" name="cliente_numero_d" value="11111111">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group">
+                                                            <label for="">Dirección</label><br>
+                                                            <textarea rows="3" class="form-control" id="cliente_direccion_d" name="cliente_direccion_d"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group">
+                                                            <label for="">Telefono</label><br>
+                                                            <input class="form-control" id="cliente_telefono_d" name="cliente_telefono_d">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-3"></div>
+                                                    <div class="col-lg-3" style="margin-top: 12px">
+                                                        <button  type="button" id="btn_generarventa" class="btn btn-primary" onclick="guardar_comanda_delivery()">
+                                                            <i class="fa fa-money"></i> Guardar</button>
+                                                    </div>
+                                                    <div class="col-lg-1"></div>
+                                                    <div class="col-lg-2" style="margin-top: 12px; display: none" >
+                                                        <button onclick="guardar_comanda_delivery()" class="btn btn-primary"><i class="fa fa-check"></i> Generar</button>
+                                                    </div>
+
+                                                    <div class="col-lg-3" style="margin-top: 12px">
+                                                        <a class="btn btn-secondary" href="javascript:history.back()" role="button"><i class="fa fa-backward"></i> Regresar</a>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="">Dirección</label><br>
-                                            <textarea rows="3" class="form-control" id="cliente_direccion_d" name="cliente_direccion_d"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="">Telefono</label><br>
-                                            <input class="form-control" id="cliente_telefono_d" name="cliente_telefono_d">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-3"></div>
-                                    <div class="col-lg-3" style="margin-top: 12px">
-                                        <button  type="button" id="btn_generarventa" class="btn btn-primary" onclick="guardar_comanda_delivery()">
-                                            <i class="fa fa-money"></i> Guardar</button>
-                                    </div>
-                                    <div class="col-lg-1"></div>
-                                    <div class="col-lg-2" style="margin-top: 12px; display: none" >
-                                        <button onclick="guardar_comanda_delivery()" class="btn btn-primary"><i class="fa fa-check"></i> Generar</button>
-                                    </div>
-                                    <div class="col-lg-1"></div>
-                                    <div class="col-lg-2" style="margin-top: 12px">
-                                        <a class="btn btn-secondary" href="javascript:history.back()" role="button"><i class="fa fa-backward"></i> Regresar</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

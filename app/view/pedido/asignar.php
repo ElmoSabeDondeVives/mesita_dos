@@ -143,8 +143,9 @@
                                                                     <td><?=$pf->producto_nombre?></td>
                                                                     <td><?=$total ?></td>
                                                                     <td>
-                                                                        <button class='btn btn-success' data-toggle='modal' onclick="guardar_pedido(<?=$pf->id_producto?>,'<?=$pf->producto_nombre?>','<?=$total?>','<?= $pf->producto_precio_codigoafectacion?>')" data-target='#asignar_pedido'><i class='fa fa-check'></i></button>
-                                                                        <a class="btn btn-primary" href="<?= _SERVER_ . $pf->producto_foto?>" target="_blank"><i class="fa fa-eye"></i></a>
+                                                                        <button class='btn btn-sm btn-success' data-toggle='modal' onclick="guardar_pedido(<?=$pf->id_producto?>,'<?=$pf->producto_nombre?>','<?=$total?>','<?= $pf->producto_precio_codigoafectacion?>')" data-target='#asignar_pedido'> <i class='fa fa-check'></i>
+                                                                        </button>
+                                                                        <a class="btn btn-sm btn-primary" href="<?= _SERVER_ . $pf->producto_foto?>" target="_blank"><i class="fa fa-eye"></i></a>
                                                                     <td>
                                                                 </tr>
                                                                 <?php
@@ -159,65 +160,60 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-7">
-                                            <div class="col-md-12 col-lg-12 col-xs-12">
-                                                <form class="" enctype="multipart/form-data" id="guardar_comanda">
-                                                    <input type="hidden" id="contenido" name="contenido">
-                                                    <input type="hidden" class="form-control" id="id_producto" name="id_producto">
-                                                    <input type="hidden" class="form-control" id="comanda_total" name="comanda_total">
-                                                    <input type="hidden" id="id_mesa" name="id_mesa" value="<?= $id;?>">
+                                            <div class="row">
+                                                <div class="col-md-12 col-lg-12 col-xs-12">
+                                                    <form class="" enctype="multipart/form-data" id="guardar_comanda">
+                                                        <input type="hidden" id="contenido" name="contenido">
+                                                        <input type="hidden" class="form-control" id="id_producto" name="id_producto">
+                                                        <input type="hidden" class="form-control" id="comanda_total" name="comanda_total">
+                                                        <input type="hidden" id="id_mesa" name="id_mesa" value="<?= $id;?>">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <table class="table table-dark " >
+                                                                    <thead>
 
+                                                                        <td>PRODUCTO</td>
+                                                                        <td>PU</td>
+                                                                        <td>CANT</td>
+                                                                        <td>ENTR</td>
+                                                                        <td>OBS</td>
+                                                                        <td>TOTAL</td>
+                                                                        <td>ACCIÓN</td>
 
-                                                    <table class="table table-bordered" style="background: darksalmon;">
-                                                        <thead>
-                                                        <tr style="font-weight: bold;text-align: center">
-                                                            <td>PRODUCTO</td>
-                                                            <td>PU</td>
-                                                            <td>CANT</td>
-                                                            <td>ENTR</td>
-                                                            <td>OBS</td>
-                                                            <td>TOTAL</td>
-                                                            <td>ACCIÓN</td>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody id="contenido_detalle_compra">
-                                                        </tbody>
-                                                        <!--<tr>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                        </tr>-->
-                                                        <tr>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td>Total</td>
-                                                            <td><span id="comanda_total_">S/ 0.00</span></td>
-                                                        </tr>
-                                                    </table>
+                                                                    </thead>
+                                                                    <tbody id="contenido_detalle_compra">
+                                                                    </tbody>
+                                                                    <tr>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                        <td>Total</td>
+                                                                        <td><span id="comanda_total_">S/ 0.00</span></td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
 
-                                                    <div class="row">
-                                                        <div class="col-lg-3 col-xs-4 col-md-4 col-sm-4">
-                                                            <label for="">Cant. de Personas</label>
-                                                            <input type="number" value="1" class="form-control" id="comanda_cantidad_personas" name="comanda_cantidad_personas">
+                                                        <div class="row">
+                                                            <div class="col-lg-3 col-xs-4 col-md-4 col-sm-4">
+                                                                <label for="">Cant. de Personas</label>
+                                                                <input type="number" value="1" class="form-control" id="comanda_cantidad_personas" name="comanda_cantidad_personas">
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-6 col-sm-2 col-md-2 col-xs-2"></div>
-                                                        <div class="col-lg-2 col-sm-3 col-md-3 col-xs-3" style="margin-top: 12px">
-                                                            <button type="submit" class="btn btn-primary submitBtn"><i class="fa fa-check"></i> Generar</button>
+                                                        <div class="row">
+                                                            <div class="col-lg-6 col-sm-2 col-md-2 col-xs-2"></div>
+                                                            <div class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="margin-top: 12px">
+                                                                <button type="submit" class="btn btn-primary submitBtn"><i class="fa fa-check"></i> Generar</button>
+                                                            </div>
+                                                            <div class="col-lg-3 col-sm-3 col-md-3 col-xs-3" style="margin-top: 12px">
+                                                                <a class="btn btn-secondary" href="javascript:history.back()" role="button"><i class="fa fa-backward"></i> Regresar</a>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-lg-1 col-sm-2 col-md-2 col-xs-2"></div>
-                                                        <div class="col-lg-2 col-sm-3 col-md-3 col-xs-3" style="margin-top: 12px">
-                                                            <a class="btn btn-secondary" href="javascript:history.back()" role="button"><i class="fa fa-backward"></i> Regresar</a>
-                                                        </div>
-                                                    </div>
-                                                </form>
+                                                    </form>
+                                                </div>
                                             </div>
+
                                         </div>
                                     </div>
 
